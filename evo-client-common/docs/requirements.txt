@@ -1,0 +1,7 @@
+mkdocs==1.4.3
+mkdocs-jupyter==0.24.1
+mkdocs-material==9.1.11
+mkdocs-section-index==0.3.5
+mkdocstrings==0.25.1
+mkdocstrings-python==1.10.3
+griffe==0.45.2

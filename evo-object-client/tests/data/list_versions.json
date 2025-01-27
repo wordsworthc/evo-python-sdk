@@ -1,0 +1,66 @@
+{
+    "object_path": "A/m.json",
+    "object_id": "00000000-0000-0000-0000-000000000002",
+    "object": {
+        "schema": "/objects/file.schema.json",
+        "uuid": "00000000-0000-0000-0000-000000000002"
+    },
+    "version_id": "2020-01-01T01:30:00.0000000Z",
+    "created_at": "2020-01-01 01:30:00+00:00",
+    "created_by": {
+        "id": "00000000-0000-0000-0000-000000000010",
+        "name": "x y",
+        "email": "test@test.com"
+    },
+    "modified_at": "2020-01-01 01:30:00+00:00",
+    "modified_by": {
+        "id": "00000000-0000-0000-0000-000000000012",
+        "name": "x w",
+        "email": "test@test.com"
+    },
+    "etag": "",
+    "links": {
+        "download": "http://unittest.localhost/path/geoscience-object/orgs/00000000-0000-0000-0000-0000000004d2/workspaces/00000000-0000-0000-0000-00000000162e/objects/path/A/m.json",
+        "data": []
+    },
+    "versions": [{
+            "version_id": "2020-01-01T01:30:00.0000000Z",
+            "created_at": "2020-01-01 01:30:00+00:00",
+            "created_by": {
+                "id": "00000000-0000-0000-0000-000000000010",
+                "name": "x y",
+                "email": "test@test.com"
+            },
+            "etag": "",
+            "links": {
+                "download": "http://unittest.localhost/path/geoscience-object/orgs/00000000-0000-0000-0000-0000000004d2/workspaces/00000000-0000-0000-0000-00000000162e/objects/path/A/m.json"
+            }
+        },
+        {
+            "version_id": "2022-01-01T01:30:00.0000000Z",
+            "created_at": "2022-01-01 01:30:00+00:00",
+            "created_by": {
+                "id": "00000000-0000-0000-0000-000000000011",
+                "name": "x z",
+                "email": "test@test.com"
+            },
+            "etag": "",
+            "links": {
+                "download": "http://unittest.localhost/path/geoscience-object/orgs/00000000-0000-0000-0000-0000000004d2/workspaces/00000000-0000-0000-0000-00000000162e/objects/path/A/m.json"
+            }
+        },
+        {
+            "version_id": "2010-01-01T01:30:00.0000000Z",
+            "created_at": "2010-01-01 01:30:00+00:00",
+            "created_by": {
+                "id": "00000000-0000-0000-0000-000000000012",
+                "name": "x w",
+                "email": "test@test.com"
+            },
+            "etag": "",
+            "links": {
+                "download": "http://unittest.localhost/path/geoscience-object/orgs/00000000-0000-0000-0000-0000000004d2/workspaces/00000000-0000-0000-0000-00000000162e/objects/path/A/m.json"
+            }
+        }
+    ]
+}

@@ -1,0 +1,156 @@
+import json
+from unittest import mock
+from uuid import UUID
+
+from data import load_test_data
+from evo.common import HealthCheckType, RequestMethod
+from evo.common.test_tools import BASE_URL, MockResponse, TestHTTPHeaderDict, TestWithConnector, utc_datetime
+from evo.workspaces import ServiceUser, Workspace, WorkspaceRole, WorkspaceServiceClient
+
+ORG_UUID = UUID(int=0)
+USER_ID = UUID(int=2)
+BASE_PATH = f"/workspace/orgs/{ORG_UUID}"
+
+TEST_USER = ServiceUser(id=USER_ID, name="Test User", email="test.user@unit.test")
+
+
+def _test_workspace(ws_id: UUID, name: str) -> Workspace:
+    """Factory method to create test workspace objects."""
+    return Workspace(
+        id=ws_id,
+        display_name=name.title(),
+        description=name.lower(),
+        user_role=WorkspaceRole.owner,
+        org_id=ORG_UUID,
+        hub_url=BASE_URL,
+        created_at=utc_datetime(2020, 1, 1),
+        created_by=TEST_USER,
+    )
+
+
+TEST_WORKSPACE_A = _test_workspace(UUID(int=0xA), "Test Workspace A")
+TEST_WORKSPACE_B = _test_workspace(UUID(int=0xB), "Test Workspace B")
+TEST_WORKSPACE_C = _test_workspace(UUID(int=0xC), "Test Workspace C")
+
+
+class TestWorkspaceClient(TestWithConnector):
+    def setUp(self) -> None:
+        super().setUp()
+        self.workspace_client = WorkspaceServiceClient(connector=self.connector, org_id=ORG_UUID)
+
+    async def test_get_service_health(self) -> None:
+        with mock.patch("evo.workspaces.client.get_service_health") as mock_get_service_health:
+            await self.workspace_client.get_service_health()
+        mock_get_service_health.assert_called_once_with(self.connector, "workspace", check_type=HealthCheckType.FULL)
+
+    def _empty_content(self) -> str:
+        data = """{"results": [], "links": {"first": "http://firstlink", "last": "http://lastlink",
+                "next": null, "previous": null, "count": 0, "total": 0}}"""
+        return data
+
+    async def test_list_workspaces_default_args(self):
+        with self.transport.set_http_response(200, self._empty_content(), headers={"Content-Type": "application/json"}):
+            workspaces = await self.workspace_client.list_workspaces()
+        self.assert_request_made(
+            method=RequestMethod.GET,
+            path=f"{BASE_PATH}/workspaces?offset=0",
+            headers={"Accept": "application/json"},
+        )
+        self.assertEqual([], workspaces)
+
+    async def test_list_workspaces_all_args(self):
+        with self.transport.set_http_response(200, self._empty_content(), headers={"Content-Type": "application/json"}):
+            workspaces = await self.workspace_client.list_workspaces(offset=10, limit=20)
+        self.assert_request_made(
+            method=RequestMethod.GET,
+            path=f"{BASE_PATH}/workspaces?limit=20&offset=10",
+            headers={"Accept": "application/json"},
+        )
+        self.assertEqual([], workspaces)
+
+    async def test_delete_workspace_call(self):
+        with self.transport.set_http_response(204):
+            response = await self.workspace_client.delete_workspace(workspace_id=TEST_WORKSPACE_A.id)
+        self.assert_request_made(
+            method=RequestMethod.DELETE,
+            path=f"{BASE_PATH}/workspaces/{TEST_WORKSPACE_A.id}",
+        )
+        self.assertIsNone(response, "Delete workspace response should be None")
+
+    async def test_create_workspace(self):
+        with self.transport.set_http_response(201, json.dumps(load_test_data("new_workspace.json"))):
+            new_workspace = await self.workspace_client.create_workspace(
+                name="Test Workspace",
+                description="test workspace",
+            )
+        self.assert_request_made(
+            method=RequestMethod.POST,
+            path=f"{BASE_PATH}/workspaces",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body={
+                "bounding_box": None,
+                "default_coordinate_system": "",
+                "description": "test workspace",
+                "labels": None,
+                "name": "Test Workspace",
+            },
+        )
+        self.assertEqual(TEST_WORKSPACE_A, new_workspace)
+
+    async def test_list_workspaces(self) -> None:
+        content_0 = load_test_data("list_workspaces_0.json")
+        content_1 = load_test_data("list_workspaces_1.json")
+        responses = [
+            MockResponse(status_code=200, content=json.dumps(content_0), headers={"Content-Type": "application/json"}),
+            MockResponse(status_code=200, content=json.dumps(content_1), headers={"Content-Type": "application/json"}),
+        ]
+        self.transport.request.side_effect = responses
+        expected_workspaces = [TEST_WORKSPACE_A, TEST_WORKSPACE_B, TEST_WORKSPACE_C]
+        actual_workspaces = await self.workspace_client.list_workspaces(limit=2)
+
+        self.assertEqual(2, self.transport.request.call_count, "Two requests should be made.")
+        self.assert_any_request_made(
+            method=RequestMethod.GET,
+            path=f"{BASE_PATH}/workspaces?limit=2&offset=0",
+            headers=TestHTTPHeaderDict({"Accept": "application/json"}),
+        )
+        self.assert_any_request_made(
+            method=RequestMethod.GET,
+            path=f"{BASE_PATH}/workspaces?limit=2&offset=2",
+            headers=TestHTTPHeaderDict({"Accept": "application/json"}),
+        )
+        self.assertEqual(expected_workspaces, actual_workspaces)
+
+    async def test_list_workspaces_sorted_by_display_name(self) -> None:
+        content_0 = load_test_data("list_workspaces_0.json")
+        content_1 = load_test_data("list_workspaces_1.json")
+
+        # Shuffle the workspaces in the response content.
+        results_0: list = content_0["results"]
+        results_1: list = content_1["results"]
+        results_0.insert(2, results_1.pop(0))
+        results_1.insert(0, results_0.pop(0))
+
+        responses = [
+            MockResponse(status_code=200, content=json.dumps(content_0), headers={"Content-Type": "application/json"}),
+            MockResponse(status_code=200, content=json.dumps(content_1), headers={"Content-Type": "application/json"}),
+        ]
+        self.transport.request.side_effect = responses
+        expected_workspaces = [TEST_WORKSPACE_A, TEST_WORKSPACE_B, TEST_WORKSPACE_C]
+        actual_workspaces = await self.workspace_client.list_workspaces(limit=2)
+
+        self.assertEqual(2, self.transport.request.call_count, "Two requests should be made.")
+        self.assert_any_request_made(
+            method=RequestMethod.GET,
+            path=f"{BASE_PATH}/workspaces?limit=2&offset=0",
+            headers=TestHTTPHeaderDict({"Accept": "application/json"}),
+        )
+        self.assert_any_request_made(
+            method=RequestMethod.GET,
+            path=f"{BASE_PATH}/workspaces?limit=2&offset=2",
+            headers=TestHTTPHeaderDict({"Accept": "application/json"}),
+        )
+        self.assertEqual(expected_workspaces, actual_workspaces)

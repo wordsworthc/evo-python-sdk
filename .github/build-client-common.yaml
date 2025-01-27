@@ -1,0 +1,33 @@
+name: Validate All Changes
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/build-client-common.yaml'
+      - 'evo-client-common/**'
+
+jobs:
+  test-lint:
+    name: "Test & Lint"
+    uses: ./.github/workflows/python-tests-client-common.yaml
+
+  validate-docs:
+    name: "Validate Documentation"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate mkdocs
+        uses: seequent/evo-client-library-automation/.github/actions/build-mkdocs@main
+
+  bump-version:
+    name: "Test Final Version Increment"
+    uses: seequent/evo-client-library-automation/.github/workflows/python-bumpver.yaml@main
+    with:
+      tag-type: final
+      extra-args: --dry

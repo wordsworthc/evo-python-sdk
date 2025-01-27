@@ -1,0 +1,117 @@
+site_name: Evo Client Common
+use_directory_urls: false
+watch:
+  - src/evo
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      base_path: [ ".", ".." ]
+  - toc:
+      permalink: "#"
+
+extra_css:
+  - stylesheet/extra.css
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - content.code.annotate
+    - content.code.copy
+  language: en
+  custom_dir: docs/overrides
+  logo: img/logo.svg
+  favicon: img/favicon-16x16.png
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      scheme: default
+      primary: black
+      accent: deep purple
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      enable_inventory: true
+      default_handler: python
+      handlers:
+        python:
+          paths: [ src ]
+          import:
+            - https://docs.python.org/3/objects.inv
+          options:
+            docstring_style: sphinx
+            # General
+            heading_level: 2
+            show_root_heading: true
+            allow_inspection: true
+            show_bases: true
+            show_source: false
+            show_category_heading: true
+            # Members
+            inherited_members: true
+            filters:
+              - "!^__?" # Hide protected and private members
+            merge_init_into_class: true
+            show_if_no_docstring: true
+            show_signature: true
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+  - mkdocs-jupyter
+  - section-index
+
+nav:
+    - Home: "index.md"
+    - Library:
+        - Quickstart: quickstart.md
+        - Interfaces: interfaces.md
+        - Basic Concepts: concepts.md
+        - aiohttp: aio.md
+        - OAuth:
+            - Authorization Code: oauth/authorization-code.md
+            - Client Credentials: oauth/client-credentials.md
+            - Device Flow: oauth/device-flow.md
+            - Data Types: oauth/data-types.md
+            - Exceptions: oauth/exceptions.md
+        - Discover:
+            - Organizations: clients/discovery.md
+            - Workspaces: clients/workspaces.md
+        - Reference:
+            - Data Types: reference/data.md
+            - Exceptions: reference/exceptions.md
+            - File I/O:
+                - reference/file-io/index.md
+                - Local Storage: reference/file-io/local-storage.md
+                - Remote Storage: reference/file-io/remote-storage.md
+            - Notebook Utilities: reference/notebook-utils.md
+    - Notebooks:
+        - Quickstart: examples/quickstart.ipynb
+        - OAuth Examples: examples/oauth.ipynb
+        - Notebook Utilities: examples/notebook_utils.ipynb

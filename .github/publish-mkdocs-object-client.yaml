@@ -1,0 +1,35 @@
+name: Publish Documentation
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/publish-mkdocs-object-client.yaml"
+      - "evo-object-client/**"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    env:
+      PIP_INDEX_URL: https://${{ secrets.AZUREARTIFACTS_RW }}@pkgs.dev.azure.com/bentleycs/Seequent/_packaging/Seequent-libraries/pypi/simple/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish mkdocs
+        uses: seequent/evo-client-library-automation/.github/actions/publish-mkdocs@main

@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "evo-client-common"
+version = "2.0.8"
+requires-python = ">=3.10"
+readme = { file = "README.md", content-type = "text/markdown" }
+dependencies = [
+    # Specify the minimum versions to avoid security issues.
+    "pure-interface>=8.0.0",
+    "pydantic",
+    "python-dateutil",
+]
+
+[project.optional-dependencies]
+aiohttp = ["aiohttp"]
+notebooks = [
+    "evo-client-common[aiohttp]",
+    "ipywidgets",
+    "jupyter",
+    "python-dotenv",
+]
+
+# Dev dependencies. The version is left unspecified so the latest is installed.
+test = [
+    "evo-client-common[aiohttp]",
+    "freezegun",
+    "parameterized==0.9.0",
+    "pytest",
+]
+dev = [
+    "evo-client-common[notebooks,test]",
+    "bumpver",
+    "coverage[toml]",
+    "ruff==0.9.1", # keep in sync with .pre-commit-config.yaml
+    "pre-commit"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"evo.notebooks" = ["assets/*"]
+
+[tool.ruff]
+src = ["docs", "src", "tests"]
+extend-include = ["*.ipynb"]
+line-length = 120
+
+[tool.ruff.lint.per-file-ignores]
+"docs/examples/code_samples.py" = ["E402", "F704"]
+
+[tool.bumpver]
+current_version = "v2.0.8"
+version_pattern = "vMAJOR.MINOR.PATCH[.PYTAGNUM]"
+commit = "True"
+tag = "True"
+commit_message = "Bump version from {old_version} to {new_version}"
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'version = "{pep440_version}"',
+    'current_version = "{version}"',
+]
