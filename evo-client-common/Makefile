@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 pre-commit:
 	pre-commit install -c .pre-commit-config.yaml
 	git add .
@@ -6,3 +8,6 @@ pre-commit:
 	git add .
 	pre-commit run --all-files -c .pre-commit-config.yaml || true
 	git add .
+
+doc-site:
+	uv run --extra docs mkdocs serve
