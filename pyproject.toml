@@ -1,0 +1,14 @@
+[project]
+name = "evo-python-sdk"
+version = "0.1.0"
+description = "Overall repository to contain independently versioned evo ython SDKs"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.uv.sources]
+evo-client-common = { workspace = true }
+evo-object-client = { workspace = true }
+
+[tool.uv.workspace]
+members = ["evo-client-common", "evo-object-client"]

@@ -2,120 +2,25 @@
 
 `evo-object-client`
 
-The Geoscience Object Service (colloquially known as Goose) is Seequent's next-generation cloud offering for geoscience
-data, empowering our users to build responsive modern workflows. The Goose integration with Leapfrog is a key
-development milestone that has very little value in isolation - the full benefits will only be realised as third
-parties also integrate with Goose.
+The Geoscience Object Service is Seequent's next-generation cloud offering for geoscience
+data, empowering our users to build responsive modern workflows. 
 
-Phase two of the LF - Goose integration is to create a Geoscience Object Service Client Library that enables development
-teams to get up and running with Geoscience Objects. Python was chosen primarily because it is convenient for
-integrating with Leapfrog, however we expect that the underlying concepts can be used to accelerate library development
-in other languages/environments as well.
+## Environment
 
-## Setting up Your Environment
+`uv run` can be used to run arbitrary scripts or commands in your project environment.
 
-This library refers to upstream dependencies which are published to a private package index. In order to resolve those
-dependencies you will need to configure the pip index url in your environment. The easiest way to do this starts with
-[creating a python virtual environment][virtual-environments], then adding a `pip.ini` file to
-the root directory of your virtual environment.
+Prior to every `uv run` invocation, `uv` will verify that the lockfile is up-to-date with the pyproject.toml, 
+and that the environment is up-to-date with the lockfile, keeping your project in-sync without the need for manual intervention. 
+`uv run` guarantees that your command is run in a consistent, locked environment.
 
-> Note: Some types of virtual environments use a script to activate the environment, such as `source bin/activate`. If you
-> are using powershell, you may need to run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` before
-> running the activation script. This step is only required once, and will allow you to run the activation script.
-> See [About Execution Policies][execution-policies] for more information.
+To only sync:
 
-> Note: Make sure to activate your virtual environment before proceeding.
+`uv sync`
 
-### `pip.ini`
+To make changes to the library or run the examples which will install Jupyter and other development related packages:
 
-Add a file named `pip.ini` in the root folder of your virtual environment:
+`uv run [command]`
 
-```ini
-[global]
-index-url=https://pkgs.dev.azure.com/bentleycs/Seequent/_packaging/Seequent-libraries/pypi/simple/
-```
 
-> Note: A `pip.ini` file should be used in a Windows environment, while `pip.conf` should be used on other platforms.
-
-This configuration tells pip to use the Azure Artifacts package index.
-
-### Authenticating with Azure Artifacts
-
-Before proceeding, make sure you can access the following Azure Artifacts feed: [https://dev.azure.com/bentleycs/Seequent/_artifacts/feed/Seequent-libraries](https://dev.azure.com/bentleycs/Seequent/_artifacts/feed/Seequent-libraries). You must be authenticated at this URL to install the dependencies of this library.
-
-#### Artifacts Keyring (Preferred)
-
-Two additional packages are required so that you can authenticate with the Azure Artifacts: `keyring`, and
-`artifacts-keyring`. These can be installed by running the following command in your python virtual environment:
-
-```
-pip install --index-url https://pypi.org/simple keyring artifacts-keyring
-```
-
-> In this step the `--index-url` parameter is required so that the pypi index is used, which does not require
-> authentication. Alternatively these dependencies can be installed _before_ adding the `pip.ini` file.
-
-> `artifacts-keyring` requires .Net runtime 6.0.x or later. If you encounter an error similar to
-> `WARNING: Keyring is skipped due to an exception: Failed to get credentials: process with PID 181971 exited with code -11`,
-> please make sure you have the required [.Net runtime installed][install-dotnet].
-
-#### Personal Access Token (PAT) (Workaround)
-
-Some users have encountered issues authenticating using the `artifacts-keyring` package. If you encounter issues with
-the `artifacts-keyring` package, you can authenticate with the Azure Artifacts adding a personal access token (PAT) to
-your `pip.ini` file. This is not recommended, as it exposes your PAT in plain text, but it is a workaround for users who
-are unable to authenticate using the `artifacts-keyring` package. Personal access tokens have a limited lifespan (maximum 90 days)
-and must be kept up to date.
-
-```ini
-[global]
-index-url=https://Seequent-Libraries:<personal-acces-token>@pkgs.dev.azure.com/bentleycs/Seequent/_packaging/Seequent-libraries/pypi/simple/
-```
-
-For more information on how to create a personal access token, see this how-to article on confluence: [Setting up PIP and NPM to work with Azure DevOps Artifact feeds][personal-access-token]
-
-## Install this Library
-
-After setting up the environment, as described above, this library can be installed from source. Installing the
-development requirements will also set up an [editable installation of this library][editable-install], as well as
-installing all library dependencies.
-
-### Development Installation
-
-To make changes to the library or run the examples which will require Jupyter and other development related packages:
-
-`pip install -e .[dev]`
-
-There is an example Jupyter notebook in `examples/`. To run the example, copy the `examples/.example.env` file to 
-`examples/.env` with any changes, if necessary. This file is populated with example host names which should 
-generally work.
-
-### Dependency Compatibility
-
-Some dependencies used in this library are also used elsewhere, where specific earlier versions are pinned. These
-earlier dependency versions can be installed in a python 3.10 environment to make sure the usage in this library is
-compatible with the versions pinned in other places:
-
-`pip install -r requirements_compatibility.txt`
-
-## Contains Automatically Generated Code
-
-All code in `src/evo/object/endpoints/*` is automatically generated from the OpenAPI specification for the Geoscience
-Object Service. The api clients (`endpoints/api/*`) are generated using [`OpenAPI Generator`][openapi-generator] with
-highly customized templates that are compatible with [`evo-client-common`][common]. The templates are maintained in a
-[separate automation repository][automation] and will be used to generate other evo service clients.
-
-`models.py` is generated using [`datamodel-code-generator`][datamodel-code-generator] because it produces cleaner
-python models for service responses. In particular, initial experiments showed that
-[`datamodel-code-generator`][datamodel-code-generator] produces a cleaner class hierarchy with a superior implementation
-for models with `allOf`, `anyOf`, and `oneOf` schema compositions.
-
-[virtual-environments]: https://docs.python.org/3/library/venv.html
-[execution-policies]: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies
-[install-dotnet]: https://learn.microsoft.com/en-us/dotnet/core/install/
-[personal-access-token]: https://seequent.atlassian.net/wiki/spaces/AR2/pages/33095775/Setting+up+PIP+and+NPM+to+work+with+Azure+DevOps+Artifact+feeds
-[editable-install]: https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs
-[openapi-generator]: https://openapi-generator.tech/
-[datamodel-code-generator]: https://koxudaxi.github.io/datamodel-code-generator/
-[common]: https://github.com/seequent/evo-client-common
-[automation]: https://github.com/seequent/evo-client-library-automation
+To run the tests:
+`uv run pytest tests/`
