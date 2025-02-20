@@ -2,13 +2,18 @@
 
 `evo-client-common`
 
-The Geoscience Object Service is Seequent's next-generation cloud offering for geoscience
-data, empowering our users to build responsive modern workflows. 
+Evo Client Common is a Python package that establishes a common framework for use by client libraries that interact
+with Evo APIs. 
 
 
-## Environment
+## Using the library
 
-`uv run` can be used to run arbitrary scripts or commands in your project environment.
+See the [Getting Started](quickstart.md) guide for how to use this library. There is also more detailed information about authentication options in [the OAuth examples](oauth.md).
+
+
+## Developing the library
+
+`uv run [command]` can be used to run arbitrary scripts or commands in your project environment.
 
 Prior to every `uv run` invocation, `uv` will verify that the lockfile is up-to-date with the pyproject.toml, 
 and that the environment is up-to-date with the lockfile, keeping your project in-sync without the need for manual intervention. 
@@ -23,27 +28,7 @@ $ flask run -p 3000
 $ python example.py
 ```
 
-To make changes to the library or run the examples which will install Jupyter and other development related packages:
-
-`uv run [command]`
-
-There are example Jupyter notebooks in `docs\examples`. To run the examples copy the `docs\examples\.example.env` file to 
-`docs\examples\.env` with any changes, if necessary. This file is populated with example host names which should 
-generally work.
-
-To use the OAuth2 token generation there is a configuration file in `\evo\common\services\oauth_config.yml` with 
-relevant urls.
-
 ### Tests
 
 To run the tests:
 `uv run --extra dev pytest tests/`
-
-### Building Documentation
-
-You can run `mkdocs` commands ensuring all dependencies are installed with `uv run --extra docs mkdocs [command]`.
-
-
-`uv run --extra docs mkdocs serve` serves up a webpage with the documentation.
-
-`uv run --extra docs mkdocs build` creates a static copy accessed via `site/index.html`.
