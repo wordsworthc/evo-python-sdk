@@ -22,7 +22,16 @@ notebooks = [
     "jupyter",
     "python-dotenv",
 ]
+docs = [
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-autorefs",
+    "mkdocs-jupyter",
+    "mkdocs-material",
+    "mkdocs-section-index",
+]
 
+[dependency-groups]
 # Dev dependencies. The version is left unspecified so the latest is installed.
 test = [
     "evo-client-common[aiohttp]",
@@ -31,19 +40,12 @@ test = [
     "pytest",
 ]
 dev = [
-    "evo-client-common[notebooks,test]",
+    "evo-client-common[notebooks]",
     "bumpver",
     "coverage[toml]",
     "ruff==0.9.1", # keep in sync with .pre-commit-config.yaml
     "pre-commit",
-]
-docs = [
-    "mkdocs",
-    "mkdocstrings[python]",
-    "mkdocs-material",
-    "mkdocs-autorefs",
-    "mkdocs-jupyter",
-    "mkdocs-section-index",
+    {include-group="test"},
 ]
 
 [tool.setuptools.packages.find]

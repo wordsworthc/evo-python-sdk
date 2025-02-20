@@ -17,6 +17,7 @@ aiohttp = ["evo-client-common[aiohttp]>=2.0.1"]
 notebooks = ["evo-client-common[notebooks]>=2.0.1"]
 utils = ["pyarrow"]
 
+[dependency-groups]
 # Dev dependencies. The version is left unspecified so the latest is installed.
 test = [
     "evo-object-client[aiohttp,utils]",
@@ -25,10 +26,11 @@ test = [
     "pytest",
 ]
 dev = [
-    "evo-object-client[notebooks,test]",
+    "evo-object-client[notebooks]",
     "bumpver",
     "coverage[toml]",
     "ruff",
+    {include-group="test"},
 ]
 
 [tool.setuptools.packages.find]

@@ -19,8 +19,8 @@ To only sync:
 
 To make changes to the library or run the examples which will install Jupyter and other development related packages:
 
-`uv run --extra dev [command]`
+`uv run [command]`
 
 
 To run the tests:
-`uv run --extra dev pytest tests/`
+`uv run pytest tests/`

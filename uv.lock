@@ -588,19 +588,6 @@ dependencies = [
 aiohttp = [
     { name = "aiohttp" },
 ]
-dev = [
-    { name = "aiohttp" },
-    { name = "bumpver" },
-    { name = "coverage", extra = ["toml"] },
-    { name = "freezegun" },
-    { name = "ipywidgets" },
-    { name = "jupyter" },
-    { name = "parameterized" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "python-dotenv" },
-    { name = "ruff" },
-]
 docs = [
     { name = "mkdocs" },
     { name = "mkdocs-autorefs" },
@@ -615,8 +602,20 @@ notebooks = [
     { name = "jupyter" },
     { name = "python-dotenv" },
 ]
+
+[package.dev-dependencies]
+dev = [
+    { name = "bumpver" },
+    { name = "coverage", extra = ["toml"] },
+    { name = "evo-client-common", extra = ["aiohttp", "notebooks"] },
+    { name = "freezegun" },
+    { name = "parameterized" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
 test = [
-    { name = "aiohttp" },
+    { name = "evo-client-common", extra = ["aiohttp"] },
     { name = "freezegun" },
     { name = "parameterized" },
     { name = "pytest" },
@@ -625,12 +624,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "aiohttp", marker = "extra == 'aiohttp'" },
-    { name = "bumpver", marker = "extra == 'dev'" },
-    { name = "coverage", extras = ["toml"], marker = "extra == 'dev'" },
     { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'notebooks'", editable = "evo-client-common" },
-    { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'test'", editable = "evo-client-common" },
-    { name = "evo-client-common", extras = ["notebooks", "test"], marker = "extra == 'dev'", editable = "evo-client-common" },
-    { name = "freezegun", marker = "extra == 'test'" },
     { name = "ipywidgets", marker = "extra == 'notebooks'" },
     { name = "jupyter", marker = "extra == 'notebooks'" },
     { name = "mkdocs", marker = "extra == 'docs'" },
@@ -639,14 +633,29 @@ requires-dist = [
     { name = "mkdocs-material", marker = "extra == 'docs'" },
     { name = "mkdocs-section-index", marker = "extra == 'docs'" },
     { name = "mkdocstrings", extras = ["python"], marker = "extra == 'docs'" },
-    { name = "parameterized", marker = "extra == 'test'", specifier = "==0.9.0" },
-    { name = "pre-commit", marker = "extra == 'dev'" },
     { name = "pure-interface", specifier = ">=8.0.0" },
     { name = "pydantic" },
-    { name = "pytest", marker = "extra == 'test'" },
     { name = "python-dateutil" },
     { name = "python-dotenv", marker = "extra == 'notebooks'" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = "==0.9.1" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "bumpver" },
+    { name = "coverage", extras = ["toml"] },
+    { name = "evo-client-common", extras = ["aiohttp"], editable = "evo-client-common" },
+    { name = "evo-client-common", extras = ["notebooks"], editable = "evo-client-common" },
+    { name = "freezegun" },
+    { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "ruff", specifier = "==0.9.1" },
+]
+test = [
+    { name = "evo-client-common", extras = ["aiohttp"], editable = "evo-client-common" },
+    { name = "freezegun" },
+    { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pytest" },
 ]
 
 [[package]]
@@ -662,45 +671,55 @@ dependencies = [
 aiohttp = [
     { name = "evo-client-common", extra = ["aiohttp"] },
 ]
-dev = [
-    { name = "bumpver" },
-    { name = "coverage", extra = ["toml"] },
-    { name = "evo-client-common", extra = ["aiohttp", "notebooks"] },
-    { name = "pandas" },
-    { name = "parameterized" },
-    { name = "pyarrow" },
-    { name = "pytest" },
-    { name = "ruff" },
-]
 notebooks = [
     { name = "evo-client-common", extra = ["notebooks"] },
-]
-test = [
-    { name = "evo-client-common", extra = ["aiohttp"] },
-    { name = "pandas" },
-    { name = "parameterized" },
-    { name = "pyarrow" },
-    { name = "pytest" },
 ]
 utils = [
     { name = "pyarrow" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "bumpver" },
+    { name = "coverage", extra = ["toml"] },
+    { name = "evo-object-client", extra = ["aiohttp", "notebooks", "utils"] },
+    { name = "pandas" },
+    { name = "parameterized" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+test = [
+    { name = "evo-object-client", extra = ["aiohttp", "utils"] },
+    { name = "pandas" },
+    { name = "parameterized" },
+    { name = "pytest" },
+]
+
 [package.metadata]
 requires-dist = [
-    { name = "bumpver", marker = "extra == 'dev'" },
-    { name = "coverage", extras = ["toml"], marker = "extra == 'dev'" },
     { name = "evo-client-common", editable = "evo-client-common" },
     { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'aiohttp'", editable = "evo-client-common" },
     { name = "evo-client-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "evo-client-common" },
-    { name = "evo-object-client", extras = ["aiohttp", "utils"], marker = "extra == 'test'", editable = "evo-object-client" },
-    { name = "evo-object-client", extras = ["notebooks", "test"], marker = "extra == 'dev'", editable = "evo-object-client" },
-    { name = "pandas", marker = "extra == 'test'" },
-    { name = "parameterized", marker = "extra == 'test'", specifier = "==0.9.0" },
     { name = "pyarrow", marker = "extra == 'utils'" },
     { name = "pydantic", specifier = ">=2,<3" },
-    { name = "pytest", marker = "extra == 'test'" },
-    { name = "ruff", marker = "extra == 'dev'" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "bumpver" },
+    { name = "coverage", extras = ["toml"] },
+    { name = "evo-object-client", extras = ["aiohttp", "utils"], editable = "evo-object-client" },
+    { name = "evo-object-client", extras = ["notebooks"], editable = "evo-object-client" },
+    { name = "pandas" },
+    { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+test = [
+    { name = "evo-object-client", extras = ["aiohttp", "utils"], editable = "evo-object-client" },
+    { name = "pandas" },
+    { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pytest" },
 ]
 
 [[package]]
