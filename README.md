@@ -13,11 +13,14 @@ With workspaces, `uv lock` operates on the entire workspace at once. `uv run` an
 To install uv on your machine, run one of the following convenience scripts from the root of the repo. These scripts ensure everyone is using the same version.
 
 Windows:
-
+```
 ./scripts/install-uv.ps1
-UNIX-like:
+```
 
+UNIX-like:
+```
 ./scripts/install-uv.sh
+```
 You can run the same script again whenever the version in the UV_VERSION file changes. It will replace your existing installation of uv.
 
 ## SDKs
