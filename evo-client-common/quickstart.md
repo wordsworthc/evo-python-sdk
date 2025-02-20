@@ -93,7 +93,7 @@ await transport.open()
 ### Log in to Evo
 
 The Evo service requires users to log in to access their data. This is done using the OAuth 2.0 protocol. The
-[`AuthorizationCodeAuthorizer`][evo.oauth.AuthorizationCodeAuthorizer] class is used to authenticate users and obtain an access token. The access
+`evo.oauth.AuthorizationCodeAuthorizer` class is used to authenticate users and obtain an access token. The access
 token is used to make requests to the Evo service.
 
 ``` python
@@ -135,7 +135,7 @@ await authorizer.authorize()
 ### Using the Discovery API
 
 The discovery API is used to find the organizations and hubs that a user has access to. This is done using the
-[`DiscoveryApiClient`][evo.discovery.DiscoveryApiClient] class. The `list_organizations()` method is used to get a
+`evo.discovery.DiscoveryApiClient` class. The `list_organizations()` method is used to get a
 list of organizations. Each listed organization includes a list of hubs that are used by that organization.
 
 ``` python
@@ -147,7 +147,7 @@ async with ApiConnector("https://discover.api.seequent.com", transport, authoriz
 ### Using the Workspace API
 
 The Workspace API is used to find the workspaces that a user has access to. This is done using the
-[`WorkspaceServiceClient`][evo.workspaces.WorkspaceServiceClient] class. The `get_workspaces()` method is used to get
+`evo.workspaces.WorkspaceServiceClient` class. The `get_workspaces()` method is used to get
 a list of workspaces belonging to the specified organization on the specified hub.
 
 ``` python
@@ -215,6 +215,6 @@ async with hub_connector:
 Some utility classes for robust file I/O operations have been implemented in the `evo.common.io` module. These classes
 are designed to handle large files and provide a simple interface for reading and writing data in chunks.
 
-The most common use case for these classes is to transfer large files between local storage and remote storage. [HTTPSource][evo.common.io.HTTPSource] and [BlobStorageDestination][evo.common.io.BlobStorageDestination] each have static methods that make it easy to upload and download files.
+The most common use case for these classes is to transfer large files between local storage and remote storage. `evo.common.io.HTTPSource` and `evo.common.io.BlobStorageDestination` each have static methods that make it easy to upload and download files.
 
-Evo APIs currently use the Azure Blob Storage interface for uploading data. Downloading large files is very standardized across service providers, but uploading large files is a different story. Azure Blob Storage has a unique way to support chunked file upload, so an Azure-specific implemntation is provided in [BlobStorageDestination][evo.common.io.BlobStorageDestination].
+Evo APIs currently use the Azure Blob Storage interface for uploading data. Downloading large files is very standardized across service providers, but uploading large files is a different story. Azure Blob Storage has a unique way to support chunked file upload, so an Azure-specific implemntation is provided in `evo.common.io.BlobStorageDestination`.
