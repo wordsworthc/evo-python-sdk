@@ -115,7 +115,7 @@ from evo.oauth import OIDCConnector, ClientCredentialsAuthorizer, OAuthScopes
 
 ISSUER_URI = "https://ims.bentley.com"
 CLIENT_NAME = "<client_name>"
-CLIENT_SECRET = "<client_secret"
+CLIENT_SECRET = "<client_secret>"
 CLIENT_ID = CLIENT_NAME.lower()
 
 authorizer = ClientCredentialsAuthorizer(
@@ -147,7 +147,7 @@ async with ApiConnector("https://discover.api.seequent.com", transport, authoriz
 ### Using the Workspace API
 
 The Workspace API is used to find the workspaces that a user has access to. This is done using the
-`evo.workspaces.WorkspaceServiceClient` class. The `get_workspaces()` method is used to get
+`evo.workspaces.WorkspaceServiceClient` class. The `list_workspaces()` method is used to get
 a list of workspaces belonging to the specified organization on the specified hub.
 
 ``` python
