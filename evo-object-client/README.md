@@ -5,22 +5,28 @@
 The Geoscience Object Service is Seequent's next-generation cloud offering for geoscience
 data, empowering our users to build responsive modern workflows. 
 
-## Environment
+## Using the library
 
-`uv run` can be used to run arbitrary scripts or commands in your project environment.
+See the [Getting Started](quickstart.md) guide for how to use this library.
+
+## Developing the library
+
+`uv run [command]` can be used to run arbitrary scripts or commands in your project environment.
 
 Prior to every `uv run` invocation, `uv` will verify that the lockfile is up-to-date with the pyproject.toml, 
 and that the environment is up-to-date with the lockfile, keeping your project in-sync without the need for manual intervention. 
 `uv run` guarantees that your command is run in a consistent, locked environment.
 
-To only sync:
+Alternatively, you can use `uv sync` to manually update the environment then activate it before executing a command:
 
-`uv sync`
+```bash
+$ uv sync
+$ source .venv/bin/activate
+$ flask run -p 3000
+$ python example.py
+```
 
-To make changes to the library or run the examples which will install Jupyter and other development related packages:
-
-`uv run [command]`
-
+### Tests
 
 To run the tests:
-`uv run pytest tests/`
+`uv run --extra dev pytest tests/`

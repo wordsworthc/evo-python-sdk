@@ -14,7 +14,6 @@ build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 aiohttp = ["evo-client-common[aiohttp]>=2.0.1"]
-notebooks = ["evo-client-common[notebooks]>=2.0.1"]
 utils = ["pyarrow"]
 
 [dependency-groups]
@@ -26,7 +25,6 @@ test = [
     "pytest",
 ]
 dev = [
-    "evo-object-client[notebooks]",
     "bumpver",
     "coverage[toml]",
     "ruff",
@@ -38,12 +36,8 @@ where = ["src"]
 namespaces = true
 
 [tool.ruff]
-src = ["docs", "src", "tests"]
-extend-include = ["*.ipynb"]
+src = ["src", "tests"]
 line-length = 120
-
-[tool.ruff.lint.per-file-ignores]
-"docs/examples/code_samples.py" = ["E402", "F704"]
 
 [tool.bumpver]
 current_version = "v2.2.2"
