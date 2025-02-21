@@ -20,7 +20,7 @@ T = TypeVar("T", bound=ResourceMetadata)
 class Download(ABC, Generic[T]):
     """A base class for referencing binary data that needs to be downloaded.
 
-    Each service that provides binary data is expected to extend this class, providing the specific implementation
+    Each SDK that provides binary data from an API is expected to extend this class, providing the specific implementation
     for generating download URLs and caching the downloaded data.
     """
 

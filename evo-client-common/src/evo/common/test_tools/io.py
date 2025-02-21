@@ -166,7 +166,7 @@ class TestWithDownloadHandler(unittest.IsolatedAsyncioTestCase, TestWithStorage)
             self.assert_range_request_made(url, offset, min(chunk_size, filesize - offset))
 
 
-class BlobDestinationRequestHandler(AbstractTestRequestHandler):
+class StorageDestinationRequestHandler(AbstractTestRequestHandler):
     def __init__(self) -> None:
         self._mutex = asyncio.Lock()
         self._buffer: dict[str, bytes] = {}
@@ -190,9 +190,7 @@ class BlobDestinationRequestHandler(AbstractTestRequestHandler):
             return b"".join(self._buffer[block_id] for block_id in self._block_list)
 
     async def handle_put_block(self, block_id: str, headers: HTTPHeaderDict, body: bytes) -> MockResponse:
-        """Mock Azure Blob Storage PUT BLOCK operation.
-
-        https://learn.microsoft.com/en-us/rest/api/storageservices/put-block
+        """Mock Storage PUT BLOCK operation.
 
         :param block_id: The block id from the query parameters.
         :param headers: The request headers.
@@ -207,9 +205,7 @@ class BlobDestinationRequestHandler(AbstractTestRequestHandler):
         return MockResponse(status_code=201, reason="Created")
 
     async def handle_put_block_list(self, headers: HTTPHeaderDict, body: bytes) -> MockResponse:
-        """Mock Azure Blob Storage PUT BLOCK LIST operation.
-
-        https://learn.microsoft.com/en-us/rest/api/storageservices/put-block-list
+        """Mock Storage PUT BLOCK LIST operation.
 
         :param headers: The request headers.
         :param body: The request body.
@@ -289,6 +285,6 @@ class TestWithUploadHandler(unittest.IsolatedAsyncioTestCase, TestWithStorage):
         if not hasattr(self, "transport"):
             # Allowing for multiple inheritance, where the transport is set in a different setUp method.
             self.transport = TestTransport()
-        self.handler = BlobDestinationRequestHandler()
+        self.handler = StorageDestinationRequestHandler()
         self.transport.set_request_handler(self.handler)
         self.url_generator = UrlGenerator()

@@ -43,15 +43,15 @@
         "data": [
             {
                 "id": "00000000-0000-0000-0000-000000000003",
-                "download_url": "https://blob-storage.unittest.localhost/wheres/my/data/00000000-0000-0000-0000-000000000003"
+                "download_url": "https://storage.unittest.localhost/wheres/my/data/00000000-0000-0000-0000-000000000003"
             },
             {
                 "id": "00000000-0000-0000-0000-000000000004",
-                "download_url": "https://blob-storage.unittest.localhost/wheres/my/data/00000000-0000-0000-0000-000000000004"
+                "download_url": "https://storage.unittest.localhost/wheres/my/data/00000000-0000-0000-0000-000000000004"
             },
             {
                 "id": "00000000-0000-0000-0000-000000000005",
-                "download_url": "https://blob-storage.unittest.localhost/wheres/my/data/00000000-0000-0000-0000-000000000005"
+                "download_url": "https://storage.unittest.localhost/wheres/my/data/00000000-0000-0000-0000-000000000005"
             }
         ]
     }

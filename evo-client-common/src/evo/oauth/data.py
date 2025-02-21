@@ -30,9 +30,9 @@ def _utcnow() -> datetime:
 
 
 class OAuthScopes(Flag):
-    """Public OAuth scopes for authenticating against Seequent applications.
-
-    https://seequent.atlassian.net/wiki/spaces/PS/pages/24611660/Reference+OAuth+scopes
+    """Public OAuth scopes for authenticating against Evo APIs.
+    
+    https://developer.seequent.com/docs/guides/getting-started/apps-and-tokens#about-evo-access-tokens
     """
 
     # OpenID Scopes
@@ -60,10 +60,6 @@ class OAuthScopes(Flag):
 
     evo_file = auto()
     """Required for access to the File API."""
-
-    # Bentley Scopes
-    ims_user_search = auto()
-    ims_organization_search = auto()
 
     # Useful combinations
     """Default scopes for Evo applications.
@@ -98,8 +94,6 @@ scopes_map = {
     OAuthScopes.evo_blocksync: "evo.blocksync",
     OAuthScopes.evo_object: "evo.object",
     OAuthScopes.evo_file: "evo.file",
-    OAuthScopes.ims_user_search: "ims-user-search",
-    OAuthScopes.ims_organization_search: "ims-organization-search",
 }
 
 

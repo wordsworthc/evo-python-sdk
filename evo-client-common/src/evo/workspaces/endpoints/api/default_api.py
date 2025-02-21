@@ -59,10 +59,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -127,10 +127,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -191,10 +191,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -254,10 +254,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -322,10 +322,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -388,10 +388,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -450,10 +450,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -511,10 +511,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -572,10 +572,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -635,10 +635,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -698,10 +698,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -764,10 +764,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -836,10 +836,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -904,10 +904,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -964,10 +964,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -1030,10 +1030,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -1103,10 +1103,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -1195,10 +1195,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -1295,10 +1295,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -1394,10 +1394,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -1477,10 +1477,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501
@@ -1544,10 +1544,10 @@ class DefaultApi:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response has a type.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not have a type.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """  # noqa: E501

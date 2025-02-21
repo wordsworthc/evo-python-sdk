@@ -615,7 +615,7 @@ class TestTransportRequest(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_bg_task_cancelled_during_close(self):
-        """Test for cancelling background tasks mid close: https://github.com/seequent/evo-client-common/issues/120"""
+        """Test for cancelling background tasks mid close."""
 
         transport = AioTransport(user_agent="test-agent")
         await transport.open()

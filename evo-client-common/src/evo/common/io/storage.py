@@ -18,15 +18,15 @@ from .exceptions import ChunkedIOError
 from .http import HTTPIOBase
 from .interfaces import IDestination
 
-logger = logging.getLogger("io.azure")
+logger = logging.getLogger("io.storage")
 
 __all__ = [
-    "BlobStorageDestination",
+    "StorageDestination",
 ]
 
 
-class BlobBlock:
-    """Metadata about a block in Azure blob storage."""
+class StorageBlock:
+    """Metadata about a block in storage."""
 
     def __init__(self, byte_offset: int) -> None:
         """Create a new block with the given byte offset."""
@@ -49,12 +49,12 @@ class BlobBlock:
 
 
 class BlockList:
-    """A list of blocks to be committed to Azure blob storage."""
+    """A list of blocks to be committed to storage."""
 
     def __init__(self) -> None:
         self._mutex = asyncio.Lock()
         self._sealed = False
-        self._blocks: list[BlobBlock] = []
+        self._blocks: list[StorageBlock] = []
 
     async def add_block(self, byte_offset: int) -> str:
         """Add a block with the given byte offset to the list.
@@ -63,18 +63,17 @@ class BlockList:
 
         :return: The block id of the created block.
         """
-        new_block = BlobBlock(byte_offset)
+        new_block = StorageBlock(byte_offset)
         async with self._mutex:
             assert not self._sealed, "Cannot add block to sealed block list."
             self._blocks.append(new_block)
         return new_block.id
 
     async def prepare(self) -> bytes:
-        """Prepare the block list for committing to Azure blob storage.
+        """Prepare the block list for committing to storage.
 
         :return: The XML representation of the block list as bytes.
         """
-        # https://learn.microsoft.com/en-us/rest/api/storageservices/put-block-list?tabs=microsoft-entra-id#request-body
         async with self._mutex:
             self._sealed = True
             return "\n".join(
@@ -87,22 +86,8 @@ class BlockList:
             ).encode("utf-8")
 
 
-class BlobStorageDestination(HTTPIOBase, IDestination):
-    """[`IDestination`][evo.common.io.interfaces.IDestination] implementation for uploading to blob storage."""
-
-    # This was originally implemented this with leases (write/delete lock in azure) for write operations, but it turns
-    # out one can't acquire a lease on a blob that doesn't exist. It may be possible to upload a block with a single
-    # null byte so that the blob is created before acquiring a lease.
-    #
-    # The way the azure client library handles file uploads by default, it does not use leases unless one specifically
-    # acquires one even for large uploads.
-    #
-    # TLDR; Due to the way staging blocks and committing blobs works, leases are not necessary after all.
-    #
-    # References:
-    #     https://learn.microsoft.com/en-us/rest/api/storageservices/lease-blob
-    #     https://learn.microsoft.com/en-us/rest/api/storageservices/put-block
-    #     https://learn.microsoft.com/en-us/rest/api/storageservices/put-block-list
+class StorageDestination(HTTPIOBase, IDestination):
+    """`evo.common.io.interfaces.IDestination` implementation for uploading to storage."""
 
     def __init__(self, url_callback: Callable[[], Awaitable[str]], transport: ITransport) -> None:
         super().__init__(url_callback, transport)
@@ -110,16 +95,16 @@ class BlobStorageDestination(HTTPIOBase, IDestination):
         self._committed = False
 
     async def write_chunk(self, offset: int, data: bytes) -> None:
-        """Write a chunk of data to blob storage.
+        """Write a chunk of data to storage.
 
         :param offset: Byte number to start writing from.
         :param data: Bytes to write.
 
-        :raises AssertionError: if the blob is already committed
+        :raises AssertionError: if the data is already committed
         """
         logger.debug(f"Writing {len(data)} at offset {offset}")
         if self._committed:
-            raise AssertionError("Cannot write chunk because blob is already committed.")
+            raise AssertionError("Cannot write chunk because data is already committed.")
         block_id = await self._block_list.add_block(offset)
         logger.debug(f"Staging block at offset {offset:032d} with id {block_id}")
         await self._query_resource(
@@ -132,7 +117,6 @@ class BlobStorageDestination(HTTPIOBase, IDestination):
         logger.debug(f"Staging {block_id} complete")
 
     async def _commit(self) -> None:
-        # https://learn.microsoft.com/en-us/rest/api/storageservices/put-block-list?tabs=microsoft-entra-id#sample-request
         payload = await self._block_list.prepare()
         logger.debug(f"Committing blocks:\n{payload.decode('utf-8')}")
         await self._query_resource(
@@ -147,7 +131,7 @@ class BlobStorageDestination(HTTPIOBase, IDestination):
         )
 
     async def commit(self, retry: Retry | None = None) -> None:
-        """Commit all staged blocks to blob storage.
+        """Commit all staged blocks to storage.
 
         :param retry: A Retry object with a wait strategy. If a chunk is successfully transferred the attempt counter
             will be reset.
@@ -157,8 +141,8 @@ class BlobStorageDestination(HTTPIOBase, IDestination):
         :raises RetryError: if the maximum number of consecutive attempts have failed. RetryError is a
             subclass of ChunkedIOException.
         """
-        logger.debug("Committing blob...")
-        assert not self._committed, "Cannot commit blob because blob is already committed."
+        logger.debug("Committing data...")
+        assert not self._committed, "Cannot commit data because data is already committed."
 
         if retry is None:
             retry = Retry(logger=logger)
@@ -172,7 +156,7 @@ class BlobStorageDestination(HTTPIOBase, IDestination):
                     raise handler.exception
 
         self._committed = True
-        logger.debug("The blob was successfully committed.")
+        logger.debug("The data was successfully committed.")
 
     @staticmethod
     async def upload_file(
@@ -183,7 +167,7 @@ class BlobStorageDestination(HTTPIOBase, IDestination):
         retry: Retry | None = None,
         fb: IFeedback | None = None,
     ) -> None:
-        """Upload a file with the given filename to the given Azure Blob Storage URL.
+        """Upload a file with the given filename to the given Storage URL.
 
         The url generator MUST generate a url that contains a valid SAS (shared access signature) token. The url
         generator may be called again if the last url expires (unless Retry is initialised with max_attempts == 0).
@@ -211,7 +195,7 @@ class BlobStorageDestination(HTTPIOBase, IDestination):
             retry = Retry(logger=logger)
 
         manager = ChunkedIOManager(message="Uploading", retry=retry, max_workers=max_workers)
-        async with BlobStorageDestination(url_callback=url_generator, transport=transport) as destination:
+        async with StorageDestination(url_callback=url_generator, transport=transport) as destination:
             size = os.path.getsize(src_path)
             with src_path.open("rb") as input_:
                 source = BytesSource(input_, size)

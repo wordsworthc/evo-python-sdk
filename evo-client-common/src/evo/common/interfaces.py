@@ -145,7 +145,7 @@ class ICache(Interface):
     """An interface for managing cache directories for service data.
 
     The cache may be used to store transient binary data, such as files from File API or parquet files from
-    the Geoscience Object Service.
+    the Geoscience Object API.
     """
 
     root: Path

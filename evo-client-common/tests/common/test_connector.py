@@ -14,8 +14,8 @@ from evo.common import ApiConnector, EmptyResponse, HTTPHeaderDict, HTTPResponse
 from evo.common.exceptions import (
     BadRequestException,
     ClientValueError,
-    CustomRFC87Error,
-    DefaultRFC87Error,
+    CustomTypedError,
+    DefaultTypedError,
     EvoApiException,
     ForbiddenException,
     NotFoundException,
@@ -688,14 +688,14 @@ class TestApiConnector(TestWithConnector):
                 "(203) OK\nsome content",
             ),
             (
-                "Unknown response type (203) with body like RFC 87",
+                "Unknown response type (203) with body",
                 MockResponse(
                     status_code=203,
                     content=json.dumps(
                         {
                             "type": "service data",
                             "title": "Service Data Format",
-                            "detail": "some data model that resembles RFC 87",
+                            "detail": "some data model",
                         }
                     ),
                     reason="OK",
@@ -703,7 +703,7 @@ class TestApiConnector(TestWithConnector):
                 UnknownResponseError,
                 "(203) OK\n"
                 "{'type': 'service data', 'title': 'Service Data Format',"
-                " 'detail': 'some data model that resembles RFC 87'}",
+                " 'detail': 'some data model'}",
             ),
             (
                 "Bad request (400)",
@@ -755,7 +755,7 @@ class TestApiConnector(TestWithConnector):
                     content=json.dumps({"title": "Conflict title."}),
                     reason="Conflict",
                 ),
-                DefaultRFC87Error,
+                DefaultTypedError,
                 "Error: (409) Conflict\nType: about:blank\nTitle: Conflict title.",
             ),
             (
@@ -765,7 +765,7 @@ class TestApiConnector(TestWithConnector):
                     content=json.dumps({"title": "Internal server error title."}),
                     reason="Internal Server Error",
                 ),
-                DefaultRFC87Error,
+                DefaultTypedError,
                 "Error: (500) Internal Server Error\nType: about:blank\nTitle: Internal server error title.",
             ),
             (
@@ -775,7 +775,7 @@ class TestApiConnector(TestWithConnector):
                     content=json.dumps({"title": "Bad gateway title."}),
                     reason="Bad Gateway",
                 ),
-                DefaultRFC87Error,
+                DefaultTypedError,
                 "Error: (502) Bad Gateway\nType: about:blank\nTitle: Bad gateway title.",
             ),
             (
@@ -790,7 +790,7 @@ class TestApiConnector(TestWithConnector):
                     ),
                     reason="Internal Server Error",
                 ),
-                DefaultRFC87Error,
+                DefaultTypedError,
                 "Error: (500) Internal Server Error"
                 "\nType: https://specific.unittest.test/errors/internal-server-error"
                 "\nTitle: Internal server error title.",
@@ -807,7 +807,7 @@ class TestApiConnector(TestWithConnector):
                     ),
                     reason="Internal Server Error",
                 ),
-                DefaultRFC87Error,
+                DefaultTypedError,
                 "Error: (500) Internal Server Error"
                 "\nType: https://other.unittest.test/errors/other/internal-server-error"
                 "\nTitle: Internal server error title.",
@@ -999,10 +999,10 @@ class TestApiConnector(TestWithConnector):
 
     @contextmanager
     def __temp_register_custom_error(self) -> Iterator[None]:
-        with mock.patch.object(CustomRFC87Error, "_CustomRFC87Error__CONCRETE_TYPES", dict()):
+        with mock.patch.object(CustomTypedError, "_CustomTypedError__CONCRETE_TYPES", dict()):
             yield
 
-    async def test_custom_rfc87_error_mapped(self) -> None:
+    async def test_custom_Typed_error_mapped(self) -> None:
         mock_response = MockResponse(
             status_code=422,
             content=json.dumps(
@@ -1015,13 +1015,13 @@ class TestApiConnector(TestWithConnector):
 
         with self.__temp_register_custom_error():
 
-            class CustomValidationError(CustomRFC87Error):
+            class CustomValidationError(CustomTypedError):
                 TYPE_ID = "errors/other/validation"
 
             with self.assertRaises(CustomValidationError):
                 await self._parse_response(expected_type=_ResponseType200, response=mock_response)
 
-    async def test_rfc87_error_fallback(self) -> None:
+    async def test_Typed_error_fallback(self) -> None:
         mock_response = MockResponse(
             status_code=422,
             content=json.dumps(
@@ -1034,45 +1034,45 @@ class TestApiConnector(TestWithConnector):
 
         with self.__temp_register_custom_error():
 
-            class NotTheSameCustomError(CustomRFC87Error):
+            class NotTheSameCustomError(CustomTypedError):
                 TYPE_ID = "/some/other/error"
 
-            with self.assertRaises(DefaultRFC87Error):
+            with self.assertRaises(DefaultTypedError):
                 await self._parse_response(expected_type=_ResponseType200, response=mock_response)
 
-    def test_duplicate_custom_rfc87_error(self) -> None:
+    def test_duplicate_custom_Typed_error(self) -> None:
         def create_duplicate_custom_error_handle() -> None:
-            class AnRFC87Error(CustomRFC87Error):
+            class AnTypedError(CustomTypedError):
                 TYPE_ID = "/error-source"
 
-            class ADuplicateRFC87Error(CustomRFC87Error):
+            class ADuplicateTypedError(CustomTypedError):
                 TYPE_ID = "/error-source"
 
         with self.__temp_register_custom_error():
             with self.assertRaises(ValueError):
                 create_duplicate_custom_error_handle()
 
-    def test_invalid_type_id_for_custom_rfc87_error_handle(self) -> None:
+    def test_invalid_type_id_for_custom_Typed_error_handle(self) -> None:
         def create_invalid_type_id() -> None:
-            class AnInvalidRFC87Error(CustomRFC87Error):
+            class AnInvalidTypedError(CustomTypedError):
                 TYPE_ID = 1
 
         with self.__temp_register_custom_error():
             with self.assertRaises(ValueError):
                 create_invalid_type_id()
 
-    def test_nonetype_allowed_for_abstract_rfc87_error_handle(self) -> None:
+    def test_nonetype_allowed_for_abstract_Typed_error_handle(self) -> None:
         with self.__temp_register_custom_error():
 
-            class AValidBaseRFC87Error(CustomRFC87Error):
+            class AValidBaseTypedError(CustomTypedError):
                 TYPE_ID = None
 
-            class AValidRFC87Error(AValidBaseRFC87Error):
+            class AValidTypedError(AValidBaseTypedError):
                 TYPE_ID = "/some/path/to/error"
 
-    def test_type_id_must_be_set_for_custom_rfc87_error_handle(self) -> None:
+    def test_type_id_must_be_set_for_custom_Typed_error_handle(self) -> None:
         with self.__temp_register_custom_error():
             with self.assertRaises(ValueError):
 
-                class NoTypeIDRFC87Error(CustomRFC87Error):
+                class NoTypeIDTypedError(CustomTypedError):
                     pass

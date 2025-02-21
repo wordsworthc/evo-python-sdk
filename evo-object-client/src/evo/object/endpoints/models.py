@@ -42,7 +42,7 @@ class DataDownloadUrl(CustomBaseModel):
 class DataUploadRequestBody(CustomBaseModel):
     name: StrictStr = Field(..., title="Name")
     """
-    SHA256 or UUID "name" for the data blob. SHA256 is preferred as it allows other clients to deduplicate data.
+    SHA256 or UUID "name" for the data file. SHA256 is preferred as it allows other clients to deduplicate data.
     """
 
 

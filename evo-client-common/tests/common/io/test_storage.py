@@ -12,7 +12,7 @@ from urllib.parse import urlencode
 from parameterized import parameterized_class
 
 from evo.common import RequestMethod
-from evo.common.io.azure import BlobBlock, BlobStorageDestination, BlockList
+from evo.common.io.storage import StorageBlock, StorageDestination, BlockList
 from evo.common.test_tools import TestWithUploadHandler, utc_datetime
 from evo.common.utils import BackoffLinear, Retry
 
@@ -29,11 +29,11 @@ logger = logging.getLogger(__name__)
         {"byte_offset": 4 * 1024 * 1024 * 1024 * 1024},
     ]
 )
-class TestBlobBlock(unittest.TestCase):
+class TestStorageBlock(unittest.TestCase):
     byte_offset: int
 
     def setUp(self) -> None:
-        self.block = BlobBlock(self.byte_offset)
+        self.block = StorageBlock(self.byte_offset)
 
     def test_byte_offset(self) -> None:
         """Test the block byte offset."""
@@ -67,7 +67,7 @@ class TestBlockList(unittest.IsolatedAsyncioTestCase):
         tasks = []
         for offset in random.sample(self.block_offsets, k=len(self.block_offsets)):
             tasks.append(self.block_list.add_block(offset))
-        self.sorted_block_ids = [BlobBlock(offset).id for offset in sorted(self.block_offsets)]
+        self.sorted_block_ids = [StorageBlock(offset).id for offset in sorted(self.block_offsets)]
         self.randomized_block_ids = await asyncio.gather(*tasks)
 
     async def test_empty_list(self) -> None:
@@ -91,16 +91,16 @@ class TestBlockList(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(expected, document.decode("utf-8"))
 
 
-class TestBlobStorageDestination(TestIDestination, TestWithUploadHandler):
-    destination: BlobStorageDestination
+class TestStorageDestination(TestIDestination, TestWithUploadHandler):
+    destination: StorageDestination
 
     def setup_destination(self) -> None:
         TestWithUploadHandler.setUp(self)
-        self.destination = BlobStorageDestination(self.url_generator.get_new_url, self.transport)
+        self.destination = StorageDestination(self.url_generator.get_new_url, self.transport)
 
     def assert_put_block(self, offset: int, data: bytes) -> None:
         """Assert that a block was put to the server with the expected request format."""
-        block = BlobBlock(offset)
+        block = StorageBlock(offset)
         url = self.url_generator.current_url + "&" + urlencode({"comp": "block", "blockid": block.id})
         self.transport.assert_request_made(
             RequestMethod.PUT,
@@ -133,7 +133,7 @@ class TestBlobStorageDestination(TestIDestination, TestWithUploadHandler):
             self.assertEqual(1, self.url_generator.n_calls)
 
     async def test_commit(self) -> AsyncIterator[None]:
-        """Test committing a file to blob storage submits the expected block list."""
+        """Test committing a file to storage submits the expected block list."""
         async with self.destination:
             chunks_with_offsets = await self.write_whole_file()
             self.transport.reset_mock()
@@ -153,7 +153,7 @@ class TestBlobStorageDestination(TestIDestination, TestWithUploadHandler):
 
     @mock.patch("evo.common.io.http.datetime", spec=datetime)
     async def test_commit_retries(self, mock_datetime: mock.Mock) -> None:
-        """Test that committing a file to blob storage retries on auth failure."""
+        """Test that committing a file to storage retries on auth failure."""
         mock_datetime.now.return_value = utc_datetime(2024, 7, 12, hour=12, minute=0)
         async with self.destination:
             chunks_with_offsets = await self.write_whole_file()
@@ -180,7 +180,7 @@ class TestBlobStorageDestination(TestIDestination, TestWithUploadHandler):
     async def test_upload_file(self) -> None:
         test_data_file = self.CACHE_DIR / "test_data_upload.csv"
         test_data_file.write_bytes(TEST_DATA)
-        await BlobStorageDestination.upload_file(test_data_file, self.url_generator.get_new_url, self.transport)
+        await StorageDestination.upload_file(test_data_file, self.url_generator.get_new_url, self.transport)
         uploaded_data = await self.handler.get_committed()
         self.assertEqual(test_data_file.read_bytes(), uploaded_data)
 

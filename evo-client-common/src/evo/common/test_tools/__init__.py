@@ -16,7 +16,7 @@ from .http import (
     TestWithConnector,
 )
 from .io import (
-    BlobDestinationRequestHandler,
+    StorageDestinationRequestHandler,
     DownloadRequestHandler,
     TestWithDownloadHandler,
     TestWithUploadHandler,
@@ -35,7 +35,7 @@ __all__ = [
     "ORG",
     "WORKSPACE_ID",
     "AbstractTestRequestHandler",
-    "BlobDestinationRequestHandler",
+    "StorageDestinationRequestHandler",
     "DownloadRequestHandler",
     "MockResponse",
     "TestAuthorizer",

@@ -43,7 +43,7 @@ class ResourceAuthorizationError(ChunkedIOError):
 
     This error is raised when resource operations fail with a 401 status code. This error usually indicates that
     the resource URL that was provided has expired and needs to be renewed. The error can be recovered by renewing the
-    resource URL, which must in turn be supported by the issuing service.
+    resource URL, which must in turn be supported by the issuing API.
     """
 
     def __init__(self, message: str, client: HTTPIOBase) -> None:

@@ -8,7 +8,7 @@ from dateutil.parser import parse as dateutil_parse
 
 from data import load_test_data
 from evo.common import HealthCheckType, Page, RequestMethod, ServiceUser
-from evo.common.io.exceptions import BlobNotFoundError
+from evo.common.io.exceptions import DataNotFoundError
 from evo.common.test_tools import MockResponse, TestWithConnector, TestWithStorage
 from evo.object import (
     ObjectDataDownload,
@@ -514,7 +514,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
         ):
             aiter_downloads = self.object_client.prepare_data_download(expected_id, expected_version, ["missing"])
 
-            with self.assertRaises(BlobNotFoundError):
+            with self.assertRaises(DataNotFoundError):
                 await anext(aiter_downloads)
 
     def test_get_data_client(self) -> None:

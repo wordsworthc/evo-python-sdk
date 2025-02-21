@@ -7,7 +7,7 @@ from evo import logging
 from .._types import PathLike
 from ..interfaces import IFeedback, ITransport
 from ..utils import NoFeedback, Retry
-from .azure import BlobStorageDestination
+from .storage import StorageDestination
 
 logger = logging.getLogger("io.upload")
 
@@ -15,7 +15,7 @@ logger = logging.getLogger("io.upload")
 class Upload(ABC):
     """A base class for referencing binary data that needs to be uploaded.
 
-    Each service that accepts binary data is expected to extend this class, providing the specific implementation
+    Each SDK that accepts binary data from an API is expected to extend this class, providing the specific implementation
     for generating upload URLs.
     """
 
@@ -33,7 +33,7 @@ class Upload(ABC):
 
         :returns: The upload URL.
 
-        :raises BlobExistsError: if the resource already exists in the target service.
+        :raises DataExistsError: if the resource already exists.
         """
         ...
 
@@ -68,7 +68,7 @@ class Upload(ABC):
             of ChunkedIOException.
         """
         with self._uploading():
-            await BlobStorageDestination.upload_file(
+            await StorageDestination.upload_file(
                 filename=filename,
                 url_generator=self.get_upload_url,
                 transport=transport,

@@ -6,7 +6,7 @@ from uuid import UUID
 from evo import logging
 from evo.common import ApiConnector, Environment, ICache, IFeedback
 from evo.common.exceptions import StorageFileNotFoundError
-from evo.common.io.exceptions import BlobExistsError
+from evo.common.io.exceptions import DataExistsError
 from evo.common.utils import NoFeedback, PartialFeedback
 
 from ..io import _CACHE_SCOPE, ObjectDataUpload
@@ -158,7 +158,7 @@ class ObjectDataClient:
         upload = ObjectDataUpload(connector=self._connector, environment=self._environment, name=table_info["data"])
         try:
             await upload.upload_from_cache(cache=self._cache, transport=self._connector.transport, fb=fb)
-        except BlobExistsError:
+        except DataExistsError:
             logger.debug(f"Data not uploaded because data already exists (label: {table_info['data']})")
             fb.progress(1)
         return table_info
@@ -192,7 +192,7 @@ class ObjectDataClient:
 
         :return: A pyarrow table loaded directly from the parquet file.
 
-        :raises BlobNotFoundError: If the data does not exist or is not associated with this object version.
+        :raises DataNotFoundError: If the data does not exist or is not associated with this object version.
         :raises TableFormatError: If the data does not match the expected format.
         :raises SchemaValidationError: If the data has a different number of rows than expected.
         """
@@ -228,7 +228,7 @@ class ObjectDataClient:
 
         :return: A pandas dataframe loaded directly from the parquet file.
 
-        :raises BlobNotFoundError: If the data does not exist or is not associated with this object version.
+        :raises DataNotFoundError: If the data does not exist or is not associated with this object version.
         :raises TableFormatError: If the data does not match the expected format.
         :raises SchemaValidationError: If the data has a different number of rows than expected.
         """
