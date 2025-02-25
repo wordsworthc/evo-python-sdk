@@ -701,9 +701,7 @@ class TestApiConnector(TestWithConnector):
                     reason="OK",
                 ),
                 UnknownResponseError,
-                "(203) OK\n"
-                "{'type': 'service data', 'title': 'Service Data Format',"
-                " 'detail': 'some data model'}",
+                "(203) OK\n{'type': 'service data', 'title': 'Service Data Format', 'detail': 'some data model'}",
             ),
             (
                 "Bad request (400)",

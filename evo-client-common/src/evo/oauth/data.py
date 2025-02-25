@@ -31,7 +31,7 @@ def _utcnow() -> datetime:
 
 class OAuthScopes(Flag):
     """Public OAuth scopes for authenticating against Evo APIs.
-    
+
     https://developer.seequent.com/docs/guides/getting-started/apps-and-tokens#about-evo-access-tokens
     """
 
