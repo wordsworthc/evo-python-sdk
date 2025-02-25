@@ -17,12 +17,12 @@ logging.basicConfig(level=logging.DEBUG)
 
 ISSUER_URI = "https://ims.bentley.com"
 REDIRECT_URL = "http://localhost:3000/signin-oidc"
-CLIENT_NAME = "EvoPythonSDK"
-CLIENT_ID = CLIENT_NAME.lower()
+USER_AGENT = "EvoPythonSDK"
+CLIENT_ID = "<client-id>"
 
 connector = OIDCConnector(
     transport=AioTransport(
-        user_agent=CLIENT_NAME,
+        user_agent=USER_AGENT,
     ),
     oidc_issuer=ISSUER_URI,
     client_id=CLIENT_ID,
@@ -86,14 +86,14 @@ from evo.oauth import ClientCredentialsAuthorizer, OAuthScopes, OIDCConnector
 logging.basicConfig(level=logging.DEBUG)
 
 ISSUER_URI = "https://ims.bentley.com"
-CLIENT_NAME = "EvoPythonSDK"
+USER_AGENT = "EvoPythonSDK"
 CLIENT_ID = "<client-id>"
 CLIENT_SECRET = "<client-secret>"
 
 authorizer = ClientCredentialsAuthorizer(
     oidc_connector=OIDCConnector(
         transport=AioTransport(
-            user_agent=CLIENT_NAME,
+            user_agent=USER_AGENT,
         ),
         oidc_issuer=ISSUER_URI,
         client_id=CLIENT_ID,
@@ -117,13 +117,13 @@ from evo.oauth import DeviceFlowAuthorizer, OAuthScopes, OIDCConnector
 logging.basicConfig(level=logging.INFO)
 
 ISSUER_URI = "https://ims.bentley.com"
-CLIENT_NAME = "Evo-SDK-Device-Flow"
-CLIENT_ID = CLIENT_NAME.lower()
+USER_AGENT = "Evo-SDK-Device-Flow"
+CLIENT_ID = "<client-id>"
 
 authorizer = DeviceFlowAuthorizer(
     oidc_connector=OIDCConnector(
         transport=AioTransport(
-            user_agent=CLIENT_NAME,
+            user_agent=USER_AGENT,
         ),
         oidc_issuer=ISSUER_URI,
         client_id=CLIENT_ID,

@@ -201,7 +201,7 @@ class TestOAuthRedirectHandler(TestWithOIDCConnector):
                 "sqid wrong issuer still works",
                 # *.seequent.com issuer urls are not validated because the issuer ID in the ID token does not match the
                 # openid configuration (which is not compliant with the OIDC spec). This has been acknowledged and is
-                # not considered an issue because we should be using bentley ID going forward.
+                # not considered an issue because Seequent ID login with Evo is deprecated - use Bentley ID.
                 "https://sqid.wrong.seequent.com",
                 get_user_access_token(id_issuer="https://sqid.wrong.issuer.test"),
             ),

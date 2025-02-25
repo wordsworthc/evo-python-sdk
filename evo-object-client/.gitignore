@@ -17,5 +17,5 @@ build/
 # Environmnents
 venv*/
 .venv*/
-.ipynb_checkpoints/
+./
 .env

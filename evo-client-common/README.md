@@ -31,4 +31,12 @@ $ python example.py
 ### Tests
 
 To run the tests:
-`uv run --extra dev pytest tests/`
+`uv run --extra test pytest tests/`
+
+Alternatively, you can use `uv sync --all-groups` to manually update the environment including test dependencies then activate it before executing a command:
+
+```bash
+$ uv sync --all-groups
+$ source .venv/bin/activate
+$ pytest tests/
+```

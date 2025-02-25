@@ -1,7 +1,7 @@
 [project]
 name = "evo-python-sdk"
 version = "0.1.0"
-description = "Overall repository to contain independently versioned evo ython SDKs"
+description = "Overall repository to contain independently versioned evo python SDKs"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []

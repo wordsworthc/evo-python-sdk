@@ -38,9 +38,6 @@ dev = [
 where = ["src"]
 namespaces = true
 
-[tool.setuptools.package-data]
-"evo.notebooks" = ["assets/*"]
-
 [tool.ruff]
 src = ["src", "tests"]
 line-length = 120
