@@ -34,8 +34,8 @@ authorizer = AuthorizationCodeAuthorizer(
 await authorizer.login()
 
 # Select an Organization.
-async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as idp_connector:
-    discovery_client = DiscoveryApiClient(idp_connector)
+async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as api_connector:
+    discovery_client = DiscoveryApiClient(api_connector)
     organizations = await discovery_client.list_organizations()
 
 selected_org = organizations[0]
@@ -139,8 +139,8 @@ The discovery API is used to find the organizations and hubs that a user has acc
 list of organizations. Each listed organization includes a list of hubs that are used by that organization.
 
 ``` python
-async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as idp_connector:
-    discovery_client = DiscoveryApiClient(idp_connector)
+async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as api_connector:
+    discovery_client = DiscoveryApiClient(api_connector)
     organizations = await discovery_client.list_organizations()
 ```
 

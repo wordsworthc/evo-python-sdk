@@ -1000,7 +1000,7 @@ class TestApiConnector(TestWithConnector):
         with mock.patch.object(CustomTypedError, "_CustomTypedError__CONCRETE_TYPES", dict()):
             yield
 
-    async def test_custom_Typed_error_mapped(self) -> None:
+    async def test_custom_typed_error_mapped(self) -> None:
         mock_response = MockResponse(
             status_code=422,
             content=json.dumps(
@@ -1019,7 +1019,7 @@ class TestApiConnector(TestWithConnector):
             with self.assertRaises(CustomValidationError):
                 await self._parse_response(expected_type=_ResponseType200, response=mock_response)
 
-    async def test_Typed_error_fallback(self) -> None:
+    async def test_typed_error_fallback(self) -> None:
         mock_response = MockResponse(
             status_code=422,
             content=json.dumps(
@@ -1038,7 +1038,7 @@ class TestApiConnector(TestWithConnector):
             with self.assertRaises(DefaultTypedError):
                 await self._parse_response(expected_type=_ResponseType200, response=mock_response)
 
-    def test_duplicate_custom_Typed_error(self) -> None:
+    def test_duplicate_custom_typed_error(self) -> None:
         def create_duplicate_custom_error_handle() -> None:
             class AnTypedError(CustomTypedError):
                 TYPE_ID = "/error-source"
@@ -1050,7 +1050,7 @@ class TestApiConnector(TestWithConnector):
             with self.assertRaises(ValueError):
                 create_duplicate_custom_error_handle()
 
-    def test_invalid_type_id_for_custom_Typed_error_handle(self) -> None:
+    def test_invalid_type_id_for_custom_typed_error_handle(self) -> None:
         def create_invalid_type_id() -> None:
             class AnInvalidTypedError(CustomTypedError):
                 TYPE_ID = 1
@@ -1059,7 +1059,7 @@ class TestApiConnector(TestWithConnector):
             with self.assertRaises(ValueError):
                 create_invalid_type_id()
 
-    def test_nonetype_allowed_for_abstract_Typed_error_handle(self) -> None:
+    def test_nonetype_allowed_for_abstract_typed_error_handle(self) -> None:
         with self.__temp_register_custom_error():
 
             class AValidBaseTypedError(CustomTypedError):
@@ -1068,7 +1068,7 @@ class TestApiConnector(TestWithConnector):
             class AValidTypedError(AValidBaseTypedError):
                 TYPE_ID = "/some/path/to/error"
 
-    def test_type_id_must_be_set_for_custom_Typed_error_handle(self) -> None:
+    def test_type_id_must_be_set_for_custom_typed_error_handle(self) -> None:
         with self.__temp_register_custom_error():
             with self.assertRaises(ValueError):
 

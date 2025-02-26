@@ -31,13 +31,13 @@
     "created_by": {
         "id": "00000000-0000-0000-0000-0000000003e8",
         "name": "Test User",
-        "email": "t.user@unittest.com"
+        "email": "t.user@example.com"
     },
     "modified_at": "2023-08-04T05:47:18Z",
     "modified_by": {
         "id": "00000000-0000-0000-0000-0000000003e8",
         "name": "Test User",
-        "email": "t.user@unittest.com"
+        "email": "t.user@example.com"
     },
     "etag": "",
     "links": {
