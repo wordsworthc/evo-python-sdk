@@ -246,15 +246,15 @@ class UnknownResponseError(EvoApiException):
     """The service sent an unknown response."""
 
 
-class BaseRFC87Error(EvoApiException):
-    """Base class for service errors that implement RFC 87.
+class BaseTypedError(EvoApiException):
+    """Base class for service errors that have a defined type.
 
-    Concrete error types must subclass BaseRFC87Error and define the class attribute `TYPE_ID`, which will be used
+    Concrete error types must subclass BaseTypedError and define the class attribute `TYPE_ID`, which will be used
     to map service error responses to the corresponding implementation.
 
-    The fallback type `DefaultRFC87Error` will be used if an error response satisfies RFC 87 and no other concrete type
-    matches the type ID in the response. It is worth noting that RFC 87 allows the type to be missing from the response,
-    in which case `DefaultRFC87Error` will be used, and the instance `type_` will be 'about:blank' (as is specified).
+    The fallback type `DefaultTypedError` will be used if an error response has a title and no other concrete type
+    matches the type ID in the response. It is worth noting that the type may be missing from the response,
+    in which case `DefaultTypedError` will be used, and the instance `type_` will be 'about:blank' (as is specified).
     """
 
     status: int
@@ -292,18 +292,18 @@ class BaseRFC87Error(EvoApiException):
         return error_message
 
 
-class CustomRFC87Error(BaseRFC87Error):
-    """Base class for service errors that implement RFC 87.
+class CustomTypedError(BaseTypedError):
+    """Base class for service errors that have a type.
 
-    Concrete error types must subclass CustomRFC87Error and define the class attribute `TYPE_ID`, which will be used
+    Concrete error types must subclass CustomTypedError and define the class attribute `TYPE_ID`, which will be used
     to map service error responses to the corresponding implementation.
 
-    The fallback type `DefaultRFC87Error` will be used if an error response satisfies RFC 87 and no other concrete type
-    matches the type ID in the response. It is worth noting that RFC 87 allows the type to be missing from the response,
-    in which case `DefaultRFC87Error` will be used, and the instance `type_` will be 'about:blank' (as is specified).
+    The fallback type `DefaultTypedError` will be used if an error response has a title and no other concrete type
+    matches the type ID in the response. It is worth noting that the type may be missing from the response,
+    in which case `DefaultTypedError` will be used, and the instance `type_` will be 'about:blank' (as is specified).
     """
 
-    __CONCRETE_TYPES: dict[str, type[CustomRFC87Error]] = {}
+    __CONCRETE_TYPES: dict[str, type[CustomTypedError]] = {}
 
     TYPE_ID: ClassVar[str]
     """The type ID used to match concrete error types.
@@ -313,28 +313,28 @@ class CustomRFC87Error(BaseRFC87Error):
     """
 
     @staticmethod
-    def from_type_id(type_id: str | None) -> type[CustomRFC87Error]:
-        """Get a concrete RFC 87 error type, based on the type ID.
+    def from_type_id(type_id: str | None) -> type[CustomTypedError]:
+        """Get a concrete error type, based on the type ID.
 
         :param type_id: The type ID of the received error.
 
         :return: The concrete implementation of the requested type.
         """
         if type_id is None:
-            return DefaultRFC87Error
+            return DefaultTypedError
 
-        for defined_type_id, error_type in CustomRFC87Error.__CONCRETE_TYPES.items():
+        for defined_type_id, error_type in CustomTypedError.__CONCRETE_TYPES.items():
             if type_id.endswith(defined_type_id):
                 return error_type
-        return DefaultRFC87Error
+        return DefaultTypedError
 
     @staticmethod
     def provided_by(content: object) -> bool:
-        """Determine whether the content of an error response conforms to the RFC 87 format.
+        """Determine whether the content of an error response has a title
 
         :param content: The deserialized content of a 4xx or 5xx error response.
 
-        :return: True if the content satisfies RFC 87.
+        :return: True if the content satisfies has a title.
         """
         return isinstance(content, dict) and "title" in content
 
@@ -349,13 +349,13 @@ class CustomRFC87Error(BaseRFC87Error):
             return  # abstract class
         if not isinstance(type_id, str):
             raise ValueError(f"{cls} TYPE_ID must be a string.")
-        if existing_cls := CustomRFC87Error.__CONCRETE_TYPES.get(type_id):
+        if existing_cls := CustomTypedError.__CONCRETE_TYPES.get(type_id):
             raise ValueError(f"Duplicated TYPE_ID between {cls} and {existing_cls}")
-        CustomRFC87Error.__CONCRETE_TYPES[type_id] = cls
+        CustomTypedError.__CONCRETE_TYPES[type_id] = cls
 
 
-class DefaultRFC87Error(CustomRFC87Error):
-    """Fallback RFC 87 Error implementation that meets the minimum specification."""
+class DefaultTypedError(CustomTypedError):
+    """Fallback Typed Error implementation that meets the minimum specification."""
 
     TYPE_ID = "about:blank"
 
@@ -369,16 +369,16 @@ class DefaultRFC87Error(CustomRFC87Error):
         return self.content.get("type", self.TYPE_ID)
 
 
-class GeneralizedRFC87Error(BaseRFC87Error):
-    """Base class for RFC 87 errors that should be generalized based on status code.
+class GeneralizedTypedError(BaseTypedError):
+    """Base class for Typed errors that should be generalized based on status code.
 
-    Generalized error types must subclass GeneralizedRFC87Error and define the class attribute `STATUS_CODE`, which will
+    Generalized error types must subclass GeneralizedTypedError and define the class attribute `STATUS_CODE`, which will
     be used to map service error codes to the corresponding generalization.
 
     This mechanism allows specific error codes to be treated consistently, regardless of service implementation.
     """
 
-    __GENERALIZED_TYPES: dict[int, type[GeneralizedRFC87Error]] = {}
+    __GENERALIZED_TYPES: dict[int, type[GeneralizedTypedError]] = {}
 
     TYPE_ID = "about:blank"
     STATUS_CODE: int
@@ -387,17 +387,17 @@ class GeneralizedRFC87Error(BaseRFC87Error):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         status_code = getattr(cls, "STATUS_CODE")
-        GeneralizedRFC87Error.__GENERALIZED_TYPES[status_code] = cls
+        GeneralizedTypedError.__GENERALIZED_TYPES[status_code] = cls
 
     @staticmethod
-    def from_status_code(status_code: int) -> type[GeneralizedRFC87Error] | None:
-        """Get a generalized RFC 87 error type, based on the status code.
+    def from_status_code(status_code: int) -> type[GeneralizedTypedError] | None:
+        """Get a generalized error type, based on the status code.
 
         :param status_code: The status code of the error response.
 
         :return: The generalized implementation for the requested status code.
         """
-        return GeneralizedRFC87Error.__GENERALIZED_TYPES.get(status_code, None)
+        return GeneralizedTypedError.__GENERALIZED_TYPES.get(status_code, None)
 
     @property
     def type_(self) -> str:
@@ -431,25 +431,25 @@ class GeneralizedRFC87Error(BaseRFC87Error):
             return None
 
 
-class BadRequestException(GeneralizedRFC87Error):
+class BadRequestException(GeneralizedTypedError):
     """The service cannot process the request due to a client error (400 - Bad Request)."""
 
     STATUS_CODE = 400
 
 
-class UnauthorizedException(GeneralizedRFC87Error):
+class UnauthorizedException(GeneralizedTypedError):
     """The client must authenticate to get a response (401 - Unauthorized)."""
 
     STATUS_CODE = 401
 
 
-class ForbiddenException(GeneralizedRFC87Error):
+class ForbiddenException(GeneralizedTypedError):
     """The client does not have access rights to the content (403- Forbidden)."""
 
     STATUS_CODE = 403
 
 
-class NotFoundException(GeneralizedRFC87Error):
+class NotFoundException(GeneralizedTypedError):
     """The Service API could not find the requested resource (404 - Not Found)."""
 
     STATUS_CODE = 404

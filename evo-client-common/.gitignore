@@ -17,7 +17,6 @@ build/
 venv/
 venv*/
 .venv/
-.ipynb_checkpoints/
 .env
 .tox/
 

@@ -4,7 +4,7 @@ from uuid import UUID
 
 from data import load_test_data
 from evo.common import IFeedback, RequestMethod
-from evo.common.io.exceptions import BlobExistsError
+from evo.common.io.exceptions import DataExistsError
 from evo.common.test_tools import TestWithConnector, TestWithStorage
 from evo.common.utils import NoFeedback, PartialFeedback
 from evo.object.utils import KnownTableFormat, ObjectDataClient
@@ -24,7 +24,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         """Test saving tabular data using pyarrow."""
         with (
             mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
-            mock.patch("evo.common.io.upload.BlobStorageDestination") as mock_destination,
+            mock.patch("evo.common.io.upload.StorageDestination") as mock_destination,
         ):
             mock_table = mock.Mock()
             mock_get_known_format.return_value = mock_known_format = mock.Mock(spec=KnownTableFormat)
@@ -44,7 +44,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         """Test saving tabular data using pandas."""
         with (
             mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
-            mock.patch("evo.common.io.upload.BlobStorageDestination") as mock_destination,
+            mock.patch("evo.common.io.upload.StorageDestination") as mock_destination,
             mock.patch("pyarrow.Table") as mock_pyarrow_table,
         ):
             mock_pyarrow_table.from_pandas.return_value = mock_table = mock.Mock()
@@ -103,7 +103,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
 
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(put_data_response)),
-            mock.patch("evo.common.io.upload.BlobStorageDestination", autospec=True) as mock_destination,
+            mock.patch("evo.common.io.upload.StorageDestination", autospec=True) as mock_destination,
         ):
 
             async def _mock_upload_file_side_effect(*args, **kwargs):
@@ -130,7 +130,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(put_data_response)),
             mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
-            mock.patch("evo.common.io.upload.BlobStorageDestination", autospec=True) as mock_destination,
+            mock.patch("evo.common.io.upload.StorageDestination", autospec=True) as mock_destination,
         ):
             mock_table = mock.Mock()
             mock_get_known_format.return_value = mock_known_format = mock.Mock(spec=KnownTableFormat)
@@ -168,7 +168,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(put_data_response)),
             mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
-            mock.patch("evo.common.io.upload.BlobStorageDestination", autospec=True) as mock_destination,
+            mock.patch("evo.common.io.upload.StorageDestination", autospec=True) as mock_destination,
             mock.patch("pyarrow.Table") as mock_pyarrow_table,
         ):
             mock_pyarrow_table.from_pandas.return_value = mock_table = mock.Mock()
@@ -209,7 +209,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(put_data_response)),
             mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
-            mock.patch("evo.common.io.upload.BlobStorageDestination", autospec=True) as mock_destination,
+            mock.patch("evo.common.io.upload.StorageDestination", autospec=True) as mock_destination,
         ):
             mock_table = mock.Mock()
             mock_get_known_format.return_value = mock_known_format = mock.Mock(spec=KnownTableFormat)
@@ -222,7 +222,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
                 self.assertIs(self.transport, kwargs["transport"])
                 self.assertIs(NoFeedback, kwargs["fb"])
 
-                with self.assertRaises(BlobExistsError) as cm:
+                with self.assertRaises(DataExistsError) as cm:
                     await kwargs["url_generator"]()
                 raise cm.exception  # upload_table() should catch this exception.
 
@@ -248,7 +248,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(put_data_response)),
             mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
-            mock.patch("evo.common.io.upload.BlobStorageDestination", autospec=True) as mock_destination,
+            mock.patch("evo.common.io.upload.StorageDestination", autospec=True) as mock_destination,
             mock.patch("pyarrow.Table") as mock_pyarrow_table,
         ):
             mock_pyarrow_table.from_pandas.return_value = mock_table = mock.Mock()
@@ -262,7 +262,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
                 self.assertIs(self.transport, kwargs["transport"])
                 self.assertIs(NoFeedback, kwargs["fb"])
 
-                with self.assertRaises(BlobExistsError) as cm:
+                with self.assertRaises(DataExistsError) as cm:
                     await kwargs["url_generator"]()
                 raise cm.exception  # upload_table() should catch this exception.
 

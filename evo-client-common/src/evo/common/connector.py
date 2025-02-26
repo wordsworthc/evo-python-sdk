@@ -20,10 +20,10 @@ from .data import EmptyResponse, HTTPHeaderDict, HTTPResponse, RequestMethod
 from .exceptions import (
     ClientTypeError,
     ClientValueError,
-    CustomRFC87Error,
+    CustomTypedError,
     EvoApiException,
     EvoClientException,
-    GeneralizedRFC87Error,
+    GeneralizedTypedError,
     UnauthorizedException,
     UnknownResponseError,
 )
@@ -168,10 +168,10 @@ class ApiConnector:
         :raise UnauthorizedException: If the server responds with HTTP status 401.
         :raise ForbiddenException: If the server responds with HTTP status 403.
         :raise NotFoundException: If the server responds with HTTP status 404.
-        :raise BaseRFC87Error: If the server responds with any other HTTP status between 400 and 599, and the body
-            of the response conforms to RFC 87.
+        :raise BaseTypedError: If the server responds with any other HTTP status between 400 and 599, and the body
+            of the response has a type.
         :raise EvoApiException: If the server responds with any other HTTP status between 400 and 599, and the body of
-            the response does not conform to RFC 87.
+            the response does not have a type.
         :raise UnknownResponseError: For other HTTP status codes with no corresponding response type in
             `response_types_map`.
         """
@@ -209,7 +209,7 @@ class ApiConnector:
         )
 
         # Prepare response type.
-        if (default_response_type := GeneralizedRFC87Error.from_status_code(response.status)) is not None:
+        if (default_response_type := GeneralizedTypedError.from_status_code(response.status)) is not None:
             pass  # Use the response type returned above.
         elif 400 <= response.status <= 599:  # Error status code.
             default_response_type = EvoApiException
@@ -401,9 +401,9 @@ class ApiConnector:
         elif response_type is EmptyResponse and response_data != "":
             raise ClientValueError(msg=f"Unexpected content with '{response.status}' status code")
         elif issubclass(response_type, EvoApiException):  # Raise if API exception.
-            if response_type is EvoApiException and CustomRFC87Error.provided_by(response_data):
-                # Use RFC 87 Error types, but don't override generalized error types.
-                response_type = CustomRFC87Error.from_type_id(response_data.get("type"))
+            if response_type is EvoApiException and CustomTypedError.provided_by(response_data):
+                # Use Typed Error types, but don't override generalized error types.
+                response_type = CustomTypedError.from_type_id(response_data.get("type"))
             raise response_type(
                 status=response.status, reason=response.reason, content=response_data, headers=response.headers
             )

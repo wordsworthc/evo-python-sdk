@@ -20,7 +20,7 @@ __all__ = [
     "DEFAULT_CHUNK_SIZE",
 ]
 
-DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024  # Azure blob storage default size
+DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024
 """The default max size of each chunk to be transferred."""
 
 
@@ -61,7 +61,7 @@ class ChunkedIOTracker:
     def __iter__(self) -> Iterator[ChunkMetadata]:
         """Iterate over the chunks of data to be transferred.
 
-        :return: An iterator of [`ChunkMetadata`][evo.common.io.ChunkMetadata] objects.
+        :return: An iterator of `evo.common.io.ChunkMetadata` objects.
         """
         for i, is_complete in enumerate(self._chunk_status):
             this_offset = i * self._chunk_size
@@ -93,11 +93,11 @@ class ChunkedIOTracker:
 
 
 class ChunkedIOManager:
-    """Manager for robust multithreaded data transfer from [`ISource`][evo.common.io.interfaces.ISource] to
-    [`IDestination`][evo.common.io.interfaces.IDestination].
+    """Manager for robust multithreaded data transfer from `evo.common.io.interfaces.ISource` to
+    `evo.common.io.interfaces.IDestination`.
 
     This class is designed to transfer large files in chunks, with the ability to retry failed transfers. The progress
-    of the transfer can be reported to a [`IFeedback`][evo.common.interfaces.IFeedback] object.
+    of the transfer can be reported to a `evo.common.interfaces.IFeedback` object.
     """
 
     def __init__(
@@ -165,11 +165,11 @@ class ChunkedIOManager:
     async def run(self, source: ISource, destination: IDestination, fb: IFeedback | None = None) -> None:
         """Transfer all data from source to destination.
 
-        Recoverable transfer failures must be raised as a subclass of [`ChunkedIOManager`][evo.common.io.ChunkedIOManager],
+        Recoverable transfer failures must be raised as a subclass of `evo.common.io.ChunkedIOManager`,
         this will retry recoverable transfers up to the max_attempts specified in Retry after calling the error's
         recover() method. The attempt counter is reset whenever a chunk is successfully transferred.
 
-        If the maximum number of attempts is reached, [`RetryError`][evo.common.exceptions.RetryError] will be
+        If the maximum number of attempts is reached, `evo.common.exceptions.RetryError` will be
         raised with the last error.
 
         :param source: The source to read data from.

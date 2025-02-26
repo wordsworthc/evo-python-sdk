@@ -94,7 +94,7 @@ class TestDiscoveryApiClient(TestWithConnector):
         """Test that the Organization dataclass is hashable."""
         org = Organization(
             id=UUID("12345678-1234-5678-1234-567812345678"),
-            display_name="Chris is cool",
+            display_name="Hashable org name",
             hubs=(
                 Hub(
                     url="https://example.com",

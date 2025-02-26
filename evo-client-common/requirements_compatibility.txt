@@ -1,2 +1,0 @@
-# LF is stuck on pydantic 1.7.4, let's pin that version for unit tests.
-pydantic==1.7.4

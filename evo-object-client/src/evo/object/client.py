@@ -7,7 +7,7 @@ from uuid import UUID
 from evo import logging
 from evo.common import ApiConnector, BaseServiceClient, HealthCheckType, ICache, Page, ServiceHealth
 from evo.common.data import Environment
-from evo.common.io.exceptions import BlobNotFoundError
+from evo.common.io.exceptions import DataNotFoundError
 from evo.common.utils import get_service_health
 from evo.workspaces import ServiceUser
 
@@ -76,18 +76,18 @@ class DownloadedObject:
     def prepare_data_download(self, data_identifiers: Sequence[str | UUID]) -> Iterator[ObjectDataDownload]:
         """Prepare to download multiple data files from the geoscience object service, for this object.
 
-        Any data IDs that are not associated with the requested object will raise a BlobNotFoundError.
+        Any data IDs that are not associated with the requested object will raise a DataNotFoundError.
 
         :param data_identifiers: A list of sha256 digests or UUIDs for the data to be downloaded.
 
         :return: An iterator of data download contexts that can be used to download the data.
 
-        :raises BlobNotFoundError: If any requested data ID is not associated with this object.
+        :raises DataNotFoundError: If any requested data ID is not associated with this object.
         """
         try:
             filtered_urls_by_name = {str(name): self._urls_by_name[str(name)] for name in data_identifiers}
         except KeyError as exc:
-            raise BlobNotFoundError(f"Unable to find the requested data: {exc.args[0]}") from exc
+            raise DataNotFoundError(f"Unable to find the requested data: {exc.args[0]}") from exc
         for ctx in ObjectDataDownload._create_multiple(
             connector=self._connector, metadata=self._metadata, urls_by_name=filtered_urls_by_name
         ):
@@ -258,7 +258,7 @@ class ObjectServiceClient(BaseServiceClient):
     ) -> AsyncIterator[ObjectDataDownload]:
         """Prepare to download multiple data files from the geoscience object service.
 
-        Any data IDs that are not associated with the requested object will raise a BlobNotFoundError.
+        Any data IDs that are not associated with the requested object will raise a DataNotFoundError.
 
         :param object_id: The ID of the object to download data from.
         :param version_id: The version ID of the object to download data from.
@@ -266,7 +266,7 @@ class ObjectServiceClient(BaseServiceClient):
 
         :return: An async iterator of data download contexts that can be used to download the data.
 
-        :raises BlobNotFoundError: If any requested data ID is not associated with the referenced object.
+        :raises DataNotFoundError: If any requested data ID is not associated with the referenced object.
         """
         downloaded_object = await self.download_object_by_id(object_id, version=version_id)
         for ctx in downloaded_object.prepare_data_download(data_identifiers):

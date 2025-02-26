@@ -29,7 +29,7 @@ _RE_JSON = re.compile(r"json", re.IGNORECASE)
 class AioTransport(ITransport):
     """A client for managing concurrent connections to multiple APIs with a common configuration.
 
-    See [`ITransport`][evo.common.interfaces.ITransport] for more detail.
+    See `evo.common.interfaces.ITransport` for more detail.
     """
 
     def __init__(

@@ -34,8 +34,8 @@ authorizer = AuthorizationCodeAuthorizer(
 await authorizer.login()
 
 # Select an Organization.
-async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as idp_connector:
-    discovery_client = DiscoveryApiClient(idp_connector)
+async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as api_connector:
+    discovery_client = DiscoveryApiClient(api_connector)
     organizations = await discovery_client.list_organizations()
 
 selected_org = organizations[0]
@@ -139,8 +139,8 @@ The discovery API is used to find the organizations and hubs that a user has acc
 list of organizations. Each listed organization includes a list of hubs that are used by that organization.
 
 ``` python
-async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as idp_connector:
-    discovery_client = DiscoveryApiClient(idp_connector)
+async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as api_connector:
+    discovery_client = DiscoveryApiClient(api_connector)
     organizations = await discovery_client.list_organizations()
 ```
 
@@ -215,6 +215,6 @@ async with hub_connector:
 Some utility classes for robust file I/O operations have been implemented in the `evo.common.io` module. These classes
 are designed to handle large files and provide a simple interface for reading and writing data in chunks.
 
-The most common use case for these classes is to transfer large files between local storage and remote storage. `evo.common.io.HTTPSource` and `evo.common.io.BlobStorageDestination` each have static methods that make it easy to upload and download files.
+The most common use case for these classes is to transfer large files between local storage and remote storage. `evo.common.io.HTTPSource` and `evo.common.io.StorageDestination` each have static methods that make it easy to upload and download files.
 
-Evo APIs currently use the Azure Blob Storage interface for uploading data. Downloading large files is very standardized across service providers, but uploading large files is a different story. Azure Blob Storage has a unique way to support chunked file upload, so an Azure-specific implemntation is provided in `evo.common.io.BlobStorageDestination`.
+Downloading large files is very standardized across service providers, but uploading large files is a different story. Evo APIs have a unique way to support chunked file upload, so an Evo-specific implementation is provided in `evo.common.io.StorageDestination`.

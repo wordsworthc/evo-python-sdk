@@ -42,7 +42,7 @@ class DataDownloadUrl(CustomBaseModel):
 class DataUploadRequestBody(CustomBaseModel):
     name: StrictStr = Field(..., title="Name")
     """
-    SHA256 or UUID "name" for the data blob. SHA256 is preferred as it allows other clients to deduplicate data.
+    SHA256 or UUID "name" for the data file. SHA256 is preferred as it allows other clients to deduplicate data.
     """
 
 
@@ -73,7 +73,7 @@ class GeoscienceObject(CustomBaseModel):
     """
     The geoscience object with the additional required schema properties.
 
-    This object is largely defined by the schemas in the geoscience-object-schemas repository.
+    This object is largely defined by the schemas in the evo-schemas repository.
     There are some default, required values listed here explicitly.
     """
 
@@ -127,7 +127,7 @@ class UpdateGeoscienceObject(CustomBaseModel):
     The geoscience object with the additional required schema properties.
 
     The uuid field must be set when updating a geoscience object.
-    This object is largely defined by the schemas in the geoscience-object-schemas repository.
+    This object is largely defined by the schemas in the evo-schemas repository.
     There are some default, required values listed here explicitly.
     """
 

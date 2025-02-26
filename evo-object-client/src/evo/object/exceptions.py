@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from evo.common.exceptions import CustomRFC87Error, EvoClientException
+from evo.common.exceptions import CustomTypedError, EvoClientException
 
 
 class SchemaIDFormatError(EvoClientException):
@@ -30,7 +30,7 @@ class SchemaValidationError(EvoClientException):
     """Failed to validate data against a geoscience object schema"""
 
 
-class ObjectAlreadyExistsError(CustomRFC87Error):
+class ObjectAlreadyExistsError(CustomTypedError):
     TYPE_ID = "/geoscienceobject/objects/already-exists"
 
     @property

@@ -13,7 +13,7 @@ __all__ = [
 async def _check_service_health(
     connector: ApiConnector, service_name: str, full: bool, check_type: HealthCheckType
 ) -> HTTPResponse:
-    """Internal that calls the health check endpoint of a named service.
+    """Internal that calls the health check endpoint of a named API.
 
     :param connector: The API connector.
     :param service_name: The name of the service to check, as used in the Evo service URL.

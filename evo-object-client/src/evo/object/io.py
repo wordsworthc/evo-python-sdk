@@ -8,7 +8,7 @@ from uuid import UUID
 from evo import logging
 from evo.common import ApiConnector, Environment, ICache, IFeedback, ITransport
 from evo.common.io import Download, Upload
-from evo.common.io.exceptions import BlobExistsError, BlobNotFoundError, RenewalError
+from evo.common.io.exceptions import DataExistsError, DataNotFoundError, RenewalError
 from evo.common.utils import NoFeedback, Retry
 
 from .data import ObjectMetadata
@@ -76,13 +76,13 @@ class ObjectDataUpload(Upload):
             case [DataUploadResponseBody(upload_url=url)] if isinstance(url, str):
                 return url
             case [DataUploadResponseBody(exists=exists)] if exists is True:
-                raise BlobExistsError(
+                raise DataExistsError(
                     "Named data already exists in the workspace:\n"
                     f"data_name: {self._name}\n"
                     f"workspace_id: {self.environment.workspace_id}"
                 )
             case _:
-                raise RenewalError("Failed to get a blob upload url")
+                raise RenewalError("Failed to get an upload url")
 
     async def upload_from_cache(
         self,
@@ -184,7 +184,7 @@ class ObjectDataDownload(Download[ObjectMetadata]):
                 return url
             else:
                 raise RenewalError(f"Failed to get a data download url for {self.label}")
-        raise BlobNotFoundError(f"Unable to find the requested data: {self.label}")
+        raise DataNotFoundError(f"Unable to find the requested data: {self.label}")
 
     @staticmethod
     def _create_multiple(

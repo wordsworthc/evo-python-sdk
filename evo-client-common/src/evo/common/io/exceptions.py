@@ -19,7 +19,7 @@ class ChunkedIOError(ChunkedIOException):
     """Base exception for recoverable errors that are handled within chunked_io.
 
     All ChunkedIOError subtypes are considered recoverable and should implement a recover() method that prepares the
-    [`ISource`][evo.common.io.interfaces.ISource] or [`IDestination`][evo.common.io.interfaces.IDestination] that raised
+    `evo.common.io.interfaces.ISource` or `evo.common.io.interfaces.IDestination` that raised
     the error for a retry attempt.
 
     :ivar raised_by: The source or destination that raised the exception.
@@ -44,9 +44,9 @@ class RenewalTimeoutError(RenewalError):
     """RenewalTimeoutError is raised when an attempt to renew a url is made within a specified threshold."""
 
 
-class BlobExistsError(EvoClientException):
+class DataExistsError(EvoClientException):
     """Raised when requesting an upload url for a binary resource that already exists in the target service."""
 
 
-class BlobNotFoundError(EvoClientException):
+class DataNotFoundError(EvoClientException):
     """Raised when requesting a download url for a binary resource that does not exist in the target service."""

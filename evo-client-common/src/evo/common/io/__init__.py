@@ -1,4 +1,4 @@
-from .azure import BlobStorageDestination
+from .storage import StorageDestination
 from .bytes import BytesDestination, BytesSource
 from .chunked_io_manager import ChunkedIOManager, ChunkedIOTracker, ChunkMetadata
 from .download import Download
@@ -6,7 +6,7 @@ from .http import HTTPIOBase, HTTPSource, ResourceAuthorizationError
 from .upload import Upload
 
 __all__ = [
-    "BlobStorageDestination",
+    "StorageDestination",
     "BytesDestination",
     "BytesSource",
     "ChunkedIOManager",
