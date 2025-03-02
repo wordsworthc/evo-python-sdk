@@ -8,5 +8,7 @@ jobs:
     name: Linting
     runs-on: ubuntu-latest
     steps:
-        uses: ./.github/actions/linting
+        - uses: ./.github/actions/linting
+
+        - run: echo "I did a thing"
     
