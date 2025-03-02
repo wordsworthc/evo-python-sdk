@@ -4,10 +4,20 @@ on:
   push:
 
 jobs:
-  run-linting:
-    name: Linting
+  run-commit-tasks:
+    name: Lint and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/linting
+      - uses: ./.github/actions/testing
+        with:
+          PACKAGE: evo-client-common
+      - uses: ./.github/actions/testing
+        strategy:
+          fail-fast: false
+          matrix:
+            package: [evo-client-common, evo-object-client]
+        with:
+          PACKAGE: ${{ matrix.package}}
     
