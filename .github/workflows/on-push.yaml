@@ -7,7 +7,8 @@ jobs:
   run-linting:
     name: Lint
     runs-on: ubuntu-latest
-    uses: ./.github/actions/linting
+    steps:
+      - uses: ./.github/actions/linting
   run-tests:
     name: Test
     runs-on: ubuntu-latest
@@ -15,6 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         package: [evo-client-common, evo-object-client]
-    uses: ./.github/actions/testing
-    with:
-      PACKAGE: ${{ matrix.package}}
+    steps:
+      - uses: ./.github/actions/testing
+        with:
+          PACKAGE: ${{ matrix.package}}
