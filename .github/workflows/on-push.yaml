@@ -1,0 +1,11 @@
+name: Commit push Trigger
+
+on:
+  push:
+
+jobs:
+  run-linting:
+    name: Linting
+    runs-on: ubuntu-latest
+    uses: ./.github/actions/linting
+    
