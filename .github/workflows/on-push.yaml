@@ -18,8 +18,8 @@ jobs:
       matrix:
         package: [evo-client-common, evo-object-client]
       steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/testing
-        with:
-          PACKAGE: ${{ matrix.package}}
+        - uses: actions/checkout@v4
+        - uses: ./.github/actions/testing
+          with:
+            PACKAGE: ${{ matrix.package}}
     
