@@ -386,6 +386,16 @@ name = "evo-python-sdk"
 version = "0.1.0"
 source = { virtual = "." }
 
+[package.dev-dependencies]
+dev = [
+    { name = "ruff" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [{ name = "ruff", specifier = "==0.9.1" }]
+
 [[package]]
 name = "exceptiongroup"
 version = "1.2.2"
