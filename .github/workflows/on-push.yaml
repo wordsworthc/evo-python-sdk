@@ -1,4 +1,4 @@
-name: Commit push Trigger
+name: Commit push trigger
 
 on:
   push:
@@ -7,9 +7,7 @@ jobs:
   run-linting:
     name: Lint
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/linting
+    uses: ./.github/actions/linting
   run-tests:
     name: Test
     runs-on: ubuntu-latest
@@ -17,9 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         package: [evo-client-common, evo-object-client]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/testing
-        with:
-          PACKAGE: ${{ matrix.package}}
-    
+    uses: ./.github/actions/testing
+    with:
+      PACKAGE: ${{ matrix.package}}
