@@ -1,4 +1,4 @@
-name: Commit push trigger
+name: Tests and Linting
 
 on:
   push:
