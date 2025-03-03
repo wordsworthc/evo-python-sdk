@@ -1,7 +1,7 @@
 name: Tests and Linting
 
 on:
-  push:
+  pull_request:
 
 jobs:
   run-linting:
