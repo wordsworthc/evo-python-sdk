@@ -1,0 +1,25 @@
+name: "Install uv"
+description: "Install python and uv"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Set variables
+      shell: bash
+      run: |
+        UV_VER=$(cat UV_VERSION)
+        echo "UV_VERSION=$UV_VER" >> $GITHUB_ENV
+        PY_VER=$(cat .python-version)
+        echo "PYTHON_VERSION=$PY_VER" >> $GITHUB_ENV
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install uv ${{ env.UV_VERSION }}
+      uses: astral-sh/setup-uv@v2
+      with:
+        version: ${{ env.UV_VERSION }}

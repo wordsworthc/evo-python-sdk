@@ -6,6 +6,11 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
 
+[dependency-groups]
+dev = [
+    "ruff==0.9.1", # keep in sync with .pre-commit-config.yaml
+]
+
 [tool.uv.sources]
 evo-client-common = { workspace = true }
 evo-object-client = { workspace = true }
