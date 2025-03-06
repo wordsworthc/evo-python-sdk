@@ -5,11 +5,16 @@ inputs:
   PACKAGE:
     required: true
     description: "uv package to run the tests in"
+  PYTHON_VERSION:
+    required: true
+    description: "The Python version to run the tests on"
 
 runs:
   using: "composite"
   steps:
     - uses: ./.github/actions/install-uv
+      with:
+        PYTHON_VERSION: ${{ inputs.python_version }}
 
     - name: Pytest
       shell: bash
