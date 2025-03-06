@@ -4,7 +4,15 @@ description: "Lint a uv managed python project"
 runs:
   using: "composite"
   steps:
+    - name: Set variables
+      shell: bash
+      run: |
+        PY_VER=$(cat .python-version)
+        echo "PYTHON_VERSION=$PY_VER" >> $GITHUB_ENV
+
     - uses: ./.github/actions/install-uv
+      with:
+        PYTHON_VERSION: ${{ env.PYTHON_VERSION }}
 
     - name: Ruff check and format
       shell: bash
