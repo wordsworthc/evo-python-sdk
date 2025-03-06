@@ -10,6 +10,7 @@ from evo.common import Environment, ServiceUser
 from .exceptions import UserPermissionTypeError
 
 __all__ = [
+    "ServiceUser",
     "UserPermission",
     "WorkspaceRole",
     "Workspace",

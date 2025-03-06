@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Protocol
 
 
-# `evo-object-client` uses protocols for annotating some pyarrow types, because:
+# `evo-objects` uses protocols for annotating some pyarrow types, because:
 # - pyarrow is optional, but type annotations are not.
 # - pyarrow has poor type checker support.
 #

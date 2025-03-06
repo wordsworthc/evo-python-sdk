@@ -10,15 +10,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/linting
+
   run-tests:
     name: Test
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        package: [evo-client-common, evo-object-client]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        package: [evo-client-common, evo-objects]
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/testing
         with:
+          PYTHON_VERSION: ${{ matrix.python-version }}
           PACKAGE: ${{ matrix.package}}

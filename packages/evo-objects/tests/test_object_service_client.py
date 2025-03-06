@@ -10,7 +10,7 @@ from data import load_test_data
 from evo.common import HealthCheckType, Page, RequestMethod, ServiceUser
 from evo.common.io.exceptions import DataNotFoundError
 from evo.common.test_tools import MockResponse, TestWithConnector, TestWithStorage
-from evo.object import (
+from evo.objects import (
     ObjectDataDownload,
     ObjectDataUpload,
     ObjectMetadata,
@@ -19,8 +19,8 @@ from evo.object import (
     ObjectVersion,
     SchemaVersion,
 )
-from evo.object.exceptions import ObjectAlreadyExistsError, ObjectUUIDError
-from evo.object.utils import ObjectDataClient
+from evo.objects.exceptions import ObjectAlreadyExistsError, ObjectUUIDError
+from evo.objects.utils import ObjectDataClient
 from helpers import NoImport
 
 EMPTY_CONTENT = '{"objects": [], "links": {"next": null, "prev": null}}'
@@ -40,7 +40,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
 
     async def test_check_service_health(self) -> None:
         """Test service health check implementation"""
-        with mock.patch("evo.object.client.get_service_health", spec_set=True) as mock_get_service_health:
+        with mock.patch("evo.objects.client.get_service_health", spec_set=True) as mock_get_service_health:
             await self.object_client.get_service_health()
         mock_get_service_health.assert_called_once_with(
             self.connector, "geoscience-object", check_type=HealthCheckType.FULL
