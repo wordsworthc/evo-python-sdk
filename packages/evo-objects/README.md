@@ -1,7 +1,5 @@
 # Evo Object Service Client
 
-`evo-object-client`
-
 The Geoscience Object Service is Seequent's next-generation cloud offering for geoscience
 data, empowering our users to build responsive modern workflows. 
 

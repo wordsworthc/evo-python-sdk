@@ -52,7 +52,7 @@ class ObjectDataClient:
 
     This class provides a high-level interface for uploading and downloading data that is referenced in geoscience
     objects, and caching the data locally. It depends on the optional dependency `pyarrow`, which is not installed
-    by default. This dependency can be installed with `pip install evo-object-client[utils]`.
+    by default. This dependency can be installed with `pip install evo-objects[utils]`.
     """
 
     def __init__(self, environment: Environment, connector: ApiConnector, cache: ICache) -> None:
