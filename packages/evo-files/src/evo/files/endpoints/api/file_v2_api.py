@@ -483,7 +483,7 @@ class FileV2Api:
         deleted: bool | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
-    ) -> ResponseUpdatefilebyid:  # noqa: F405
+    ) -> UploadFileResponse | DownloadFileResponse:  # noqa: F405
         """Update a file
 
         Request an upload link for a new version of the specified file in blob storage. If the file does not exist an error will be returned. Follow up a successful request with a call to the returned pre-signed upload link. Specify a binary body containing the file to upload, with the addition of header key-value pair `x-ms-blob-type: BlockBlob` as required by the MS Azure documentation. The upload link is pre-signed and will expire after 30 minutes.  Including a `version_id` parameter allows creating a link to a blob with uncommitted blocks, i.e. the upload has not been completed properly, or the original pre-signed link has expired. Uncommitted blocks are valid for up to one week, after which they are automatically deleted.  Including a `deleted` parameter with a value of `false` will restore a deleted file.
@@ -544,7 +544,7 @@ class FileV2Api:
         _collection_formats = {}
 
         _response_types_map = {
-            "200": ResponseUpdatefilebyid,  # noqa: F405
+            "200": UploadFileResponse,  # noqa: F405
             "204": EmptyResponse,
             "303": DownloadFileResponse,  # noqa: F405
         }

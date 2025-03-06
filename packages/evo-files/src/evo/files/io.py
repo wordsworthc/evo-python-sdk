@@ -8,7 +8,7 @@ from evo.common import ApiConnector, Environment, ICache
 from evo.common.io import Download, Upload
 
 from .data import FileMetadata
-from .endpoints import Filev2Api
+from .endpoints import FileV2Api
 
 __all__ = [
     "FileApiDownload",
@@ -66,7 +66,7 @@ def _make_name_safe(name: str) -> str:
 
 class _FileIOMixin:
     def __init__(self, connector: ApiConnector, initial_url: str) -> None:
-        self._api = Filev2Api(connector)
+        self._api = FileV2Api(connector)
         self._mutex = asyncio.Lock()
         self._initial_url = initial_url
 

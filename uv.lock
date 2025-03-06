@@ -336,15 +336,12 @@ dependencies = [
 aiohttp = [
     { name = "evo-client-common", extra = ["aiohttp"] },
 ]
-notebooks = [
-    { name = "evo-client-common" },
-]
 
 [package.dev-dependencies]
 dev = [
     { name = "bumpver" },
     { name = "coverage", extra = ["toml"] },
-    { name = "evo-files", extra = ["aiohttp", "notebooks"] },
+    { name = "evo-files", extra = ["aiohttp"] },
     { name = "parameterized" },
     { name = "pytest" },
     { name = "ruff" },
@@ -359,7 +356,6 @@ test = [
 requires-dist = [
     { name = "evo-client-common", editable = "packages/evo-client-common" },
     { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'aiohttp'", editable = "packages/evo-client-common" },
-    { name = "evo-client-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "packages/evo-client-common" },
     { name = "pydantic", specifier = ">=2,<3" },
 ]
 
@@ -368,7 +364,6 @@ dev = [
     { name = "bumpver" },
     { name = "coverage", extras = ["toml"] },
     { name = "evo-files", extras = ["aiohttp"], editable = "packages/evo-files" },
-    { name = "evo-files", extras = ["notebooks", "test"], editable = "packages/evo-files" },
     { name = "parameterized", specifier = "==0.9.0" },
     { name = "pytest" },
     { name = "ruff" },

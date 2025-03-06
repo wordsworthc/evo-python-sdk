@@ -24,6 +24,12 @@ class FileMetadata(ResourceMetadata):
     size: int
     """The size of the file in bytes."""
 
+    modified_at: datetime
+    """The resource's last modified timestamp."""
+
+    modified_by: ServiceUser | None = None
+    """The user who last modified the resource."""
+
     @property
     def path(self) -> str:
         """The full path of the file, formed by joining the parent and name, separated by a slash ('/')."""

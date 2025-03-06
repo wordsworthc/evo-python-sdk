@@ -40,6 +40,12 @@ class TestFileApiDownload(TestWithConnector, TestWithDownloadHandler):
                 email="test@example.com",
             ),
             created_at=utc_datetime(2020, 1, 1, 1, 30),
+            modified_by=ServiceUser(
+                id=UUID(int=16),
+                name="x y",
+                email="test@example.com",
+            ),
+            modified_at=utc_datetime(2020, 1, 1, 1, 30),
             parent="/some/path",
             version_id=VERSION_ID,
             size=len(TEST_DATA),

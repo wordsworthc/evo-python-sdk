@@ -9,7 +9,7 @@ from evo.common.utils import get_service_health
 from evo import logging
 
 from .data import FileMetadata, FileVersion
-from .endpoints import Filev2Api
+from .endpoints import FileV2Api
 from .endpoints.models import DownloadFileResponse, FileVersionResponse, ListFile, UserInfo
 from .io import FileApiDownload, FileApiUpload
 
@@ -53,7 +53,7 @@ class FileAPIClient(BaseServiceClient):
         :param connector: The connector object.
         """
         super().__init__(environment, connector)
-        self._api = Filev2Api(connector=connector)
+        self._api = FileV2Api(connector=connector)
 
     async def get_service_health(self, check_type: HealthCheckType = HealthCheckType.FULL) -> ServiceHealth:
         """Get the health of the file service.
@@ -80,6 +80,8 @@ class FileAPIClient(BaseServiceClient):
             name=model.name,
             created_at=model.created_at,
             created_by=_user_from_model(model.created_by),
+            modified_at=model.modified_at,
+            modified_by=_user_from_model(model.modified_by),
             parent=model.path,
             version_id=model.version_id,
             size=model.size,
@@ -99,6 +101,8 @@ class FileAPIClient(BaseServiceClient):
             name=model.name,
             created_at=model.created_at,
             created_by=_user_from_model(model.created_by),
+            modified_at=model.modified_at,
+            modified_by=_user_from_model(model.modified_by),
             parent=str(file_path.parent),
             version_id=model.version_id,
             size=model.size,
