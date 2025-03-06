@@ -9,7 +9,7 @@ resolution-markers = [
 [manifest]
 members = [
     "evo-client-common",
-    "evo-object-client",
+    "evo-objects",
     "evo-python-sdk",
 ]
 
@@ -265,7 +265,7 @@ wheels = [
 [[package]]
 name = "evo-client-common"
 version = "2.0.8"
-source = { editable = "evo-client-common" }
+source = { editable = "packages/evo-client-common" }
 dependencies = [
     { name = "pure-interface" },
     { name = "pydantic" },
@@ -307,8 +307,8 @@ requires-dist = [
 dev = [
     { name = "bumpver" },
     { name = "coverage", extras = ["toml"] },
-    { name = "evo-client-common", editable = "evo-client-common" },
-    { name = "evo-client-common", extras = ["aiohttp"], editable = "evo-client-common" },
+    { name = "evo-client-common", editable = "packages/evo-client-common" },
+    { name = "evo-client-common", extras = ["aiohttp"], editable = "packages/evo-client-common" },
     { name = "freezegun" },
     { name = "parameterized", specifier = "==0.9.0" },
     { name = "pre-commit" },
@@ -316,16 +316,16 @@ dev = [
     { name = "ruff", specifier = "==0.9.1" },
 ]
 test = [
-    { name = "evo-client-common", extras = ["aiohttp"], editable = "evo-client-common" },
+    { name = "evo-client-common", extras = ["aiohttp"], editable = "packages/evo-client-common" },
     { name = "freezegun" },
     { name = "parameterized", specifier = "==0.9.0" },
     { name = "pytest" },
 ]
 
 [[package]]
-name = "evo-object-client"
+name = "evo-objects"
 version = "2.2.2"
-source = { editable = "evo-object-client" }
+source = { editable = "packages/evo-objects" }
 dependencies = [
     { name = "evo-client-common" },
     { name = "pydantic" },
@@ -343,23 +343,27 @@ utils = [
 dev = [
     { name = "bumpver" },
     { name = "coverage", extra = ["toml"] },
-    { name = "evo-object-client", extra = ["aiohttp", "utils"] },
+    { name = "evo-objects", extra = ["aiohttp", "utils"] },
+    { name = "numpy" },
     { name = "pandas" },
     { name = "parameterized" },
+    { name = "pyarrow" },
     { name = "pytest" },
     { name = "ruff" },
 ]
 test = [
-    { name = "evo-object-client", extra = ["aiohttp", "utils"] },
+    { name = "evo-objects", extra = ["aiohttp", "utils"] },
+    { name = "numpy" },
     { name = "pandas" },
     { name = "parameterized" },
+    { name = "pyarrow" },
     { name = "pytest" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "evo-client-common", editable = "evo-client-common" },
-    { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'aiohttp'", editable = "evo-client-common" },
+    { name = "evo-client-common", editable = "packages/evo-client-common" },
+    { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'aiohttp'", editable = "packages/evo-client-common" },
     { name = "pyarrow", marker = "extra == 'utils'" },
     { name = "pydantic", specifier = ">=2,<3" },
 ]
@@ -368,16 +372,20 @@ requires-dist = [
 dev = [
     { name = "bumpver" },
     { name = "coverage", extras = ["toml"] },
-    { name = "evo-object-client", extras = ["aiohttp", "utils"], editable = "evo-object-client" },
+    { name = "evo-objects", extras = ["aiohttp", "utils"], editable = "packages/evo-objects" },
+    { name = "numpy" },
     { name = "pandas" },
     { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pyarrow" },
     { name = "pytest" },
     { name = "ruff" },
 ]
 test = [
-    { name = "evo-object-client", extras = ["aiohttp", "utils"], editable = "evo-object-client" },
+    { name = "evo-objects", extras = ["aiohttp", "utils"], editable = "packages/evo-objects" },
+    { name = "numpy" },
     { name = "pandas" },
     { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pyarrow" },
     { name = "pytest" },
 ]
 

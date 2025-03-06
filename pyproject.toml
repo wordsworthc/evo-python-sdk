@@ -13,7 +13,7 @@ dev = [
 
 [tool.uv.sources]
 evo-client-common = { workspace = true }
-evo-object-client = { workspace = true }
+evo-objects = { workspace = true }
 
 [tool.uv.workspace]
-members = ["evo-client-common", "evo-object-client"]
+members = ["packages/*"]

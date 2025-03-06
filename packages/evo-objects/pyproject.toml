@@ -1,5 +1,5 @@
 [project]
-name = "evo-object-client"
+name = "evo-objects"
 version = "2.2.2"
 requires-python = ">=3.10"
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -19,10 +19,12 @@ utils = ["pyarrow"]
 [dependency-groups]
 # Dev dependencies. The version is left unspecified so the latest is installed.
 test = [
-    "evo-object-client[aiohttp,utils]",
+    "evo-objects[aiohttp,utils]",
     "pandas",
     "parameterized==0.9.0",
     "pytest",
+    "pyarrow",
+    "numpy",
 ]
 dev = [
     "bumpver",

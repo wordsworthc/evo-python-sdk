@@ -7,7 +7,7 @@ from evo.common import IFeedback, RequestMethod
 from evo.common.io.exceptions import DataExistsError
 from evo.common.test_tools import TestWithConnector, TestWithStorage
 from evo.common.utils import NoFeedback, PartialFeedback
-from evo.object.utils import KnownTableFormat, ObjectDataClient
+from evo.objects.utils import KnownTableFormat, ObjectDataClient
 
 
 class TestObjectDataClient(TestWithConnector, TestWithStorage):
@@ -23,7 +23,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
     def test_save_table(self) -> None:
         """Test saving tabular data using pyarrow."""
         with (
-            mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
+            mock.patch("evo.objects.utils.table_formats.get_known_format") as mock_get_known_format,
             mock.patch("evo.common.io.upload.StorageDestination") as mock_destination,
         ):
             mock_table = mock.Mock()
@@ -43,7 +43,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
     def test_save_dataframe(self) -> None:
         """Test saving tabular data using pandas."""
         with (
-            mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
+            mock.patch("evo.objects.utils.table_formats.get_known_format") as mock_get_known_format,
             mock.patch("evo.common.io.upload.StorageDestination") as mock_destination,
             mock.patch("pyarrow.Table") as mock_pyarrow_table,
         ):
@@ -129,7 +129,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         put_data_response = load_test_data("put_data.json")
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(put_data_response)),
-            mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
+            mock.patch("evo.objects.utils.table_formats.get_known_format") as mock_get_known_format,
             mock.patch("evo.common.io.upload.StorageDestination", autospec=True) as mock_destination,
         ):
             mock_table = mock.Mock()
@@ -167,7 +167,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         put_data_response = load_test_data("put_data.json")
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(put_data_response)),
-            mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
+            mock.patch("evo.objects.utils.table_formats.get_known_format") as mock_get_known_format,
             mock.patch("evo.common.io.upload.StorageDestination", autospec=True) as mock_destination,
             mock.patch("pyarrow.Table") as mock_pyarrow_table,
         ):
@@ -208,7 +208,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         put_data_response = load_test_data("put_data_exists.json")
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(put_data_response)),
-            mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
+            mock.patch("evo.objects.utils.table_formats.get_known_format") as mock_get_known_format,
             mock.patch("evo.common.io.upload.StorageDestination", autospec=True) as mock_destination,
         ):
             mock_table = mock.Mock()
@@ -247,7 +247,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         put_data_response = load_test_data("put_data_exists.json")
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(put_data_response)),
-            mock.patch("evo.object.utils.table_formats.get_known_format") as mock_get_known_format,
+            mock.patch("evo.objects.utils.table_formats.get_known_format") as mock_get_known_format,
             mock.patch("evo.common.io.upload.StorageDestination", autospec=True) as mock_destination,
             mock.patch("pyarrow.Table") as mock_pyarrow_table,
         ):
@@ -291,7 +291,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         object_id = UUID(int=2)
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(get_object_response)),
-            mock.patch("evo.object.utils.tables.KnownTableFormat") as mock_known_table_format,
+            mock.patch("evo.objects.utils.tables.KnownTableFormat") as mock_known_table_format,
             mock.patch("evo.common.io.download.HTTPSource", autospec=True) as mock_source,
         ):
             mock_table_info = {}
@@ -325,7 +325,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         object_id = UUID(int=2)
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(get_object_response)),
-            mock.patch("evo.object.utils.tables.KnownTableFormat") as mock_known_table_format,
+            mock.patch("evo.objects.utils.tables.KnownTableFormat") as mock_known_table_format,
             mock.patch("evo.common.io.download.HTTPSource", autospec=True) as mock_source,
         ):
             mock_table_info = {}
@@ -359,7 +359,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         object_id = UUID(int=2)
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(get_object_response)),
-            mock.patch("evo.object.utils.tables.KnownTableFormat") as mock_known_table_format,
+            mock.patch("evo.objects.utils.tables.KnownTableFormat") as mock_known_table_format,
             mock.patch("evo.common.io.download.HTTPSource", autospec=True),
         ):
             mock_table_info = {}
@@ -380,7 +380,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         object_id = UUID(int=2)
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(get_object_response)),
-            mock.patch("evo.object.utils.tables.KnownTableFormat") as mock_known_table_format,
+            mock.patch("evo.objects.utils.tables.KnownTableFormat") as mock_known_table_format,
             mock.patch("evo.common.io.download.HTTPSource", autospec=True) as mock_source,
         ):
             mock_table_info = {}
@@ -414,7 +414,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         object_id = UUID(int=2)
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(get_object_response)),
-            mock.patch("evo.object.utils.tables.KnownTableFormat") as mock_known_table_format,
+            mock.patch("evo.objects.utils.tables.KnownTableFormat") as mock_known_table_format,
             mock.patch("evo.common.io.download.HTTPSource", autospec=True) as mock_source,
         ):
             mock_table_info = {}
@@ -447,7 +447,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         object_id = UUID(int=2)
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(get_object_response)),
-            mock.patch("evo.object.utils.tables.KnownTableFormat") as mock_known_table_format,
+            mock.patch("evo.objects.utils.tables.KnownTableFormat") as mock_known_table_format,
             mock.patch("evo.common.io.download.HTTPSource", autospec=True) as mock_source,
         ):
             mock_table_info = {}
@@ -484,7 +484,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         object_id = UUID(int=2)
         with (
             self.transport.set_http_response(status_code=200, content=json.dumps(get_object_response)),
-            mock.patch("evo.object.utils.tables.KnownTableFormat") as mock_known_table_format,
+            mock.patch("evo.objects.utils.tables.KnownTableFormat") as mock_known_table_format,
             mock.patch("evo.common.io.download.HTTPSource", autospec=True) as mock_source,
         ):
             mock_table_info = {}

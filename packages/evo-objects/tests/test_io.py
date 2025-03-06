@@ -4,7 +4,7 @@ from uuid import UUID
 
 from data import load_test_data
 from evo.common.test_tools import TestWithConnector, TestWithDownloadHandler, TestWithUploadHandler
-from evo.object import ObjectDataDownload, ObjectDataUpload, ObjectMetadata
+from evo.objects import ObjectDataDownload, ObjectDataUpload, ObjectMetadata
 
 # The test data for these tests does need to be real parquet data, we just need enough content to test
 # chunked upload and download.

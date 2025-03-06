@@ -18,15 +18,15 @@ from parameterized import parameterized, parameterized_class
 from evo.common import Environment
 from evo.common.test_tools import BASE_URL
 from evo.common.utils import Cache
-from evo.object.exceptions import SchemaValidationError, TableFormatError
-from evo.object.utils import (
+from evo.objects.exceptions import SchemaValidationError, TableFormatError
+from evo.objects.utils import (
     ArrowTableFormat,
     BaseTableFormat,
     KnownTableFormat,
     all_known_formats,
     get_known_format,
 )
-from evo.object.utils.tables import _ColumnFormat
+from evo.objects.utils.tables import _ColumnFormat
 
 SAMPLE_DATA_LENGTH = 10
 ENVIRONMENT = Environment(hub_url=BASE_URL, org_id=UUID(int=0), workspace_id=UUID(int=0))
@@ -189,7 +189,7 @@ class TestKnownFormat(unittest.TestCase):
     def test_unknown_format(self) -> None:
         all_other_formats = [other for other in all_known_formats if not other.is_provided_by(self.data_format)]
         with (
-            mock.patch("evo.object.utils.table_formats.all_known_formats", new=all_other_formats),
+            mock.patch("evo.objects.utils.table_formats.all_known_formats", new=all_other_formats),
             self.assertRaises(TableFormatError),
         ):
             known_format = get_known_format(self.sample_table)
