@@ -3,21 +3,23 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import AwareDatetime, Field, StrictInt, StrictStr
+from pydantic import Field, StrictInt, StrictStr
 
 from .._model_config import CustomBaseModel
 
 
 class ListFileLinks(CustomBaseModel):
-    self: StrictStr = Field(..., title="Self")
+    self: Annotated[StrictStr, Field(title="Self")]
 
 
 class ListFilesResponseLinks(CustomBaseModel):
-    next: StrictStr | None = Field(None, title="Next")
-    prev: StrictStr | None = Field(None, title="Prev")
-    self: StrictStr = Field(..., title="Self")
+    next: Annotated[StrictStr | None, Field(title="Next")] = None
+    prev: Annotated[StrictStr | None, Field(title="Prev")] = None
+    self: Annotated[StrictStr, Field(title="Self")]
 
 
 class UploadFileResponse(CustomBaseModel):
@@ -25,21 +27,21 @@ class UploadFileResponse(CustomBaseModel):
     Upload file response
     """
 
-    file_id: UUID = Field(..., title="File Id")
-    upload: StrictStr = Field(..., title="Upload")
-    version_id: StrictStr = Field(..., title="Version Id")
+    file_id: Annotated[UUID, Field(title="File Id")]
+    upload: Annotated[StrictStr, Field(title="Upload")]
+    version_id: Annotated[StrictStr, Field(title="Version Id")]
 
 
 class UserInfo(CustomBaseModel):
-    email: StrictStr | None = Field(None, examples=["kim@example.test"], title="Email Address")
+    email: Annotated[StrictStr | None, Field(examples=["kim@example.test"], title="Email Address")] = None
     """
     The primary email address of the user. Can be null if an error occurred while retrieving this information.
     """
-    id: UUID = Field(..., examples=["59b73891-5538-4e45-ae67-f8c5b00d7405"], title="User ID")
+    id: Annotated[UUID, Field(examples=["59b73891-5538-4e45-ae67-f8c5b00d7405"], title="User ID")]
     """
     The ID of the user
     """
-    name: StrictStr | None = Field(None, examples=["Kim Kim"], title="Full Name")
+    name: Annotated[StrictStr | None, Field(examples=["Kim Kim"], title="Full Name")] = None
     """
     The full name of the user. Can be null if an error occurred while retrieving this information.
     """
@@ -50,26 +52,30 @@ class FileVersionResponse(CustomBaseModel):
     Metadata for specific file version
     """
 
-    created_at: AwareDatetime = Field(..., title="Created At")
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: UserInfo | None = None
-    file_id: UUID = Field(..., title="File Id")
-    link: StrictStr = Field(..., title="Link")
-    name: StrictStr = Field(..., title="Name")
-    path: StrictStr = Field(..., title="Path")
-    size: StrictInt = Field(..., title="Size")
-    version_id: StrictStr = Field(..., title="Version Id")
+    file_id: Annotated[UUID, Field(title="File Id")]
+    link: Annotated[StrictStr, Field(title="Link")]
+    name: Annotated[StrictStr, Field(title="Name")]
+    path: Annotated[StrictStr, Field(title="Path")]
+    size: Annotated[StrictInt, Field(title="Size")]
+    version_id: Annotated[StrictStr, Field(title="Version Id")]
 
 
 class ListFile(CustomBaseModel):
-    created_at: AwareDatetime = Field(..., title="Created At")
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: UserInfo | None = None
-    etag: StrictStr = Field(..., title="Etag")
-    file_id: UUID = Field(..., title="File Id")
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_by: UserInfo | None = None
+    etag: Annotated[StrictStr, Field(title="Etag")]
+    file_id: Annotated[UUID, Field(title="File Id")]
     links: ListFileLinks
-    name: StrictStr = Field(..., title="Name")
-    path: StrictStr = Field(..., title="Path")
-    size: StrictInt = Field(..., title="Size")
-    version_id: StrictStr = Field(..., title="Version Id")
+    modified_at: Annotated[datetime, Field(title="Modified At")]
+    modified_by: UserInfo | None = None
+    name: Annotated[StrictStr, Field(title="Name")]
+    path: Annotated[StrictStr, Field(title="Path")]
+    size: Annotated[StrictInt, Field(title="Size")]
+    version_id: Annotated[StrictStr, Field(title="Version Id")]
 
 
 class ListFilesResponse(CustomBaseModel):
@@ -77,12 +83,12 @@ class ListFilesResponse(CustomBaseModel):
     List files.
     """
 
-    count: StrictInt = Field(..., title="Count")
-    files: list[ListFile] = Field(..., title="Files")
-    limit: StrictInt = Field(..., title="Limit")
+    count: Annotated[StrictInt, Field(title="Count")]
+    files: Annotated[list[ListFile], Field(title="Files")]
+    limit: Annotated[StrictInt, Field(title="Limit")]
     links: ListFilesResponseLinks
-    offset: StrictInt = Field(..., title="Offset")
-    total: StrictInt = Field(..., title="Total")
+    offset: Annotated[StrictInt, Field(title="Offset")]
+    total: Annotated[StrictInt, Field(title="Total")]
 
 
 class DownloadFileResponse(CustomBaseModel):
@@ -90,14 +96,18 @@ class DownloadFileResponse(CustomBaseModel):
     Download file response.
     """
 
-    created_at: AwareDatetime = Field(..., title="Created At")
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: UserInfo | None = None
-    download: StrictStr = Field(..., title="Download")
-    etag: StrictStr = Field(..., title="Etag")
-    file_id: UUID = Field(..., title="File Id")
-    name: StrictStr = Field(..., title="Name")
-    path: StrictStr = Field(..., title="Path")
-    self: StrictStr = Field(..., title="Self")
-    size: StrictInt = Field(..., title="Size")
-    version_id: StrictStr = Field(..., title="Version Id")
-    versions: list[FileVersionResponse] | None = Field(None, title="Versions")
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_by: UserInfo | None = None
+    download: Annotated[StrictStr, Field(title="Download")]
+    etag: Annotated[StrictStr, Field(title="Etag")]
+    file_id: Annotated[UUID, Field(title="File Id")]
+    modified_at: Annotated[datetime, Field(title="Modified At")]
+    modified_by: UserInfo | None = None
+    name: Annotated[StrictStr, Field(title="Name")]
+    path: Annotated[StrictStr, Field(title="Path")]
+    self: Annotated[StrictStr, Field(title="Self")]
+    size: Annotated[StrictInt, Field(title="Size")]
+    version_id: Annotated[StrictStr, Field(title="Version Id")]
+    versions: Annotated[list[FileVersionResponse] | None, Field(title="Versions")] = None
