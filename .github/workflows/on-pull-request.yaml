@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [evo-client-common, evo-object-client]
+        package: [evo-client-common, evo-objects]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/testing
