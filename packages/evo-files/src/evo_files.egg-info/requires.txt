@@ -1,0 +1,8 @@
+evo-client-common>=2.0.1
+pydantic<3,>=2
+
+[aiohttp]
+evo-client-common[aiohttp]>=2.0.1
+
+[notebooks]
+evo-client-common[notebooks]>=2.0.1

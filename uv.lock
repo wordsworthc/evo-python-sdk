@@ -9,6 +9,7 @@ resolution-markers = [
 [manifest]
 members = [
     "evo-client-common",
+    "evo-files",
     "evo-objects",
     "evo-python-sdk",
 ]
@@ -318,6 +319,62 @@ dev = [
 test = [
     { name = "evo-client-common", extras = ["aiohttp"], editable = "packages/evo-client-common" },
     { name = "freezegun" },
+    { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pytest" },
+]
+
+[[package]]
+name = "evo-files"
+version = "2.0.0"
+source = { editable = "packages/evo-files" }
+dependencies = [
+    { name = "evo-client-common" },
+    { name = "pydantic" },
+]
+
+[package.optional-dependencies]
+aiohttp = [
+    { name = "evo-client-common", extra = ["aiohttp"] },
+]
+notebooks = [
+    { name = "evo-client-common" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "bumpver" },
+    { name = "coverage", extra = ["toml"] },
+    { name = "evo-files", extra = ["aiohttp", "notebooks"] },
+    { name = "parameterized" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+test = [
+    { name = "evo-files", extra = ["aiohttp"] },
+    { name = "parameterized" },
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "evo-client-common", editable = "packages/evo-client-common" },
+    { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'aiohttp'", editable = "packages/evo-client-common" },
+    { name = "evo-client-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "packages/evo-client-common" },
+    { name = "pydantic", specifier = ">=2,<3" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "bumpver" },
+    { name = "coverage", extras = ["toml"] },
+    { name = "evo-files", extras = ["aiohttp"], editable = "packages/evo-files" },
+    { name = "evo-files", extras = ["notebooks", "test"], editable = "packages/evo-files" },
+    { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+test = [
+    { name = "evo-files", extras = ["aiohttp"], editable = "packages/evo-files" },
     { name = "parameterized", specifier = "==0.9.0" },
     { name = "pytest" },
 ]
