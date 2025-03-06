@@ -14,12 +14,20 @@ dependencies = [
 
 [project.optional-dependencies]
 aiohttp = ["evo-client-common[aiohttp]>=2.0.1"]
-notebooks = ["evo-client-common[notebooks]>=2.0.1"]
 
 [dependency-groups]
 # Dev dependencies. The version is left unspecified so the latest is installed.
-test = ["evo-files[aiohttp]", "parameterized==0.9.0", "pytest"]
-dev = ["evo-files[notebooks,test]", "bumpver", "coverage[toml]", "ruff", {include-group="test"}]
+test = [
+    "evo-files[aiohttp]",
+    "parameterized==0.9.0",
+    "pytest",
+]
+dev = [
+    "bumpver",
+    "coverage[toml]",
+    "ruff",
+    {include-group="test"},
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
