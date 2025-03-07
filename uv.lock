@@ -344,19 +344,15 @@ dev = [
     { name = "bumpver" },
     { name = "coverage", extra = ["toml"] },
     { name = "evo-objects", extra = ["aiohttp", "utils"] },
-    { name = "numpy" },
     { name = "pandas" },
     { name = "parameterized" },
-    { name = "pyarrow" },
     { name = "pytest" },
     { name = "ruff" },
 ]
 test = [
     { name = "evo-objects", extra = ["aiohttp", "utils"] },
-    { name = "numpy" },
     { name = "pandas" },
     { name = "parameterized" },
-    { name = "pyarrow" },
     { name = "pytest" },
 ]
 
@@ -373,19 +369,15 @@ dev = [
     { name = "bumpver" },
     { name = "coverage", extras = ["toml"] },
     { name = "evo-objects", extras = ["aiohttp", "utils"], editable = "packages/evo-objects" },
-    { name = "numpy" },
     { name = "pandas" },
     { name = "parameterized", specifier = "==0.9.0" },
-    { name = "pyarrow" },
     { name = "pytest" },
     { name = "ruff" },
 ]
 test = [
     { name = "evo-objects", extras = ["aiohttp", "utils"], editable = "packages/evo-objects" },
-    { name = "numpy" },
     { name = "pandas" },
     { name = "parameterized", specifier = "==0.9.0" },
-    { name = "pyarrow" },
     { name = "pytest" },
 ]
 
