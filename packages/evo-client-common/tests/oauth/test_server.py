@@ -5,7 +5,6 @@ from urllib.parse import parse_qs, urlparse
 
 from parameterized import parameterized
 
-from evo.common.pydantic_utils import export_json
 from evo.common.test_tools import long_test
 from evo.oauth import OAuthError, OAuthRedirectHandler, OAuthScopes, OIDCConnector
 from evo.oauth.data import AccessToken, OIDCConfig
@@ -233,7 +232,7 @@ class TestOAuthRedirectHandler(TestWithOIDCConnector):
         with patch_urlsafe_tokens(state=STATE_TOKEN, verifier=VERIFIER_TOKEN):
             self.handler.create_authorization_url(OAuthScopes.default)
 
-        with self.transport.set_http_response(200, export_json(expect_token)):
+        with self.transport.set_http_response(200, expect_token.model_dump_json(by_alias=True, exclude_unset=True)):
             token = await self.handler.get_token(STATE_TOKEN, AUTHORIZATION_CODE)
         self.assert_fetched_token(
             path=issuer_url + "/token",
@@ -259,7 +258,7 @@ class TestOAuthRedirectHandler(TestWithOIDCConnector):
         with patch_urlsafe_tokens(state=STATE_TOKEN, verifier=VERIFIER_TOKEN):
             self.handler.create_authorization_url(OAuthScopes.default)
 
-        with self.transport.set_http_response(200, export_json(access_token)):
+        with self.transport.set_http_response(200, access_token.model_dump_json(by_alias=True, exclude_unset=True)):
             with self.assertRaises(OAuthError):
                 await self.handler.get_token(STATE_TOKEN, AUTHORIZATION_CODE)
         self.assert_fetched_token(

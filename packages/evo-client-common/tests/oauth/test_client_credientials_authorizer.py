@@ -1,4 +1,3 @@
-from evo.common.pydantic_utils import export_json
 from evo.common.test_tools import MockResponse
 from evo.oauth import ClientCredentialsAuthorizer
 from evo.oauth.data import AccessToken, OAuthScopes, OIDCConfig
@@ -20,8 +19,11 @@ class TestClientCredentialsAuthorizer(TestWithOIDCConnector):
         self.second_token = get_access_token(access_token="second_token")
 
         self.transport.request.side_effect = [
-            MockResponse(status_code=200, content=export_json(self.first_token)),
-            MockResponse(status_code=200, content=export_json(self.second_token)),
+            MockResponse(status_code=200, content=self.first_token.model_dump_json(by_alias=True, exclude_unset=True)),
+            MockResponse(
+                status_code=200,
+                content=self.second_token.model_dump_json(by_alias=True, exclude_unset=True),
+            ),
         ]
 
     def assert_token_equals(self, expected_token: AccessToken | None) -> None:

@@ -4,7 +4,6 @@ from unittest import mock
 from parameterized import parameterized
 
 from evo.common import HTTPHeaderDict
-from evo.common.pydantic_utils import export_json
 from evo.common.test_tools import MockResponse, TestHTTPHeaderDict, long_test
 from evo.oauth import AuthorizationCodeAuthorizer, OAuthError, OAuthScopes, UserAccessToken
 from evo.oauth.data import OIDCConfig
@@ -39,8 +38,11 @@ class TestAuthorizationCodeAuthorizer(TestWithOIDCConnector):
         self.first_token = get_user_access_token(access_token="first_token")
         self.second_token = get_user_access_token(access_token="second_token")
         self.transport.request.side_effect = [
-            MockResponse(status_code=200, content=export_json(self.first_token)),
-            MockResponse(status_code=200, content=export_json(self.second_token)),
+            MockResponse(status_code=200, content=self.first_token.model_dump_json(by_alias=True, exclude_unset=True)),
+            MockResponse(
+                status_code=200,
+                content=self.second_token.model_dump_json(by_alias=True, exclude_unset=True),
+            ),
         ]
 
     async def _login(self, scopes: OAuthScopes | None = None, timeout_seconds: int | None = None) -> None:
@@ -243,7 +245,9 @@ class TestAuthorizationCodeAuthorizer(TestWithOIDCConnector):
         await self.login()
         self.assert_token_equals(self.first_token)
         self.transport.request.reset_mock()
-        self.transport.request.side_effect = [MockResponse(200, export_json(access_token))]
+        self.transport.request.side_effect = [
+            MockResponse(200, access_token.model_dump_json(by_alias=True, exclude_unset=True))
+        ]
         self.assertFalse(await self.authorizer.refresh_token())
         self.assert_fetched_token(
             grant_type="refresh_token",

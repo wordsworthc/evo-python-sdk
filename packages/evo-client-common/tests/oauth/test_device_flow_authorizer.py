@@ -1,6 +1,5 @@
 from evo.common import HTTPHeaderDict
 from evo.common.data import RequestMethod
-from evo.common.pydantic_utils import export_json
 from evo.common.test_tools import AbstractTestRequestHandler, MockResponse, TestHTTPHeaderDict
 from evo.oauth import DeviceFlowAuthorizer, OAuthError
 from evo.oauth.data import DeviceFlowResponse, OAuthScopes, OIDCConfig
@@ -34,14 +33,14 @@ class DeviceFlowHandler(AbstractTestRequestHandler):
     def _handle_device_authorization(self) -> MockResponse:
         return MockResponse(
             status_code=200,
-            content=export_json(self.flow),
+            content=self.flow.model_dump_json(by_alias=True, exclude_unset=True),
         )
 
     def _handle_token(self, params: dict) -> MockResponse:
         if self.flow is not None and params.get("device_code") == self.flow.device_code:
             return MockResponse(
                 status_code=200,
-                content=export_json(self.token),
+                content=self.token.model_dump_json(by_alias=True, exclude_unset=True),
             )
         return self.bad_request()
 
