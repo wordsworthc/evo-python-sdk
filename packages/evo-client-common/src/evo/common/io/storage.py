@@ -66,6 +66,10 @@ class BlockList:
         new_block = StorageBlock(byte_offset)
         async with self._mutex:
             assert not self._sealed, "Cannot add block to sealed block list."
+            existing_blocks = {block.byte_offset: block for block in self._blocks}
+            if byte_offset in existing_blocks.keys():
+                # Remove the old block for this offset, duplicates are not allowed.
+                self._blocks.remove(existing_blocks[byte_offset])
             self._blocks.append(new_block)
         return new_block.id
 

@@ -67,6 +67,8 @@ class TestBlockList(unittest.IsolatedAsyncioTestCase):
         tasks = []
         for offset in random.sample(self.block_offsets, k=len(self.block_offsets)):
             tasks.append(self.block_list.add_block(offset))
+        # Add a retry of the last task due to failure
+        tasks.append(self.block_list.add_block(offset))
         self.sorted_block_ids = [StorageBlock(offset).id for offset in sorted(self.block_offsets)]
         self.randomized_block_ids = await asyncio.gather(*tasks)
 
