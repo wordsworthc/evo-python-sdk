@@ -1,20 +1,36 @@
 from __future__ import annotations
 
 import enum
-from dataclasses import dataclass
+from typing import NamedTuple
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID
 
-from evo.common import Environment, ServiceUser
+from evo.common import ServiceUser, Environment
 
 from .exceptions import UserPermissionTypeError
 
 __all__ = [
-    "ServiceUser",
     "UserPermission",
     "WorkspaceRole",
     "Workspace",
+    "Coordinate",
+    "BoundingBox",
+    "WorkspaceOrderByEnum",
+    "OrderByOperatorEnum",
 ]
+
+
+class OrderByOperatorEnum(str, enum.Enum):
+    asc = "asc"
+    desc = "desc"
+
+
+class WorkspaceOrderByEnum(str, enum.Enum):
+    name = "name"
+    created_at = "created_at"
+    updated_at = "updated_at"
+    user_role = "user_role"
 
 
 class UserPermission(enum.Flag):
@@ -53,6 +69,39 @@ class WorkspaceRole(enum.Flag):
 
 
 @dataclass(frozen=True, kw_only=True)
+class UserRole:
+    """The role of a user in a workspace."""
+
+    user_id: UUID
+    """The ID of the user."""
+
+    role: WorkspaceRole
+    """The role of the user in the workspace."""
+
+
+@dataclass(frozen=True, kw_only=True)
+class User(UserRole):
+    """The info of a user in a workspace."""
+
+    email: str | None = None
+    """The email of the user."""
+
+    full_name: str | None = None
+    """The full name of the user."""
+
+
+class Coordinate(NamedTuple):
+    latitude: float
+    longitude: float
+
+
+@dataclass(frozen=True, kw_only=True)
+class BoundingBox:
+    coordinates: list[list[Coordinate]]
+    type: str
+
+
+@dataclass(frozen=True, kw_only=True)
 class Workspace:
     """Metadata about a workspace environment."""
 
@@ -65,7 +114,7 @@ class Workspace:
     description: str | None
     """The workspace description."""
 
-    user_role: WorkspaceRole
+    user_role: WorkspaceRole | None
     """The role of the current user in the workspace."""
 
     org_id: UUID
@@ -79,6 +128,21 @@ class Workspace:
 
     created_by: ServiceUser
     """The info of the user that created the workspace."""
+
+    updated_at: datetime
+    """A timestamp representing when the workspace was updated last."""
+
+    updated_by: ServiceUser
+    """The info of the user that updated the workspace."""
+
+    bounding_box: BoundingBox | None = None
+    """The bounding box of the workspace."""
+
+    default_coordinate_system: str = ""
+    """The default coordinate system of the workspace."""
+
+    labels: list[str] = field(default_factory=list)
+    """The labels associated with the workspace."""
 
     def user_has_permission(self, required_permission: UserPermission | WorkspaceRole) -> bool:
         """Test whether the current user has at least the given permission for this workspace.

@@ -264,7 +264,7 @@ wheels = [
 
 [[package]]
 name = "evo-client-common"
-version = "2.0.9"
+version = "2.1.0"
 source = { editable = "packages/evo-client-common" }
 dependencies = [
     { name = "pure-interface" },
@@ -299,7 +299,7 @@ test = [
 requires-dist = [
     { name = "aiohttp", marker = "extra == 'aiohttp'" },
     { name = "pure-interface", specifier = ">=8.0.0" },
-    { name = "pydantic" },
+    { name = "pydantic", specifier = ">=2" },
     { name = "python-dateutil" },
 ]
 

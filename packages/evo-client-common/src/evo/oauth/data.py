@@ -7,7 +7,7 @@ from datetime import datetime, timedelta, timezone
 from enum import Flag, auto
 from typing import Literal, Optional
 
-from evo.common.pydantic_utils import PYDANTIC_V2, BaseModel, Field
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 from evo.common.utils import BackoffLinear, Retry
 from evo.oauth.exceptions import OAuthError, OIDCError
 
@@ -213,91 +213,45 @@ class UserAccessToken(AccessToken):
             raise OAuthError("Unable to decode ID token.") from e
 
 
-if PYDANTIC_V2:
-    from pydantic import ValidationInfo, field_validator
+class OIDCConfig(BaseModel):
+    issuer: str
+    """The issuer URL."""
 
-    class OIDCConfig(BaseModel):
-        issuer: str
-        """The issuer URL."""
+    authorization_endpoint: str
+    """The authorization endpoint, relative to the issuer URL."""
 
-        authorization_endpoint: str
-        """The authorization endpoint, relative to the issuer URL."""
+    token_endpoint: str
+    """The token endpoint, relative to the issuer URL."""
 
-        token_endpoint: str
-        """The token endpoint, relative to the issuer URL."""
+    device_authorization_endpoint: str | None = None
+    """The device authorization endpoint, relative to the issuer URL."""
 
-        device_authorization_endpoint: str | None = None
-        """The device authorization endpoint, relative to the issuer URL."""
+    end_session_endpoint: str | None = None
+    """The end session endpoint, relative to the issuer URL."""
 
-        end_session_endpoint: str | None = None
-        """The end session endpoint, relative to the issuer URL."""
+    response_types_supported: set[str]
+    """The supported response types for the authorization endpoint."""
 
-        response_types_supported: set[str]
-        """The supported response types for the authorization endpoint."""
+    grant_types_supported: set[str] = set(["authorization_code", "implicit"])
+    """The supported grant types for the token endpoint."""
 
-        grant_types_supported: set[str] = set(["authorization_code", "implicit"])
-        """The supported grant types for the token endpoint."""
-
-        @field_validator(
-            "authorization_endpoint",
-            "token_endpoint",
-            "device_authorization_endpoint",
-            "end_session_endpoint",
-            check_fields=True,
-        )
-        @classmethod
-        def endpoints_exist_under_issuer(cls, v, info: ValidationInfo):
-            if "issuer" in info.data:
-                if not v.startswith(info.data["issuer"]):
-                    raise OIDCError(f"OIDC field {info.field_name} must be a URL under the issuer")
-                validated_endpoint = v.removeprefix(info.data["issuer"])
-                logger.info(f"Found OAuth {info.field_name} endpoint: {validated_endpoint}")
-                return validated_endpoint
-            else:
-                raise OIDCError("Missing issuer url in OIDC config.")
-
-else:
-    from pydantic import validator
-    from pydantic.fields import ModelField
-
-    class OIDCConfig(BaseModel):
-        issuer: str
-        """The issuer URL."""
-
-        authorization_endpoint: str
-        """The authorization endpoint, relative to the issuer URL."""
-
-        token_endpoint: str
-        """The token endpoint, relative to the issuer URL."""
-
-        device_authorization_endpoint: Optional[str] = None
-        """The device authorization endpoint, relative to the issuer URL."""
-
-        end_session_endpoint: Optional[str] = None
-        """The end session endpoint, relative to the issuer URL."""
-
-        response_types_supported: set[str]
-        """The supported response types for the authorization endpoint."""
-
-        grant_types_supported: set[str] = set(["authorization_code", "implicit"])
-        """The supported grant types for the token endpoint."""
-
-        @validator(
-            "authorization_endpoint",
-            "token_endpoint",
-            "device_authorization_endpoint",
-            "end_session_endpoint",
-            check_fields=True,
-        )
-        def endpoints_exist_under_issuer(cls, v, values: dict, field: ModelField):
-            if "issuer" in values:
-                if not v.startswith(values["issuer"]):
-                    raise OIDCError(f"OIDC field {field.name} must be a URL under the issuer")
-                validated_endpoint = v.removeprefix(values["issuer"])
-                logger.info(f"Found OAuth {field.name} endpoint: {validated_endpoint}")
-                return validated_endpoint
-            else:
-                raise OIDCError("Missing issuer url in OIDC config.")
+    @field_validator(
+        "authorization_endpoint",
+        "token_endpoint",
+        "device_authorization_endpoint",
+        "end_session_endpoint",
+        check_fields=True,
+    )
+    @classmethod
+    def endpoints_exist_under_issuer(cls, v, info: ValidationInfo):
+        if "issuer" in info.data:
+            if not v.startswith(info.data["issuer"]):
+                raise OIDCError(f"OIDC field {info.field_name} must be a URL under the issuer")
+            validated_endpoint = v.removeprefix(info.data["issuer"])
+            logger.info(f"Found OAuth {info.field_name} endpoint: {validated_endpoint}")
+            return validated_endpoint
+        else:
+            raise OIDCError("Missing issuer url in OIDC config.")
 
 
 class DeviceFlowResponse(BaseModel):

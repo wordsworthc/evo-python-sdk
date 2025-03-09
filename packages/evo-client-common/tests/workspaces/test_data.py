@@ -136,6 +136,8 @@ class TestWorkspace(unittest.TestCase):
             hub_url="https://unit.test/",
             created_at=datetime.fromtimestamp(0, tz=timezone.utc),
             created_by=self.user,
+            updated_at=datetime.fromtimestamp(0, tz=timezone.utc),
+            updated_by=self.user,
         )
 
     @parameterized.expand(

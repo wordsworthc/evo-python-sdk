@@ -1,12 +1,12 @@
 [project]
 name = "evo-client-common"
-version = "2.0.9"
+version = "2.1.0"
 requires-python = ">=3.10"
 readme = { file = "README.md", content-type = "text/markdown" }
 dependencies = [
     # Specify the minimum versions to avoid security issues.
     "pure-interface>=8.0.0",
-    "pydantic",
+    "pydantic>=2",
     "python-dateutil",
 ]
 
@@ -43,7 +43,7 @@ src = ["src", "tests"]
 line-length = 120
 
 [tool.bumpver]
-current_version = "v2.0.9"
+current_version = "v2.1.0"
 version_pattern = "vMAJOR.MINOR.PATCH[.PYTAGNUM]"
 commit = "True"
 tag = "True"

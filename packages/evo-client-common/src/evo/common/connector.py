@@ -13,10 +13,10 @@ from urllib.parse import quote, urlencode
 from uuid import UUID
 
 from dateutil.parser import parse
+from pydantic import BaseModel
 
 from evo import logging
 
-from . import pydantic_utils
 from .data import EmptyResponse, HTTPHeaderDict, HTTPResponse, RequestMethod
 from .exceptions import (
     ClientTypeError,
@@ -297,9 +297,9 @@ class ApiConnector:
         if isinstance(obj, Mapping):
             # If obj is a dict, sanitize the dict.
             obj_dict = obj
-        elif isinstance(obj, pydantic_utils.BaseModel):
+        elif isinstance(obj, BaseModel):
             # If obj is an API model, convert to dict.
-            obj_dict = pydantic_utils.export_dict(obj)
+            obj_dict = obj.model_dump(mode="json", by_alias=True, exclude_unset=True)
         else:
             raise ClientTypeError(
                 msg=f"{type(obj)} could not be serialized.",
@@ -313,7 +313,7 @@ class ApiConnector:
                     list,
                     tuple,
                     dict,
-                    pydantic_utils.BaseModel,
+                    BaseModel,
                 ),
             )
 
@@ -438,8 +438,8 @@ class ApiConnector:
             return cls.__deserialize_datetime(data).date()
         elif response_type is datetime.time:
             return cls.__deserialize_time(data)
-        elif issubclass(response_type, pydantic_utils.BaseModel):  # API Models.
-            return cls.__deserialize_model(data, response_type)
+        elif issubclass(response_type, BaseModel):  # API Models.
+            return response_type.model_validate(data)
         else:
             raise ClientValueError("Could not parse content.")
 
@@ -510,15 +510,3 @@ class ApiConnector:
         """
         datetime_value = cls.__deserialize_datetime(string)
         return datetime_value.time().replace(tzinfo=datetime_value.tzinfo)
-
-    @staticmethod
-    def __deserialize_model(data: dict, klass: type[pydantic_utils.T_BaseModel]) -> pydantic_utils.T_BaseModel:
-        """Deserializes list or dict to an API model.
-
-        :param data: model dict.
-        :param klass: API model class literal.
-
-        :return: API model object.
-        """
-
-        return pydantic_utils.validate_model(data, klass)

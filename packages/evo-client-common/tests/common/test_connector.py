@@ -10,7 +10,7 @@ from uuid import UUID
 from parameterized import parameterized
 from pydantic import BaseModel
 
-from evo.common import ApiConnector, EmptyResponse, HTTPHeaderDict, HTTPResponse, RequestMethod, pydantic_utils
+from evo.common import ApiConnector, EmptyResponse, HTTPHeaderDict, HTTPResponse, RequestMethod
 from evo.common.exceptions import (
     BadRequestException,
     ClientValueError,
@@ -949,7 +949,11 @@ class TestApiConnector(TestWithConnector):
                 },
             ),
             # If obj is an API model, convert to dict.
-            ("api model", SamplePydanticModel(), json.loads(pydantic_utils.export_json(SamplePydanticModel()))),
+            (
+                "api model",
+                SamplePydanticModel(),
+                json.loads(SamplePydanticModel().model_dump_json(by_alias=True, exclude_unset=True)),
+            ),
         ]
     )
     def test_sanitization(self, _name: str, input_value: Any, expected_value: Any) -> None:

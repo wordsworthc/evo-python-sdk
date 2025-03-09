@@ -1,8 +1,9 @@
 from collections.abc import Sequence
 from uuid import UUID
 
+from pydantic import BaseModel, field_validator
+
 from evo.common import ApiConnector, RequestMethod
-from evo.common.pydantic_utils import BaseModel, validator
 
 from .data import Hub, Organization
 
@@ -31,7 +32,7 @@ class _ServiceDiscoveryResult(BaseModel):
     hubs: list[_ServiceDiscoveryHub]
     service_access: list[_ServiceDiscoveryAccess]
 
-    @validator("organizations", "hubs")
+    @field_validator("organizations", "hubs")
     def _sort_by_display_name(cls, v: list) -> list:
         # Sort organizations and hubs alphanumerically by display name.
         return sorted(v, key=lambda i: i.display_name)

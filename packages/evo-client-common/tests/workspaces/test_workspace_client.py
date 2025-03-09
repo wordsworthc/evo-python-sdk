@@ -5,7 +5,7 @@ from uuid import UUID
 from data import load_test_data
 from evo.common import HealthCheckType, RequestMethod
 from evo.common.test_tools import BASE_URL, MockResponse, TestHTTPHeaderDict, TestWithConnector, utc_datetime
-from evo.workspaces import ServiceUser, Workspace, WorkspaceRole, WorkspaceServiceClient
+from evo.workspaces import ServiceUser, Workspace, WorkspaceRole, WorkspaceServiceClient, User, UserRole
 
 ORG_UUID = UUID(int=0)
 USER_ID = UUID(int=2)
@@ -25,6 +25,8 @@ def _test_workspace(ws_id: UUID, name: str) -> Workspace:
         hub_url=BASE_URL,
         created_at=utc_datetime(2020, 1, 1),
         created_by=TEST_USER,
+        updated_at=utc_datetime(2020, 1, 1),
+        updated_by=TEST_USER,
     )
 
 
@@ -56,7 +58,7 @@ class TestWorkspaceClient(TestWithConnector):
             path=f"{BASE_PATH}/workspaces?offset=0",
             headers={"Accept": "application/json"},
         )
-        self.assertEqual([], workspaces)
+        self.assertEqual([], workspaces.items())
 
     async def test_list_workspaces_all_args(self):
         with self.transport.set_http_response(200, self._empty_content(), headers={"Content-Type": "application/json"}):
@@ -66,7 +68,7 @@ class TestWorkspaceClient(TestWithConnector):
             path=f"{BASE_PATH}/workspaces?limit=20&offset=10",
             headers={"Accept": "application/json"},
         )
-        self.assertEqual([], workspaces)
+        self.assertEqual([], workspaces.items())
 
     async def test_delete_workspace_call(self):
         with self.transport.set_http_response(204):
@@ -100,7 +102,111 @@ class TestWorkspaceClient(TestWithConnector):
         )
         self.assertEqual(TEST_WORKSPACE_A, new_workspace)
 
+    async def test_update_workspace(self):
+        with self.transport.set_http_response(200, json.dumps(load_test_data("new_workspace.json"))):
+            updated_workspace = await self.workspace_client.update_workspace(
+                workspace_id=TEST_WORKSPACE_A.id,
+                name="Test Workspace",
+            )
+        self.assert_request_made(
+            method=RequestMethod.PATCH,
+            path=f"{BASE_PATH}/workspaces/{TEST_WORKSPACE_A.id}",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body={
+                "name": "Test Workspace",
+            },
+        )
+        self.assertEqual(TEST_WORKSPACE_A, updated_workspace)
+
+    async def test_assign_user_role(self) -> None:
+        with self.transport.set_http_response(
+            201,
+            json.dumps(
+                {
+                    "user_id": str(USER_ID),
+                    "role": "owner",
+                }
+            ),
+        ):
+            response = await self.workspace_client.assign_user_role(
+                workspace_id=TEST_WORKSPACE_A.id,
+                user_id=USER_ID,
+                role=WorkspaceRole.owner,
+            )
+        self.assert_request_made(
+            method=RequestMethod.POST,
+            path=f"{BASE_PATH}/workspaces/{TEST_WORKSPACE_A.id}/users",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body={
+                "user_id": str(USER_ID),
+                "role": "owner",
+            },
+        )
+        self.assertEqual(response, UserRole(user_id=USER_ID, role=WorkspaceRole.owner))
+
+    async def test_get_current_user_role(self) -> None:
+        with self.transport.set_http_response(
+            200,
+            json.dumps(
+                {
+                    "user_id": str(USER_ID),
+                    "role": "owner",
+                }
+            ),
+        ):
+            response = await self.workspace_client.get_current_user_role(workspace_id=TEST_WORKSPACE_A.id)
+        self.assert_request_made(
+            method=RequestMethod.GET,
+            path=f"{BASE_PATH}/workspaces/{TEST_WORKSPACE_A.id}/current-user-role",
+            headers={"Accept": "application/json"},
+        )
+        self.assertEqual(response, UserRole(user_id=USER_ID, role=WorkspaceRole.owner))
+
+    async def test_list_user_roles(self) -> None:
+        with self.transport.set_http_response(
+            200,
+            json.dumps(
+                {
+                    "results": [
+                        {"user_id": str(USER_ID), "role": "owner", "full_name": "Test User", "email": "test@test.com"},
+                    ],
+                    "links": {"self": "dummy-link.com"},
+                }
+            ),
+        ):
+            response = await self.workspace_client.list_user_roles(workspace_id=TEST_WORKSPACE_A.id)
+
+        self.assert_request_made(
+            method=RequestMethod.GET,
+            path=f"{BASE_PATH}/workspaces/{TEST_WORKSPACE_A.id}/users",
+            headers={"Accept": "application/json"},
+        )
+        self.assertEqual(
+            response,
+            [
+                User(user_id=USER_ID, role=WorkspaceRole.owner, full_name="Test User", email="test@test.com"),
+            ],
+        )
+
     async def test_list_workspaces(self) -> None:
+        content = load_test_data("list_workspaces_0.json")
+        with self.transport.set_http_response(200, json.dumps(content), headers={"Content-Type": "application/json"}):
+            workspaces = await self.workspace_client.list_workspaces(limit=2)
+        self.assert_request_made(
+            method=RequestMethod.GET,
+            path=f"{BASE_PATH}/workspaces?limit=2&offset=0",
+            headers={"Accept": "application/json"},
+        )
+        self.assertEqual(1, self.transport.request.call_count, "One requests should be made.")
+        self.assertEqual([TEST_WORKSPACE_A, TEST_WORKSPACE_B], workspaces.items())
+
+    async def test_list_all_workspaces(self) -> None:
         content_0 = load_test_data("list_workspaces_0.json")
         content_1 = load_test_data("list_workspaces_1.json")
         responses = [
@@ -109,7 +215,7 @@ class TestWorkspaceClient(TestWithConnector):
         ]
         self.transport.request.side_effect = responses
         expected_workspaces = [TEST_WORKSPACE_A, TEST_WORKSPACE_B, TEST_WORKSPACE_C]
-        actual_workspaces = await self.workspace_client.list_workspaces(limit=2)
+        actual_workspaces = await self.workspace_client.list_all_workspaces(limit=2)
 
         self.assertEqual(2, self.transport.request.call_count, "Two requests should be made.")
         self.assert_any_request_made(
@@ -140,7 +246,7 @@ class TestWorkspaceClient(TestWithConnector):
         ]
         self.transport.request.side_effect = responses
         expected_workspaces = [TEST_WORKSPACE_A, TEST_WORKSPACE_B, TEST_WORKSPACE_C]
-        actual_workspaces = await self.workspace_client.list_workspaces(limit=2)
+        actual_workspaces = await self.workspace_client.list_all_workspaces(limit=2)
 
         self.assertEqual(2, self.transport.request.call_count, "Two requests should be made.")
         self.assert_any_request_made(
