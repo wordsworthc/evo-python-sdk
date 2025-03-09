@@ -6,6 +6,7 @@ import json
 import re
 from collections.abc import Mapping
 from enum import Enum
+from inspect import isclass
 from types import GenericAlias, NoneType, TracebackType
 from typing import Any, ParamSpec, TypeVar
 from urllib.parse import quote, urlencode
@@ -45,7 +46,7 @@ def retry_on_auth_error(func):  # No type annotation to prevent hiding the signa
     async def wrapper(self: ApiConnector, *args: P.args, **kwargs: P.kwargs) -> T:
         # Always use the connector in a context manager to ensure the transport is opened and closed correctly.
         # ITransport implementations are required to be re-entrant, so this is safe. It may still be useful to open
-        # and close the transport elsewhere in client code to prevent unnecessarily desatroying and recreating any
+        # and close the transport elsewhere in client code to prevent unnecessarily destroying and recreating any
         # underlying sessions.
         async with self:
             try:
@@ -375,7 +376,7 @@ class ApiConnector:
 
         :return: The deserialized object.
         """
-        if response_type is not None and issubclass(response_type, HTTPResponse):
+        if response_type is not None and isclass(response_type) and issubclass(response_type, HTTPResponse):
             # Return the response object directly.
             return response
 
@@ -400,7 +401,7 @@ class ApiConnector:
             return EmptyResponse(status=response.status, reason=response.reason, headers=response.getheaders())
         elif response_type is EmptyResponse and response_data != "":
             raise ClientValueError(msg=f"Unexpected content with '{response.status}' status code")
-        elif issubclass(response_type, EvoApiException):  # Raise if API exception.
+        elif isclass(response_type) and issubclass(response_type, EvoApiException):  # Raise if API exception.
             if response_type is EvoApiException and CustomTypedError.provided_by(response_data):
                 # Use Typed Error types, but don't override generalized error types.
                 response_type = CustomTypedError.from_type_id(response_data.get("type"))
