@@ -11,7 +11,7 @@ There are three pre-defined roles within workspaces:
 - Viewer: can view the workspace
 These user roles can be assigned to users in a workspace. Once a role has been assigned it can be replaced or removed.
 Users can also retrieve user roles, the role of a particular user, and their own role if applicable.
-For more information on using the Workspaces API, see the [Workspaces API overview](https://developer.seequent.com/docs/api/workspaces/workspaces-api), or the API references here.
+For more information on using the Workspaces API, see the [Workspaces API overview](https://developer.seequent.com/docs/guides/workspaces/), or the API references here.
 This code is generated from the OpenAPI specification for Workspaces API.
 API version: 1.0
 """
