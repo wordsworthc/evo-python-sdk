@@ -18,7 +18,7 @@ API version: 2.7.2
 """
 
 # Import endpoint apis.
-from .api import Filev2Api
+from .api import FileV2Api
 
 __all__ = [
     "FileV2Api",
