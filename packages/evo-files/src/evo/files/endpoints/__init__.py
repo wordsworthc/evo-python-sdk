@@ -14,7 +14,7 @@ For more information on using the File API, see [Overview](https://developer.see
 
 
 This code is generated from the OpenAPI specification for File API.
-API version: 2.7.2
+API version: 2.7.3
 """
 
 # Import endpoint apis.
