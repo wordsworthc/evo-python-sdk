@@ -36,6 +36,14 @@ UNIX-like:
 ```
 You can run the same script again whenever the version in the UV_VERSION file changes. It will replace your existing installation of uv.
 
+### Install pre-commit hooks
+
+Once you've installed UV, install pre-commit hooks. These are used to standardise development workflows for all contributors:
+
+```
+uv run pre-commit install
+```
+
 ## SDKs
 - [evo-client-common](packages/evo-client-common/README.md)
   - A shared library that provides common functionality for integrating with Seequent's client SDKs. 
