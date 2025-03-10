@@ -10,11 +10,11 @@ Files can be referenced by their UUID, or by a user-defined file path. Files are
 replacing them will create a new version of the file. The latest version of the file is always returned
 unless a specific version is requested.
 
-For more information on using the File API, see [Overview](/docs/guides/file), or the API references here.
+For more information on using the File API, see [Overview](https://developer.seequent.com/docs/guides/file/), or the API references here.
 
 
 This code is generated from the OpenAPI specification for File API.
-API version: 2.7.0
+API version: 2.7.2
 """
 
 from evo.common.connector import ApiConnector
@@ -70,10 +70,10 @@ class FileV2Api:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response contains a descriptive `type` parameter.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not contain a `type` parameter.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """
@@ -136,10 +136,10 @@ class FileV2Api:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response contains a descriptive `type` parameter.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not contain a `type` parameter.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """
@@ -213,10 +213,10 @@ class FileV2Api:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response contains a descriptive `type` parameter.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not contain a `type` parameter.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """
@@ -298,10 +298,10 @@ class FileV2Api:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response contains a descriptive `type` parameter.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not contain a `type` parameter.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """
@@ -407,10 +407,10 @@ class FileV2Api:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response contains a descriptive `type` parameter.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not contain a `type` parameter.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """
@@ -483,7 +483,7 @@ class FileV2Api:
         deleted: bool | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
-    ) -> UploadFileResponse | DownloadFileResponse:  # noqa: F405
+    ) -> UploadFileResponse:  # noqa: F405
         """Update a file
 
         Request an upload link for a new version of the specified file in blob storage. If the file does not exist an error will be returned. Follow up a successful request with a call to the returned pre-signed upload link. Specify a binary body containing the file to upload, with the addition of header key-value pair `x-ms-blob-type: BlockBlob` as required by the MS Azure documentation. The upload link is pre-signed and will expire after 30 minutes.  Including a `version_id` parameter allows creating a link to a blob with uncommitted blocks, i.e. the upload has not been completed properly, or the original pre-signed link has expired. Uncommitted blocks are valid for up to one week, after which they are automatically deleted.  Including a `deleted` parameter with a value of `false` will restore a deleted file.
@@ -512,10 +512,10 @@ class FileV2Api:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response contains a descriptive `type` parameter.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not contain a `type` parameter.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """
@@ -571,7 +571,7 @@ class FileV2Api:
     ) -> UploadFileResponse:  # noqa: F405
         """Upload a file
 
-        Request an upload link to store the specified file in blob storage. If the folders in the file path do not exist, they will be created. If the file already exists, a new version will be created with the updated file content. Follow up a successful request with a call to the returned pre-signed upload link. Specify a binary body containing the file to upload, with the addition of header key-value pair `x-ms-blob-type: BlockBlob` as required by the MS Azure documentation. The upload link is pre-signed and will expire after 30 minutes.  Including a `version_id` parameter allows creating a link to a blob with uncommitted blocks, i.e. the upload has not been completed properly, or the original pre-signed link has expired. Uncommitted blocks are valid for up to one week, after which they are automatically deleted.
+        Request an upload link for the specified file. If the folders in the file path do not exist, they will be created. If the file already exists, a new version will be created with the updated file content. Follow up a successful request with a call to the returned pre-signed upload link. Specify a binary body containing the file to upload, with the addition of header key-value pair `x-ms-blob-type: BlockBlob`. The upload link is pre-signed and will expire after 30 minutes.  Including a `version_id` parameter allows creating a link to a blob with uncommitted blocks, i.e. the upload has not been completed properly, or the original pre-signed link has expired. Uncommitted blocks are valid for up to one week, after which they are automatically deleted.
 
         :param file_path: Path to the file.
             Example: `'a/b/file.txt'`
@@ -594,10 +594,10 @@ class FileV2Api:
         :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
         :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
         :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
-        :raise evo.common.exceptions.BaseRFC87Error: If the server responds with any other HTTP status between
-            400 and 599, and the body of the response conforms to RFC 87.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response contains a descriptive `type` parameter.
         :raise evo.common.exceptions.EvoApiException: If the server responds with any other HTTP status between 400
-            and 599, and the body of the response does not conform to RFC 87.
+            and 599, and the body of the response does not contain a `type` parameter.
         :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
             type in `response_types_map`.
         """
