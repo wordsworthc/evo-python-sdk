@@ -440,13 +440,17 @@ source = { virtual = "." }
 
 [package.dev-dependencies]
 dev = [
+    { name = "pre-commit" },
     { name = "ruff" },
 ]
 
 [package.metadata]
 
 [package.metadata.requires-dev]
-dev = [{ name = "ruff", specifier = "==0.9.1" }]
+dev = [
+    { name = "pre-commit", specifier = ">=4" },
+    { name = "ruff", specifier = "==0.9.1" },
+]
 
 [[package]]
 name = "exceptiongroup"
