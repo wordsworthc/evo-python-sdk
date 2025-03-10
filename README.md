@@ -38,10 +38,11 @@ You can run the same script again whenever the version in the UV_VERSION file ch
 
 ## SDKs
 - [evo-client-common](packages/evo-client-common/README.md)
-	- A shared library that provides common functionality for integrating with Seequent's client SDK's. 
-
+  - A shared library that provides common functionality for integrating with Seequent's client SDKs. 
+- [evo-files](packages/evo-files/README.md)
+  - A service client for interacting with the Evo File API.
 - [evo-objects](packages/evo-objects/README.md)
-	- A geoscience object service client library designed to help get up and running with geoscience objects. 
+  - A geoscience object service client library designed to help get up and running with geoscience objects. 
 
 ## Contributing
 
