@@ -63,7 +63,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: ${{ needs.detect-changes.outputs.changes}}
+        package: ${{ fromJSON(needs.detect-changes.outputs.changes) }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-uv
