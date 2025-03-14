@@ -82,4 +82,4 @@ jobs:
       - name: Publish package to Artifactory
         shell: bash
         run: |
-          uv publish  --package ${{ matrix.package }} --index artifactory --username ${{ vars.EVO_ARTIFACTORY_USER }} --password ${{ secrets.EVO_ARTIFACTORY_TOKEN }}
+          uv publish --index artifactory --username ${{ vars.EVO_ARTIFACTORY_USER }} --password ${{ secrets.EVO_ARTIFACTORY_TOKEN }}
