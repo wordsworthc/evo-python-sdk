@@ -1,6 +1,6 @@
 [project]
 name = "evo-objects"
-version = "2.2.2.dev1"
+version = "2.2.2"
 requires-python = ">=3.10"
 readme = { file = "README.md", content-type = "text/markdown" }
 dependencies = [
