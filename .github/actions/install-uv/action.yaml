@@ -3,8 +3,8 @@ description: "Install python and uv"
 
 inputs:
   PYTHON_VERSION:
-    required: true
-    description: "The Python version to run the tests on"
+    required: false
+    description: "The Python version to use with uv. If not set, will use .python-version"
 
 runs:
   using: "composite"
@@ -17,8 +17,21 @@ runs:
         UV_VER=$(cat UV_VERSION)
         echo "UV_VERSION=$UV_VER" >> $GITHUB_ENV
 
-    - name: Install uv ${{ env.UV_VERSION }} with Python ${{ inputs.python_version }}
+    - name: Use given python version
+      if: ${{ inputs.PYTHON_VERSION }}
+      shell: bash
+      run: |
+        echo "PYTHON_VERSION=${{ inputs.PYTHON_VERSION }}" >> $GITHUB_ENV
+
+    - name: Use default python version
+      if: ${{ ! inputs.PYTHON_VERSION }}
+      shell: bash
+      run: |
+        PY_VER=$(cat .python-version)
+        echo "PYTHON_VERSION=$PY_VER" >> $GITHUB_ENV
+
+    - name: Install uv ${{ env.UV_VERSION }} with Python ${{ env.PYTHON_VERSION }}
       uses: astral-sh/setup-uv@v5
       with:
-        python-version: ${{ inputs.python_version }}
+        python-version: ${{ env.PYTHON_VERSION }}
         version: ${{ env.UV_VERSION }}
