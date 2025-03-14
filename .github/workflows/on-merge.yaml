@@ -80,7 +80,6 @@ jobs:
           name: ${{ matrix.package }}
 
       - name: Publish package to Artifactory
-        if: github.repository == 'octo-org/octo-repo-prod'
         shell: bash
         run: |
           uv publish  --package ${{ matrix.package }} --index artifactory --username ${{ vars.EVO_ARTIFACTORY_USER }} --password ${{ secrets.EVO_ARTIFACTORY_TOKEN }}
