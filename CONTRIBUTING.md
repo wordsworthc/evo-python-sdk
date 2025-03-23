@@ -40,7 +40,7 @@ To ensure your pull request is merged as quickly as possible, please consider th
 
 ### Contributor License Agreement (CLA)
 
-Once you create a pull request, you will be required to sign our Contributor License Agreement (CLA).
+By making a pull request, you confirm you agree to our [Contributor License Agreement (CLA).](https://gist.github.com/imodeljs-admin/9a071844d3a8d420092b5cf360e978ca).
 
 This only needs to be completed once, and enables contributions to all projects under the Seequent GitHub organization,
 including this repository. The CLA ensures you retain copyright to your contributions, and provides us the right to use,
