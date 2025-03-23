@@ -36,6 +36,7 @@ To ensure your pull request is merged as quickly as possible, please consider th
 * Reference issues in your pull request if you're closing one.
 * Ensure your code has been automatically linted.
 * Verify that all tests pass, and write new tests with excellent code coverage for new code.
+* Seequent requires that all commits are signed with verified signatures. Please ensure you configure commit signing before creating a pull request. See [the GitHub documentation](https://docs.github.com/en/authentication/managing-commit-signature-verification) for more information.
 
 ### Contributor License Agreement (CLA)
 
