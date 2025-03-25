@@ -14,7 +14,7 @@ from __future__ import annotations
 from pathlib import PurePosixPath
 from uuid import UUID
 
-from evo.common import ApiConnector, BaseServiceClient, Environment, HealthCheckType, Page, ServiceHealth, ServiceUser
+from evo.common import APIConnector, BaseServiceClient, Environment, HealthCheckType, Page, ServiceHealth, ServiceUser
 from evo.common.utils import get_service_health
 
 from evo import logging
@@ -58,7 +58,7 @@ def _versions_from_listed_versions(models: list[FileVersionResponse]) -> list[Fi
 
 
 class FileAPIClient(BaseServiceClient):
-    def __init__(self, environment: Environment, connector: ApiConnector) -> None:
+    def __init__(self, environment: Environment, connector: APIConnector) -> None:
         """
         :param environment: The environment object
         :param connector: The connector object.
@@ -73,7 +73,7 @@ class FileAPIClient(BaseServiceClient):
 
         :return: A ServiceHealth object.
 
-        :raises EvoApiException: If the API returns an unexpected status code.
+        :raises EvoAPIException: If the API returns an unexpected status code.
         :raises ClientValueError: If the response is not a valid service health check response.
         """
         return await get_service_health(self._connector, "file", check_type=check_type)
