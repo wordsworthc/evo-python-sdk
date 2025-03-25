@@ -9,11 +9,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import DiscoveryApiClient
+from .client import DiscoveryAPIClient
 from .data import Hub, Organization
 
 __all__ = [
-    "DiscoveryApiClient",
+    "DiscoveryAPIClient",
     "Hub",
     "Organization",
 ]

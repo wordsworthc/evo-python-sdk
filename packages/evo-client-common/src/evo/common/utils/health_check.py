@@ -11,7 +11,7 @@
 
 import json
 
-from ..connector import ApiConnector
+from ..connector import APIConnector
 from ..data import DependencyStatus, HealthCheckType, HTTPResponse, RequestMethod, ServiceHealth, ServiceStatus
 from ..exceptions import ClientValueError
 
@@ -22,7 +22,7 @@ __all__ = [
 
 
 async def _check_service_health(
-    connector: ApiConnector, service_name: str, full: bool, check_type: HealthCheckType
+    connector: APIConnector, service_name: str, full: bool, check_type: HealthCheckType
 ) -> HTTPResponse:
     """Internal that calls the health check endpoint of a named API.
 
@@ -95,7 +95,7 @@ def _parse_service_health_dict(service_name: str, status_code: int, response: di
 
 
 async def get_service_health(
-    connector: ApiConnector, service_name: str, check_type: HealthCheckType = HealthCheckType.FULL
+    connector: APIConnector, service_name: str, check_type: HealthCheckType = HealthCheckType.FULL
 ) -> ServiceHealth:
     """Check the health of a named service.
 
@@ -107,7 +107,7 @@ async def get_service_health(
 
     :return: A ServiceHealth object.
 
-    :raises EvoApiException: If the API returns an unexpected status code.
+    :raises EvoAPIException: If the API returns an unexpected status code.
     :raises ClientValueError: If the response is not a valid service health check response.
     """
     response = await _check_service_health(connector, service_name, full=True, check_type=check_type)
@@ -120,7 +120,7 @@ async def get_service_health(
 
 
 async def get_service_status(
-    connector: ApiConnector, service_name: str, check_type: HealthCheckType = HealthCheckType.FULL
+    connector: APIConnector, service_name: str, check_type: HealthCheckType = HealthCheckType.FULL
 ) -> ServiceStatus:
     """Get the status of a named service.
 
@@ -132,7 +132,7 @@ async def get_service_status(
 
     :return: The status of the service.
 
-    :raises EvoApiException: If the API returns an unexpected status code.
+    :raises EvoAPIException: If the API returns an unexpected status code.
     :raises ClientValueError: If the response is not a valid service health status.
     """
     response = await _check_service_health(connector, service_name, full=False, check_type=check_type)

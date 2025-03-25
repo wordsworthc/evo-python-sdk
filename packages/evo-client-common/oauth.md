@@ -52,7 +52,7 @@ print(await authorizer.get_default_headers())
 
 `AuthorizationCodeAuthorizer.refresh_token()` can be used to refresh the access token when it expires. If the authorization server did not return a refresh token, the function will raise `OAuthError`. If you try refreshing the token within 5 minutes of the last refresh, the token will not be refreshed and the method will return `False`. Similarly, if there is any error during the refresh, the method will return `False`.
 
-This is how `ApiConnector` automatically refreshes the access token when it expires.
+This is how `APIConnector` automatically refreshes the access token when it expires.
 
 > Note: You MUST request the `offline_access` scope at login to get a refresh token. Offline access is not included by default in any of the predefined scope groups.
 

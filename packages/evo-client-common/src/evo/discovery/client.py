@@ -14,11 +14,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, field_validator
 
-from evo.common import ApiConnector, RequestMethod
+from evo.common import APIConnector, RequestMethod
 
 from .data import Hub, Organization
 
-__all__ = ["DiscoveryApiClient"]
+__all__ = ["DiscoveryAPIClient"]
 
 
 class _ServiceDiscoveryHub(BaseModel):
@@ -74,10 +74,10 @@ class _DiscoveryResult(BaseModel):
     discovery: _ServiceDiscoveryResult
 
 
-class DiscoveryApiClient:
+class DiscoveryAPIClient:
     """Simple client for interacting with the Discovery API."""
 
-    def __init__(self, connector: ApiConnector) -> None:
+    def __init__(self, connector: APIConnector) -> None:
         """
         :param connector: The API connector to use for making requests.
         """

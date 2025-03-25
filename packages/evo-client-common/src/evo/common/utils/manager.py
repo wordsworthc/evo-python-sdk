@@ -16,10 +16,10 @@ from typing import Any, TypeVar
 from uuid import UUID
 
 from evo import logging
-from evo.common import ApiConnector, BaseServiceClient, Environment
+from evo.common import APIConnector, BaseServiceClient, Environment
 from evo.common.exceptions import SelectionError
 from evo.common.interfaces import IAuthorizer, ITransport
-from evo.discovery import DiscoveryApiClient, Hub, Organization
+from evo.discovery import DiscoveryAPIClient, Hub, Organization
 from evo.workspaces import Workspace, WorkspaceServiceClient
 
 __all__ = ["ServiceManager"]
@@ -266,8 +266,8 @@ class ServiceManager:
         self.__state_mutex = asyncio.Lock()
         self.__state = _State([])
 
-    def _get_connector(self, base_url: str) -> ApiConnector:
-        return ApiConnector(base_url, self._transport, self._authorizer)
+    def _get_connector(self, base_url: str) -> APIConnector:
+        return APIConnector(base_url, self._transport, self._authorizer)
 
     async def refresh_organizations(self) -> None:
         """Refresh the list of organizations.
@@ -278,7 +278,7 @@ class ServiceManager:
         """
         logger.debug("Refreshing organizations")
         async with self.__state_mutex, self._get_connector(self._discovery_url) as connector:
-            client = DiscoveryApiClient(connector)
+            client = DiscoveryAPIClient(connector)
             try:
                 self.__state = self.__state.update_organizations(await client.list_organizations())
             except Exception:
@@ -385,7 +385,7 @@ class ServiceManager:
         """
         self.__state = self.__state.with_workspace(workspace_id)
 
-    def get_connector(self) -> ApiConnector:
+    def get_connector(self) -> APIConnector:
         """Get an API connector for the currently selected hub.
 
         :returns: The API connector.

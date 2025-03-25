@@ -229,7 +229,7 @@ class ClientValueError(_WrappedError, ValueError):
     """
 
 
-class EvoApiException(EvoClientException):
+class EvoAPIException(EvoClientException):
     """Base class for all service errors."""
 
     def __init__(self, status: int, reason: str | None, content: object | None, headers: HTTPHeaderDict | None):
@@ -253,11 +253,11 @@ class EvoApiException(EvoClientException):
         return error_message
 
 
-class UnknownResponseError(EvoApiException):
+class UnknownResponseError(EvoAPIException):
     """The service sent an unknown response."""
 
 
-class BaseTypedError(EvoApiException):
+class BaseTypedError(EvoAPIException):
     """Base class for service errors that have a defined type.
 
     Concrete error types must subclass BaseTypedError and define the class attribute `TYPE_ID`, which will be used

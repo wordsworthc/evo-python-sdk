@@ -9,7 +9,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .connector import ApiConnector, NoAuth
+from .connector import APIConnector, NoAuth
 from .data import (
     DependencyStatus,
     EmptyResponse,
@@ -28,7 +28,7 @@ from .interfaces import IAuthorizer, ICache, IFeedback, ITransport
 from .service import BaseServiceClient
 
 __all__ = [
-    "ApiConnector",
+    "APIConnector",
     "BaseServiceClient",
     "DependencyStatus",
     "EmptyResponse",

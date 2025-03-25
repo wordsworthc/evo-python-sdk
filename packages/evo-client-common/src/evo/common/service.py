@@ -9,7 +9,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .connector import ApiConnector
+from .connector import APIConnector
 from .data import Environment
 
 __all__ = ["BaseServiceClient"]
@@ -21,7 +21,7 @@ class BaseServiceClient:
     Defines including cache management and environment variables.
     """
 
-    def __init__(self, environment: Environment, connector: ApiConnector) -> None:
+    def __init__(self, environment: Environment, connector: APIConnector) -> None:
         """
         :param environment: The environment object
         :param connector: The connector object.
