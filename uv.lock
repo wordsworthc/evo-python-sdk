@@ -265,7 +265,7 @@ wheels = [
 
 [[package]]
 name = "evo-client-common"
-version = "2.1.0"
+version = "0.1.0"
 source = { editable = "packages/evo-client-common" }
 dependencies = [
     { name = "pure-interface" },
@@ -325,7 +325,7 @@ test = [
 
 [[package]]
 name = "evo-files"
-version = "2.0.0"
+version = "0.1.0"
 source = { editable = "packages/evo-files" }
 dependencies = [
     { name = "evo-client-common" },
@@ -376,7 +376,7 @@ test = [
 
 [[package]]
 name = "evo-objects"
-version = "2.2.2"
+version = "0.1.0"
 source = { editable = "packages/evo-objects" }
 dependencies = [
     { name = "evo-client-common" },
