@@ -17,7 +17,7 @@ from pathlib import Path
 from uuid import UUID
 
 from evo import logging
-from evo.common import ApiConnector, Environment, ICache, IFeedback, ITransport
+from evo.common import APIConnector, Environment, ICache, IFeedback, ITransport
 from evo.common.io import Download, Upload
 from evo.common.io.exceptions import DataExistsError, DataNotFoundError, RenewalError
 from evo.common.utils import NoFeedback, Retry
@@ -41,7 +41,7 @@ class ObjectDataUpload(Upload):
     """Context for uploading data to the Geoscience Object Service."""
 
     def __init__(
-        self, connector: ApiConnector, environment: Environment, name: str, initial_url: str | None = None
+        self, connector: APIConnector, environment: Environment, name: str, initial_url: str | None = None
     ) -> None:
         """
         :param connector: The API connector to use.
@@ -108,7 +108,7 @@ class ObjectDataUpload(Upload):
 
     @staticmethod
     async def _create_multiple(
-        connector: ApiConnector, environment: Environment, names: Sequence[str | UUID]
+        connector: APIConnector, environment: Environment, names: Sequence[str | UUID]
     ) -> AsyncIterator[ObjectDataUpload]:
         """Internal method to create multiple data upload contexts.
 
@@ -147,7 +147,7 @@ class ObjectDataDownload(Download[ObjectMetadata]):
     """Context for downloading data from the Geoscience Object Service."""
 
     def __init__(
-        self, connector: ApiConnector, metadata: ObjectMetadata, name: str, initial_url: str | None = None
+        self, connector: APIConnector, metadata: ObjectMetadata, name: str, initial_url: str | None = None
     ) -> None:
         self._api = ObjectsApi(connector)
         self._metadata = metadata
@@ -199,7 +199,7 @@ class ObjectDataDownload(Download[ObjectMetadata]):
 
     @staticmethod
     def _create_multiple(
-        connector: ApiConnector, metadata: ObjectMetadata, urls_by_name: dict[str, str]
+        connector: APIConnector, metadata: ObjectMetadata, urls_by_name: dict[str, str]
     ) -> Iterator[ObjectDataDownload]:
         """Internal method to create multiple data download contexts.
 

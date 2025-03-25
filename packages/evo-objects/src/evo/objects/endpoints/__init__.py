@@ -8,21 +8,28 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 """
-Geoscience Object Service
+Geoscience Object API
 =============
 
-A service for structured geoscience objects
 
-This code is generated from the OpenAPI specification for Geoscience Object Service.
-API version: 1.7.3
+The Geoscience Object API enables technological integrations at the object level. It enables users to access and utilise their data across all products through a common and accessible data structure.
+
+A Geoscience Object is a data structure that represents a concrete geological, geotechnical, or geophysical concept. Geoscience Objects can be referenced by their UUID or by a user-defined object path.
+
+For more information on using the Geoscience Object API, see the [Geoscience Object API overview](/docs/guides/objects), or the API references here.
+
+
+This code is generated from the OpenAPI specification for Geoscience Object API.
+API version: 1.14.0
 """
 
 # Import endpoint apis.
-from .api import DataApi, ObjectsApi
+from .api import DataApi, MetadataApi, ObjectsApi, StagesApi
 
 __all__ = [
     "DataApi",
+    "MetadataApi",
     "ObjectsApi",
+    "StagesApi",
 ]

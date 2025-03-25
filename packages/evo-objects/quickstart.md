@@ -7,7 +7,7 @@ Just want to get going? See [the Getting Started guide for evo-client-common](..
 ### Interacting with the Geoscience Object Service
 
 `evo.objects.ObjectServiceClient` requires an `evo.common.Environment` and an
-`evo.common.ApiConnector`. Workspace objects have a `get_environment()` method that returns an
+`evo.common.APIConnector`. Workspace objects have a `get_environment()` method that returns an
 environment object, which can be used by one or more service clients to interact with different services using the same
 organization and workspace. The hub connector that was used for workspace discovery can be reused for interacting
 with services.

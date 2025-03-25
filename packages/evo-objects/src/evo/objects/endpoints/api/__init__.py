@@ -10,4 +10,6 @@
 #  limitations under the License.
 
 from .data_api import DataApi  # noqa: F401
+from .metadata_api import MetadataApi  # noqa: F401
 from .objects_api import ObjectsApi  # noqa: F401
+from .stages_api import StagesApi  # noqa: F401

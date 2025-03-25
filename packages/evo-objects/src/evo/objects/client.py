@@ -16,7 +16,7 @@ from pathlib import PurePosixPath
 from uuid import UUID
 
 from evo import logging
-from evo.common import ApiConnector, BaseServiceClient, HealthCheckType, ICache, Page, ServiceHealth
+from evo.common import APIConnector, BaseServiceClient, HealthCheckType, ICache, Page, ServiceHealth
 from evo.common.data import Environment
 from evo.common.io.exceptions import DataNotFoundError
 from evo.common.utils import get_service_health
@@ -63,7 +63,7 @@ class DownloadedObject:
     """A downloaded geoscience object."""
 
     def __init__(
-        self, object_: GeoscienceObject, metadata: ObjectMetadata, urls_by_name: dict[str, str], connector: ApiConnector
+        self, object_: GeoscienceObject, metadata: ObjectMetadata, urls_by_name: dict[str, str], connector: APIConnector
     ) -> None:
         self._object = object_
         self._metadata = metadata
@@ -106,7 +106,7 @@ class DownloadedObject:
 
 
 class ObjectServiceClient(BaseServiceClient):
-    def __init__(self, environment: Environment, connector: ApiConnector) -> None:
+    def __init__(self, environment: Environment, connector: APIConnector) -> None:
         super().__init__(environment, connector)
         self._objects_api = ObjectsApi(connector=connector)
 
@@ -117,7 +117,7 @@ class ObjectServiceClient(BaseServiceClient):
 
         :return: A ServiceHealth object.
 
-        :raises EvoApiException: If the API returns an unexpected status code.
+        :raises EvoAPIException: If the API returns an unexpected status code.
         :raises ClientValueError: If the response is not a valid service health check response.
         """
         return await get_service_health(self._connector, "geoscience-object", check_type=check_type)

@@ -15,7 +15,7 @@ from typing import Any
 from uuid import UUID
 
 from evo import logging
-from evo.common import ApiConnector, Environment, ICache, IFeedback
+from evo.common import APIConnector, Environment, ICache, IFeedback
 from evo.common.exceptions import StorageFileNotFoundError
 from evo.common.io.exceptions import DataExistsError
 from evo.common.utils import NoFeedback, PartialFeedback
@@ -66,7 +66,7 @@ class ObjectDataClient:
     by default. This dependency can be installed with `pip install evo-objects[utils]`.
     """
 
-    def __init__(self, environment: Environment, connector: ApiConnector, cache: ICache) -> None:
+    def __init__(self, environment: Environment, connector: APIConnector, cache: ICache) -> None:
         """
         :param environment: The environment to upload and download data from.
         :param connector: The API connector to use for uploading and downloading data.
