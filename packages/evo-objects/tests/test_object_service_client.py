@@ -97,13 +97,13 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000010"),
                     name="x y",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
                 modified_at=dateutil_parse("2020-01-02 01:30:00+00:00").replace(tzinfo=datetime.timezone.utc),
                 modified_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000010"),
                     name="x y",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
                 parent="/A",
                 schema_id=ObjectSchema("objects", "test", SchemaVersion(1, 2, 3)),
@@ -152,7 +152,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000010"),
                     name="x y",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
                 modified_at=dateutil_parse("2020-01-02 01:30:00+00:00").replace(tzinfo=datetime.timezone.utc),
                 modified_by=ServiceUser(
@@ -194,13 +194,13 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000010"),
                     name="x y",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
                 modified_at=dateutil_parse("2020-01-02 01:30:00+00:00").replace(tzinfo=datetime.timezone.utc),
                 modified_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000010"),
                     name="x y",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
                 parent="/A",
                 schema_id=ObjectSchema("objects", "test", SchemaVersion(1, 2, 3)),
@@ -234,7 +234,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000010"),
                     name="x y",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
                 modified_at=dateutil_parse("2020-01-02 01:30:00+00:00").replace(tzinfo=datetime.timezone.utc),
                 modified_by=ServiceUser(
@@ -270,7 +270,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000011"),
                     name="x z",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
             ),
             ObjectVersion(
@@ -279,7 +279,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000010"),
                     name="x y",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
             ),
             ObjectVersion(
@@ -288,7 +288,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000012"),
                     name="x w",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
             ),
         ]
@@ -311,7 +311,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000011"),
                     name="x z",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
             ),
             ObjectVersion(
@@ -320,7 +320,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000010"),
                     name="x y",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
             ),
             ObjectVersion(
@@ -329,7 +329,7 @@ class TestObjectServiceClient(TestWithConnector, TestWithStorage):
                 created_by=ServiceUser(
                     id=UUID("00000000-0000-0000-0000-000000000012"),
                     name="x w",
-                    email="test@test.com",
+                    email="test@example.com",
                 ),
             ),
         ]

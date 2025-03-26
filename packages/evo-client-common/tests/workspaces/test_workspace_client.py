@@ -185,7 +185,12 @@ class TestWorkspaceClient(TestWithConnector):
             json.dumps(
                 {
                     "results": [
-                        {"user_id": str(USER_ID), "role": "owner", "full_name": "Test User", "email": "test@test.com"},
+                        {
+                            "user_id": str(USER_ID),
+                            "role": "owner",
+                            "full_name": "Test User",
+                            "email": "test@example.com",
+                        },
                     ],
                     "links": {"self": "dummy-link.com"},
                 }
@@ -201,7 +206,7 @@ class TestWorkspaceClient(TestWithConnector):
         self.assertEqual(
             response,
             [
-                User(user_id=USER_ID, role=WorkspaceRole.owner, full_name="Test User", email="test@test.com"),
+                User(user_id=USER_ID, role=WorkspaceRole.owner, full_name="Test User", email="test@example.com"),
             ],
         )
 

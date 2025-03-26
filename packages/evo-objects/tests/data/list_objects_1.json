@@ -10,7 +10,7 @@
             "created_by": {
                 "id": "00000000-0000-0000-0000-000000000010",
                 "name": "x y",
-                "email": "test@test.com"
+                "email": "test@example.com"
             },
             "modified_at": "2020-01-02 01:30:00+00:00",
             "modified_by": {
