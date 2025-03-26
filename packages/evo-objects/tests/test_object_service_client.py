@@ -26,7 +26,7 @@ from evo.objects import (
     ObjectDataUpload,
     ObjectMetadata,
     ObjectSchema,
-    ObjectServiceClient,
+    ObjectAPIClient,
     ObjectVersion,
     SchemaVersion,
 )
@@ -39,11 +39,11 @@ MOCK_VERSION_CONTENT = json.dumps(load_test_data("list_versions.json"))
 _MAX_UPLOAD_URLS = 32
 
 
-class TestObjectServiceClient(TestWithConnector, TestWithStorage):
+class TestObjectAPIClient(TestWithConnector, TestWithStorage):
     def setUp(self) -> None:
         TestWithConnector.setUp(self)
         TestWithStorage.setUp(self)
-        self.object_client = ObjectServiceClient(connector=self.connector, environment=self.environment)
+        self.object_client = ObjectAPIClient(connector=self.connector, environment=self.environment)
 
     @property
     def base_path(self) -> str:

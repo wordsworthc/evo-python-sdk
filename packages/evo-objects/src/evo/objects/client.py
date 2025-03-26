@@ -40,7 +40,7 @@ logger = logging.getLogger("object.client")
 
 __all__ = [
     "DownloadedObject",
-    "ObjectServiceClient",
+    "ObjectAPIClient",
 ]
 
 
@@ -105,7 +105,7 @@ class DownloadedObject:
             yield ctx
 
 
-class ObjectServiceClient(BaseAPIClient):
+class ObjectAPIClient(BaseAPIClient):
     def __init__(self, environment: Environment, connector: APIConnector) -> None:
         super().__init__(environment, connector)
         self._objects_api = ObjectsApi(connector=connector)

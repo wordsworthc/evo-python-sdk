@@ -207,13 +207,13 @@ class ObjectDataClient:
         :raises TableFormatError: If the data does not match the expected format.
         :raises SchemaValidationError: If the data has a different number of rows than expected.
         """
-        from ..client import ObjectServiceClient  # Import here to avoid circular import.
+        from ..client import ObjectAPIClient  # Import here to avoid circular import.
         from .tables import KnownTableFormat  # Import here to avoid import error if pyarrow is not installed.
 
         parquet_file = self.cache_location / str(table_info["data"])
         if not parquet_file.exists():  # Only download it if it isn't already there.
-            # Reusing the implementation for preparing a download from ObjectServiceClient to avoid code duplication.
-            client = ObjectServiceClient(self._environment, self._connector)
+            # Reusing the implementation for preparing a download from ObjectAPIClient to avoid code duplication.
+            client = ObjectAPIClient(self._environment, self._connector)
             (download,) = [d async for d in client.prepare_data_download(object_id, version_id, [table_info["data"]])]
             await download.download_to_cache(cache=self._cache, transport=self._connector.transport, fb=fb)
         else:
