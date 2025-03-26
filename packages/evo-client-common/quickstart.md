@@ -6,7 +6,7 @@ Just want to get going? This is the simplest setup to interact with an Evo servi
 
 ``` python 
 from evo.aio import AioTransport
-from evo.common import APIConnector, BaseServiceClient
+from evo.common import APIConnector, BaseAPIClient
 from evo.common.utils import BackoffIncremental
 from evo.discovery import DiscoveryAPIClient
 from evo.oauth import AuthorizationCodeAuthorizer, OIDCConnector
@@ -53,7 +53,7 @@ workspace_env = workspace.get_environment()
 
 # Interact with a service.
 async with hub_connector:
-    service_client = BaseServiceClient(workspace_env, hub_connector)
+    service_client = BaseAPIClient(workspace_env, hub_connector)
     ...
 
 ```
@@ -165,7 +165,7 @@ reused for interacting with services.
 
 ``` python
 async with hub_connector:
-    service_client = BaseServiceClient(workspace_env, hub_connector)
+    service_client = BaseAPIClient(workspace_env, hub_connector)
     ...
 ```
 
@@ -178,7 +178,7 @@ connector and environment objects.
 from uuid import UUID
 
 from evo.aio import AioTransport
-from evo.common import APIConnector, BaseServiceClient, Environment
+from evo.common import APIConnector, BaseAPIClient, Environment
 from evo.common.utils import BackoffIncremental
 from evo.oauth import AuthorizationCodeAuthorizer, OIDCConnector
 
@@ -206,7 +206,7 @@ environment = Environment(
 )
 hub_connector = APIConnector(environment.hub_url, transport, authorizer)
 async with hub_connector:
-    service_client = BaseServiceClient(environment, hub_connector)
+    service_client = BaseAPIClient(environment, hub_connector)
     ...
 ```
 

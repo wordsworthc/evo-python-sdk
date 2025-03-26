@@ -16,7 +16,7 @@ from pathlib import PurePosixPath
 from uuid import UUID
 
 from evo import logging
-from evo.common import APIConnector, BaseServiceClient, HealthCheckType, ICache, Page, ServiceHealth
+from evo.common import APIConnector, BaseAPIClient, HealthCheckType, ICache, Page, ServiceHealth
 from evo.common.data import Environment
 from evo.common.io.exceptions import DataNotFoundError
 from evo.common.utils import get_service_health
@@ -105,7 +105,7 @@ class DownloadedObject:
             yield ctx
 
 
-class ObjectServiceClient(BaseServiceClient):
+class ObjectServiceClient(BaseAPIClient):
     def __init__(self, environment: Environment, connector: APIConnector) -> None:
         super().__init__(environment, connector)
         self._objects_api = ObjectsApi(connector=connector)

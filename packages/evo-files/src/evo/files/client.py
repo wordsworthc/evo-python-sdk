@@ -14,7 +14,7 @@ from __future__ import annotations
 from pathlib import PurePosixPath
 from uuid import UUID
 
-from evo.common import APIConnector, BaseServiceClient, Environment, HealthCheckType, Page, ServiceHealth, ServiceUser
+from evo.common import APIConnector, BaseAPIClient, Environment, HealthCheckType, Page, ServiceHealth, ServiceUser
 from evo.common.utils import get_service_health
 
 from evo import logging
@@ -57,7 +57,7 @@ def _versions_from_listed_versions(models: list[FileVersionResponse]) -> list[Fi
     return sorted(versions, key=lambda v: v.created_at, reverse=True)
 
 
-class FileAPIClient(BaseServiceClient):
+class FileAPIClient(BaseAPIClient):
     def __init__(self, environment: Environment, connector: APIConnector) -> None:
         """
         :param environment: The environment object

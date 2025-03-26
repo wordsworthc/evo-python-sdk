@@ -25,11 +25,11 @@ from .data import (
     ServiceUser,
 )
 from .interfaces import IAuthorizer, ICache, IFeedback, ITransport
-from .service import BaseServiceClient
+from .service import BaseAPIClient
 
 __all__ = [
     "APIConnector",
-    "BaseServiceClient",
+    "BaseAPIClient",
     "DependencyStatus",
     "EmptyResponse",
     "Environment",

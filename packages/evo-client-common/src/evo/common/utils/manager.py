@@ -16,7 +16,7 @@ from typing import Any, TypeVar
 from uuid import UUID
 
 from evo import logging
-from evo.common import APIConnector, BaseServiceClient, Environment
+from evo.common import APIConnector, BaseAPIClient, Environment
 from evo.common.exceptions import SelectionError
 from evo.common.interfaces import IAuthorizer, ITransport
 from evo.discovery import DiscoveryAPIClient, Hub, Organization
@@ -28,7 +28,7 @@ logger = logging.getLogger("common.utils.manager")
 
 
 # Generic type variable for the client factory method.
-T_client = TypeVar("T_client", bound=BaseServiceClient)
+T_client = TypeVar("T_client", bound=BaseAPIClient)
 
 
 class _State:
