@@ -44,7 +44,7 @@ from .endpoints.models import UserRole as PydanticUserRole
 from .endpoints.models import User as PydanticUser
 
 
-class WorkspaceServiceClient:
+class WorkspaceAPIClient:
     """
     The Workspace Service API client.
     """

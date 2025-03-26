@@ -9,7 +9,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import WorkspaceServiceClient
+from .client import WorkspaceAPIClient
 from .data import ServiceUser, UserPermission, Workspace, WorkspaceRole, User, UserRole, BoundingBox, Coordinate
 
 __all__ = [
@@ -21,5 +21,5 @@ __all__ = [
     "UserPermission",
     "Workspace",
     "WorkspaceRole",
-    "WorkspaceServiceClient",
+    "WorkspaceAPIClient",
 ]

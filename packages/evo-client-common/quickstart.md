@@ -10,7 +10,7 @@ from evo.common import APIConnector, BaseAPIClient
 from evo.common.utils import BackoffIncremental
 from evo.discovery import DiscoveryAPIClient
 from evo.oauth import AuthorizationCodeAuthorizer, OIDCConnector
-from evo.workspaces import WorkspaceServiceClient
+from evo.workspaces import WorkspaceAPIClient
 
 # Configure the transport.
 transport = AioTransport(
@@ -45,7 +45,7 @@ hub_connector = APIConnector(selected_org.hubs[0].url, transport, authorizer)
 
 # Select a Workspace.
 async with hub_connector:
-    workspace_client = WorkspaceServiceClient(hub_connector, selected_org.id)
+    workspace_client = WorkspaceAPIClient(hub_connector, selected_org.id)
     workspaces = await workspace_client.list_workspaces()
 
 workspace = workspaces[0]
@@ -147,12 +147,12 @@ async with APIConnector("https://discover.api.seequent.com", transport, authoriz
 ### Using the Workspace API
 
 The Workspace API is used to find the workspaces that a user has access to. This is done using the
-`evo.workspaces.WorkspaceServiceClient` class. The `list_workspaces()` method is used to get
+`evo.workspaces.WorkspaceAPIClient` class. The `list_workspaces()` method is used to get
 a list of workspaces belonging to the specified organization on the specified hub.
 
 ``` python
 async with hub_connector:
-    workspace_client = WorkspaceServiceClient(hub_connector, selected_org.id)
+    workspace_client = WorkspaceAPIClient(hub_connector, selected_org.id)
     workspaces = await workspace_client.list_workspaces()
 ```
 

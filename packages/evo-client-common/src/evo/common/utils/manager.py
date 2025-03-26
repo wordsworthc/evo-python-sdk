@@ -20,7 +20,7 @@ from evo.common import APIConnector, BaseAPIClient, Environment
 from evo.common.exceptions import SelectionError
 from evo.common.interfaces import IAuthorizer, ITransport
 from evo.discovery import DiscoveryAPIClient, Hub, Organization
-from evo.workspaces import Workspace, WorkspaceServiceClient
+from evo.workspaces import Workspace, WorkspaceAPIClient
 
 __all__ = ["ServiceManager"]
 
@@ -352,7 +352,7 @@ class ServiceManager:
                 return  # Cannot refresh workspaces without a hub.
 
             async with self._get_connector(hub.url) as connector:
-                client = WorkspaceServiceClient(connector, org.id)
+                client = WorkspaceAPIClient(connector, org.id)
                 try:
                     self.__state = self.__state.update_workspaces(await client.list_workspaces())
                 except Exception:
