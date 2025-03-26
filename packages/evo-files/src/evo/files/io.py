@@ -22,8 +22,8 @@ from .data import FileMetadata
 from .endpoints import FileV2Api
 
 __all__ = [
-    "FileApiDownload",
-    "FileApiUpload",
+    "FileAPIDownload",
+    "FileAPIUpload",
 ]
 
 _CACHE_SCOPE = "filev2"
@@ -88,7 +88,7 @@ class _FileIOMixin:
                 return url
 
 
-class FileApiUpload(Upload, _FileIOMixin):
+class FileAPIUpload(Upload, _FileIOMixin):
     """A context for uploading a file to the File API.
 
     Do not use this class directly. Instead, use the `FileAPIClient.prepare_upload_by_*` methods.
@@ -135,7 +135,7 @@ class FileApiUpload(Upload, _FileIOMixin):
         return response.upload
 
 
-class FileApiDownload(Download[FileMetadata], _FileIOMixin):
+class FileAPIDownload(Download[FileMetadata], _FileIOMixin):
     """A context for downloading a file from the File API.
 
     Do not use this class directly. Instead, use the `FileAPIClient.prepare_download_by_*` methods.

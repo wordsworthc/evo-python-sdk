@@ -15,7 +15,7 @@ from uuid import UUID
 from data import load_test_data
 from evo.common import ServiceUser
 from evo.common.test_tools import TestWithConnector, TestWithDownloadHandler, TestWithUploadHandler, utc_datetime
-from evo.files import FileApiDownload, FileApiUpload, FileMetadata
+from evo.files import FileAPIDownload, FileAPIUpload, FileMetadata
 
 TEST_DATA = """
 x,y,z
@@ -36,7 +36,7 @@ VERSION_ID = "123456"
 INITIAL_URL = "https://unit.test/initial/url"
 
 
-class TestFileApiDownload(TestWithConnector, TestWithDownloadHandler):
+class TestFileAPIDownload(TestWithConnector, TestWithDownloadHandler):
     def setUp(self) -> None:
         TestWithConnector.setUp(self)
         TestWithDownloadHandler.setUp(self)
@@ -61,7 +61,7 @@ class TestFileApiDownload(TestWithConnector, TestWithDownloadHandler):
             version_id=VERSION_ID,
             size=len(TEST_DATA),
         )
-        self.download = FileApiDownload(connector=self.connector, metadata=self.metadata, initial_url=INITIAL_URL)
+        self.download = FileAPIDownload(connector=self.connector, metadata=self.metadata, initial_url=INITIAL_URL)
 
     def test_label(self) -> None:
         expected = f"{self.metadata.id}?version_id={self.metadata.version_id}"
@@ -110,11 +110,11 @@ class TestFileApiDownload(TestWithConnector, TestWithDownloadHandler):
         self.assert_download_requests(INITIAL_URL)
 
 
-class TestFileApiUpload(TestWithConnector, TestWithUploadHandler):
+class TestFileAPIUpload(TestWithConnector, TestWithUploadHandler):
     def setUp(self) -> None:
         TestWithConnector.setUp(self)
         TestWithUploadHandler.setUp(self)
-        self.upload = FileApiUpload(
+        self.upload = FileAPIUpload(
             connector=self.connector,
             environment=self.environment,
             file_id=FILE_ID,

@@ -22,7 +22,7 @@ from evo import logging
 from .data import FileMetadata, FileVersion
 from .endpoints import FileV2Api
 from .endpoints.models import DownloadFileResponse, FileVersionResponse, ListFile, UserInfo
-from .io import FileApiDownload, FileApiUpload
+from .io import FileAPIDownload, FileAPIUpload
 
 logger = logging.getLogger("file.client")
 
@@ -230,13 +230,13 @@ class FileAPIClient(BaseAPIClient):
         )
         return _versions_from_listed_versions(file_response.versions)
 
-    async def prepare_download_by_path(self, path: str, version_id: str | None = None) -> FileApiDownload:
+    async def prepare_download_by_path(self, path: str, version_id: str | None = None) -> FileAPIDownload:
         """Prepares a file for download by path.
 
         :param path: Path to the file.
         :param version_id: Versions of the file.
 
-        :return: A FileApiDownload object.
+        :return: A FileAPIDownload object.
         """
         response = await self._api.get_file_by_path(
             organisation_id=str(self._environment.org_id),
@@ -245,15 +245,15 @@ class FileAPIClient(BaseAPIClient):
             version_id=version_id,
         )
         metadata = self._metadata_from_endpoint_model(response)
-        return FileApiDownload(connector=self._connector, metadata=metadata, initial_url=response.download)
+        return FileAPIDownload(connector=self._connector, metadata=metadata, initial_url=response.download)
 
-    async def prepare_download_by_id(self, file_id: UUID, version_id: str | None = None) -> FileApiDownload:
+    async def prepare_download_by_id(self, file_id: UUID, version_id: str | None = None) -> FileAPIDownload:
         """Prepares a file for download by ID.
 
         :param file_id: UUID of the file.
         :param version_id: Version of the file.
 
-        :return: A FileApiDownload object.
+        :return: A FileAPIDownload object.
         """
         response = await self._api.get_file_by_id(
             organisation_id=str(self._environment.org_id),
@@ -262,21 +262,21 @@ class FileAPIClient(BaseAPIClient):
             version_id=version_id,
         )
         metadata = self._metadata_from_endpoint_model(response)
-        return FileApiDownload(connector=self._connector, metadata=metadata, initial_url=response.download)
+        return FileAPIDownload(connector=self._connector, metadata=metadata, initial_url=response.download)
 
-    async def prepare_upload_by_path(self, path: str) -> FileApiUpload:
+    async def prepare_upload_by_path(self, path: str) -> FileAPIUpload:
         """Prepares a file for upload by path. If the file already exists, a new version will be created.
 
         :param path: Path the file is being uploaded to.
 
-        :return: A FileApiUpload object.
+        :return: A FileAPIUpload object.
         """
         response = await self._api.upsert_file_by_path(
             organisation_id=str(self._environment.org_id),
             workspace_id=str(self._environment.workspace_id),
             file_path=path,
         )
-        return FileApiUpload(
+        return FileAPIUpload(
             connector=self._connector,
             environment=self._environment,
             file_id=response.file_id,
@@ -284,20 +284,20 @@ class FileAPIClient(BaseAPIClient):
             initial_url=response.upload,
         )
 
-    async def prepare_upload_by_id(self, file_id: UUID) -> FileApiUpload:
+    async def prepare_upload_by_id(self, file_id: UUID) -> FileAPIUpload:
         """Prepares a file for upload by ID. The file_id must be the ID of an existing file, for which a new version
         will be created.
 
         :param file_id: UUID of the file.
 
-        :return: A FileApiUpload object.
+        :return: A FileAPIUpload object.
         """
         response = await self._api.update_file_by_id(
             organisation_id=str(self._environment.org_id),
             workspace_id=str(self._environment.workspace_id),
             file_id=str(file_id),
         )
-        return FileApiUpload(
+        return FileAPIUpload(
             connector=self._connector,
             environment=self._environment,
             file_id=file_id,

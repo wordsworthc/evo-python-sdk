@@ -15,12 +15,12 @@
 
 from .client import FileAPIClient
 from .data import FileMetadata, FileVersion
-from .io import FileApiDownload, FileApiUpload
+from .io import FileAPIDownload, FileAPIUpload
 
 __all__ = [
     "FileAPIClient",
-    "FileApiDownload",
-    "FileApiUpload",
+    "FileAPIDownload",
+    "FileAPIUpload",
     "FileMetadata",
     "FileVersion",
 ]
