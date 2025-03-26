@@ -440,14 +440,14 @@ class ObjectsApi:
         offset: int | None = None,
         deleted: bool | None = None,
         order_by: str | None = None,
-        author: list[CreatedByInner] | None = None,  # noqa: F405
-        created_by: list[CreatedByInner] | None = None,  # noqa: F405
+        author: list[str] | None = None,
+        created_by: list[str] | None = None,
         created_at: list[str] | None = None,
-        modified_by: list[CreatedByInner] | None = None,  # noqa: F405
+        modified_by: list[str] | None = None,
         modified_at: list[str] | None = None,
         object_name: list[str] | None = None,
         schema_id: list[str] | None = None,
-        deleted_by: list[CreatedByInner] | None = None,  # noqa: F405
+        deleted_by: list[str] | None = None,
         deleted_at: list[str] | None = None,
         geojson_bounding_box: list[str] | None = None,
         additional_headers: dict[str, str] | None = None,
@@ -472,13 +472,13 @@ class ObjectsApi:
         :param order_by: (optional) A comma separated list of fields to order by, where the default sort order is ascending. To specify the sort order, prefix the field name with either `asc:` or `desc:` for ascending or descending respectively. Field names can either be arbitrary, representing a field nested inside the data, or one of the following known sort fields: `author`, `created_at`, `created_by`, `deleted_at`, `modified_at`, `modified_by`, `object_name`
             Example: `'order_by=name,desc:created_by,asc:object.a.b.c'`
         :param author: (optional) (deprecated, use `created_by`) The profile ID that you want to filter by
-            Example: `[endpoints.CreatedByInner()]`
+            Example: `['00000000-0000-0000-0000-000000000000']`
         :param created_by: (optional) The UUID of the user that created an object
-            Example: `[endpoints.CreatedByInner()]`
+            Example: `['00000000-0000-0000-0000-000000000000']`
         :param created_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param modified_by: (optional) The UUID of the user that modified an object
-            Example: `[endpoints.CreatedByInner()]`
+            Example: `['00000000-0000-0000-0000-000000000000']`
         :param modified_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param object_name: (optional) The name of the object to filter on. For backwards compatibility, when no operators are supplied, this will perform a case sensitive prefix match of the object file name. The query `object_name=gold` will match an object with the name `goldcolumns.json`. Providing an operator will query over the entire path to and including the file name.
@@ -486,7 +486,7 @@ class ObjectsApi:
         :param schema_id: (optional) The type of schema you want to filter by.
             Example: `['/objects/variogram/0.1.0/variogram.schema.json']`
         :param deleted_by: (optional) The UUID of the user that deleted an object
-            Example: `[endpoints.CreatedByInner()]`
+            Example: `['00000000-0000-0000-0000-000000000000']`
         :param deleted_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param geojson_bounding_box: (optional) The coordinates of the data to spatially search on. The value may optionally include one of two spatial operators, `geowithin` or `geointersects`. If an operator is not defined, then `geointersects` will be used by default. The coordinates must be 5 pairs of longitude and latitude, representing a closed polygon. The first and last coordinates must be the same to close the polygon.
@@ -589,14 +589,14 @@ class ObjectsApi:
         deleted: bool | None = None,
         permitted_workspaces_only: bool | None = None,
         order_by: str | None = None,
-        created_by: list[CreatedByInner] | None = None,  # noqa: F405
+        created_by: list[str] | None = None,
         created_at: list[str] | None = None,
-        modified_by: list[CreatedByInner] | None = None,  # noqa: F405
+        modified_by: list[str] | None = None,
         modified_at: list[str] | None = None,
         object_name: list[str] | None = None,
         schema_id: list[str] | None = None,
         geojson_bounding_box: list[str] | None = None,
-        deleted_by: list[CreatedByInner] | None = None,  # noqa: F405
+        deleted_by: list[str] | None = None,
         deleted_at: list[str] | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
@@ -619,11 +619,11 @@ class ObjectsApi:
         :param order_by: (optional) A comma separated list of fields to order by, where the default sort order is ascending. To specify the sort order, prefix the field name with either `asc:` or `desc:` for ascending or descending respectively. Field names can either be arbitrary, representing a field nested inside the data, or one of the following known sort fields: `created_at`, `created_by`, `modified_at`, `modified_by`, `object_name`, `deleted_at`
             Example: `'order_by=name,desc:created_by,asc:object.a.b.c'`
         :param created_by: (optional) The UUID of the user that created an object
-            Example: `[endpoints.CreatedByInner()]`
+            Example: `['00000000-0000-0000-0000-000000000000']`
         :param created_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param modified_by: (optional) The UUID of the user that modified an object
-            Example: `[endpoints.CreatedByInner()]`
+            Example: `['00000000-0000-0000-0000-000000000000']`
         :param modified_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param object_name: (optional) The name of the object to filter on. For backwards compatibility, when no operators are supplied, this will perform a case sensitive prefix match of the object file name. The query `object_name=gold` will match an object with the name `goldcolumns.json`. Providing an operator will query over the entire path to and including the file name.
@@ -633,7 +633,7 @@ class ObjectsApi:
         :param geojson_bounding_box: (optional) The coordinates of the data to spatially search on. The value may optionally include one of two spatial operators, `geowithin` or `geointersects`. If an operator is not defined, then `geointersects` will be used by default. The coordinates must be 5 pairs of longitude and latitude, representing a closed polygon. The first and last coordinates must be the same to close the polygon.
             Example: `['geointersects:(171.6,-44.5),(173.7,-44.5),(173.7,-42.9),(171.6,-42.9),(171.6,-44.5)']`
         :param deleted_by: (optional) The UUID of the user that deleted an object
-            Example: `[endpoints.CreatedByInner()]`
+            Example: `['00000000-0000-0000-0000-000000000000']`
         :param deleted_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param additional_headers: (optional) Additional headers to send with the request.
