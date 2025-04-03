@@ -16,6 +16,9 @@ dev = [
     { include-group = "test" },
 ]
 
+[tool.ruff]
+line-length = 120
+
 [tool.uv.sources]
 evo-client-common = { workspace = true }
 evo-files = { workspace = true }
