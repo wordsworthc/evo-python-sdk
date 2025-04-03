@@ -16,12 +16,6 @@ build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 aiohttp = ["aiohttp"]
-notebooks = [
-    "evo-client-common[aiohttp]",
-    "ipywidgets",
-    "jupyter",
-    "python-dotenv",
-]
 
 [dependency-groups]
 # Dev dependencies. The version is left unspecified so the latest is installed.
@@ -38,6 +32,12 @@ dev = [
     "ruff==0.9.1", # keep in sync with .pre-commit-config.yaml
     "pre-commit",
     {include-group="test"},
+]
+notebooks = [
+    "evo-client-common[aiohttp]",
+    "ipywidgets",
+    "jupyter",
+    "python-dotenv",
 ]
 
 [tool.setuptools.packages.find]
