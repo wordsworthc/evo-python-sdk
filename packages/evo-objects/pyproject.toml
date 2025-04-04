@@ -14,6 +14,7 @@ build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 aiohttp = ["evo-client-common[aiohttp]>=0.1.0"]
+notebooks = ["evo-client-common[notebooks]>=0.1.0"]
 utils = ["pyarrow", "pandas"]
 
 [dependency-groups]
@@ -25,6 +26,7 @@ test = [
     "pytest",
 ]
 dev = [
+    "evo-objects[aiohttp,notebooks,utils]",
     "bumpver",
     "coverage[toml]",
     "ruff",

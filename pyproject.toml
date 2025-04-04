@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Monorepo containing independently versioned Evo Python SDKs"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["evo-client-common[aiohttp]", "evo-objects[utils]", "evo-files"]
+dependencies = [
+    "evo-client-common[aiohttp,notebooks]",
+    "evo-objects[utils]",
+    "evo-files",
+]
 
 [dependency-groups]
 test = ["pytest", "freezegun", "parameterized==0.9.0"]
@@ -13,6 +17,7 @@ dev = [
     "ruff==0.9.1",              # keep in sync with .pre-commit-config.yaml
     "bumpver",
     "coverage[toml]",
+    "jupyter",
     { include-group = "test" },
 ]
 
