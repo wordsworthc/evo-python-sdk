@@ -5,9 +5,14 @@ description = "Monorepo containing independently versioned Evo Python SDKs"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "evo-client-common[aiohttp,notebooks]",
+    "evo-client-common[aiohttp]",
     "evo-objects[utils]",
     "evo-files",
+]
+
+[project.optional-dependencies]
+notebooks = [
+    "evo-client-common[notebooks]",
 ]
 
 [dependency-groups]
@@ -17,8 +22,11 @@ dev = [
     "ruff==0.9.1",              # keep in sync with .pre-commit-config.yaml
     "bumpver",
     "coverage[toml]",
-    "jupyter",
     { include-group = "test" },
+]
+notebooks = [
+    "evo-python-sdk[notebooks]",
+    "jupyter",
 ]
 
 [tool.ruff]

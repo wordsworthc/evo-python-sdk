@@ -32,7 +32,7 @@ test = [
     "pytest",
 ]
 dev = [
-    "evo-client-common[aiohttp,notebooks]",
+    "evo-client-common[aiohttp]",
     "bumpver",
     "coverage[toml]",
     "ruff==0.9.1", # keep in sync with .pre-commit-config.yaml
@@ -40,10 +40,8 @@ dev = [
     {include-group="test"},
 ]
 notebooks = [
-    "evo-client-common[aiohttp]",
-    "ipywidgets",
+    "evo-client-common[aiohttp,notebooks]",
     "jupyter",
-    "python-dotenv",
 ]
 
 [tool.setuptools.packages.find]

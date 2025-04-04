@@ -26,11 +26,15 @@ test = [
     "pytest",
 ]
 dev = [
-    "evo-objects[aiohttp,notebooks,utils]",
+    "evo-objects[aiohttp,utils]",
     "bumpver",
     "coverage[toml]",
     "ruff",
     {include-group="test"},
+]
+notebooks = [
+    "evo-objects[aiohttp,notebooks,utils]",
+    "jupyter",
 ]
 
 [tool.setuptools.packages.find]
