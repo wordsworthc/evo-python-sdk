@@ -17,7 +17,7 @@ from typing import Any
 from unittest import mock
 from urllib.parse import urljoin
 
-from ..connector import ApiConnector
+from ..connector import APIConnector
 from ..data import HTTPHeaderDict, HTTPResponse, RequestMethod
 from ..interfaces import IAuthorizer, ITransport
 from .consts import ACCESS_TOKEN, BASE_URL
@@ -244,7 +244,7 @@ class TestWithConnector(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
         self.transport = TestTransport()
         self.authorizer = TestAuthorizer()
-        self.connector = ApiConnector(BASE_URL, self.transport, self.authorizer)
+        self.connector = APIConnector(BASE_URL, self.transport, self.authorizer)
 
     def assert_request_made(
         self,

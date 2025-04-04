@@ -33,7 +33,7 @@ from .exceptions import (
     ClientTypeError,
     ClientValueError,
     CustomTypedError,
-    EvoApiException,
+    EvoAPIException,
     EvoClientException,
     GeneralizedTypedError,
     UnauthorizedException,
@@ -44,7 +44,7 @@ from .interfaces import IAuthorizer, ITransport
 logger = logging.getLogger("connector")
 
 __all__ = [
-    "ApiConnector",
+    "APIConnector",
     "NoAuth",
 ]
 
@@ -54,7 +54,7 @@ P = ParamSpec("P")
 
 def retry_on_auth_error(func):  # No type annotation to prevent hiding the signature of the decorated function.
     @functools.wraps(func)
-    async def wrapper(self: ApiConnector, *args: P.args, **kwargs: P.kwargs) -> T:
+    async def wrapper(self: APIConnector, *args: P.args, **kwargs: P.kwargs) -> T:
         # Always use the connector in a context manager to ensure the transport is opened and closed correctly.
         # ITransport implementations are required to be re-entrant, so this is safe. It may still be useful to open
         # and close the transport elsewhere in client code to prevent unnecessarily destroying and recreating any
@@ -93,7 +93,7 @@ NoAuth = _NoAuth()
 """An authorizer that does not provide any authentication."""
 
 
-class ApiConnector:
+class APIConnector:
     """Generic client for facilitating API requests."""
 
     def __init__(
@@ -132,7 +132,7 @@ class ApiConnector:
         """Close the HTTP transport."""
         await self._transport.close()
 
-    async def __aenter__(self) -> ApiConnector:
+    async def __aenter__(self) -> APIConnector:
         await self.open()
         return self
 
@@ -182,7 +182,7 @@ class ApiConnector:
         :raise NotFoundException: If the server responds with HTTP status 404.
         :raise BaseTypedError: If the server responds with any other HTTP status between 400 and 599, and the body
             of the response has a type.
-        :raise EvoApiException: If the server responds with any other HTTP status between 400 and 599, and the body of
+        :raise EvoAPIException: If the server responds with any other HTTP status between 400 and 599, and the body of
             the response does not have a type.
         :raise UnknownResponseError: For other HTTP status codes with no corresponding response type in
             `response_types_map`.
@@ -224,7 +224,7 @@ class ApiConnector:
         if (default_response_type := GeneralizedTypedError.from_status_code(response.status)) is not None:
             pass  # Use the response type returned above.
         elif 400 <= response.status <= 599:  # Error status code.
-            default_response_type = EvoApiException
+            default_response_type = EvoAPIException
         else:
             default_response_type = UnknownResponseError
 
@@ -412,8 +412,8 @@ class ApiConnector:
             return EmptyResponse(status=response.status, reason=response.reason, headers=response.getheaders())
         elif response_type is EmptyResponse and response_data != "":
             raise ClientValueError(msg=f"Unexpected content with '{response.status}' status code")
-        elif isclass(response_type) and issubclass(response_type, EvoApiException):  # Raise if API exception.
-            if response_type is EvoApiException and CustomTypedError.provided_by(response_data):
+        elif isclass(response_type) and issubclass(response_type, EvoAPIException):  # Raise if API exception.
+            if response_type is EvoAPIException and CustomTypedError.provided_by(response_data):
                 # Use Typed Error types, but don't override generalized error types.
                 response_type = CustomTypedError.from_type_id(response_data.get("type"))
             raise response_type(

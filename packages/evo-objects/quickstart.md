@@ -6,14 +6,14 @@ Just want to get going? See [the Getting Started guide for evo-client-common](..
 
 ### Interacting with the Geoscience Object Service
 
-`evo.objects.ObjectServiceClient` requires an `evo.common.Environment` and an
-`evo.common.ApiConnector`. Workspace objects have a `get_environment()` method that returns an
+`evo.objects.ObjectAPIClient` requires an `evo.common.Environment` and an
+`evo.common.APIConnector`. Workspace objects have a `get_environment()` method that returns an
 environment object, which can be used by one or more service clients to interact with different services using the same
 organization and workspace. The hub connector that was used for workspace discovery can be reused for interacting
 with services.
 
 ``` python
-service_client = ObjectServiceClient(workspace_env, hub_connector)
+service_client = ObjectAPIClient(workspace_env, hub_connector)
 service_health = await service_client.get_service_health()
 service_health.raise_for_status()
 
@@ -23,7 +23,7 @@ data_client = service_client.get_data_client(manager.cache)
 ...
 ```
 
-Listing objects is simple, just call the `ObjectServiceClient.list_objects()` method.
+Listing objects is simple, just call the `ObjectAPIClient.list_objects()` method.
 
 ``` python
 offset = 0
@@ -42,4 +42,4 @@ while True:
 
 You can also get a list of all objects. Internally, this recursively calls the `list_objects()` method until all objects are fetched.
 
-Check out the other methods  on the `ObjectServiceClient` for more details on how to upload and download objects, or get object versions.
+Check out the other methods  on the `ObjectAPIClient` for more details on how to upload and download objects, or get object versions.

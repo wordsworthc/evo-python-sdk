@@ -24,7 +24,7 @@ from urllib.parse import parse_qsl, urlparse
 from evo import logging
 
 from .._types import PathLike, resolve_path
-from ..connector import ApiConnector
+from ..connector import APIConnector
 from ..data import EmptyResponse, HTTPHeaderDict, HTTPResponse, RequestMethod
 from ..exceptions import ForbiddenException, UnauthorizedException
 from ..interfaces import IFeedback, ITransport
@@ -88,7 +88,7 @@ class HTTPIOBase:
         self.__callback = url_callback
         self.__transport = transport
         self.__mutex = asyncio.Lock()
-        self.__connector: ApiConnector | None = None
+        self.__connector: APIConnector | None = None
         self.__resource_path: str | None = None
         self.__query_params: list[tuple[str, Any]] = []
         self.__renewal_time: datetime | None = None
@@ -120,7 +120,7 @@ class HTTPIOBase:
                 if not url.startswith("https://"):
                     raise ValueError("Unsupported URL scheme")
                 base_url = "https://" + urlparse(url).hostname
-                self.__connector = ApiConnector(base_url=base_url, transport=self.__transport)
+                self.__connector = APIConnector(base_url=base_url, transport=self.__transport)
                 self.__update_url(url)
         await self.__connector.__aenter__()
         return self

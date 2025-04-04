@@ -32,6 +32,12 @@ from pydantic import (
 from .._model_config import CustomBaseModel
 
 
+class BaseInstanceUserRoleResponse(CustomBaseModel):
+    description: Annotated[StrictStr, Field(title="Description")]
+    id: Annotated[UUID, Field(title="Id")]
+    name: Annotated[StrictStr, Field(title="Name")]
+
+
 class Coordinate(RootModel[list[StrictFloat | StrictInt]]):
     root: Annotated[list[StrictFloat | StrictInt], Field(max_length=2, min_length=2)]
     """
@@ -90,6 +96,13 @@ class PaginationLinks(CustomBaseModel):
     total: Annotated[StrictInt, Field(title="Total")]
 
 
+class PaginationLinksWithoutTotal(CustomBaseModel):
+    count: Annotated[StrictInt, Field(title="Count")]
+    first: Annotated[AnyUrl, Field(title="First")]
+    next: Annotated[AnyUrl | None, Field(title="Next")] = None
+    previous: Annotated[AnyUrl | None, Field(title="Previous")] = None
+
+
 class RoleEnum(Enum):
     owner = "owner"
     editor = "editor"
@@ -134,6 +147,13 @@ class AssignRoleRequest(RootModel[UserRole | UserRoleViaEmail]):
     root: Annotated[UserRole | UserRoleViaEmail, Field(title="AssignRoleRequest")]
 
 
+class BaseInstanceUserResponse(CustomBaseModel):
+    email: Annotated[StrictStr, Field(title="Email")]
+    full_name: Annotated[StrictStr, Field(title="Full Name")]
+    id: Annotated[UUID, Field(title="Id")]
+    roles: Annotated[list[BaseInstanceUserRoleResponse], Field(title="Roles")]
+
+
 class BoundingBox(CustomBaseModel):
     coordinates: Annotated[list[list[Coordinate]], Field(title="Coordinates")]
     type: GeometryTypeEnum
@@ -165,6 +185,11 @@ class CreateWorkspaceRequest(CustomBaseModel):
 class ListCoordinateSystemsResponse(CustomBaseModel):
     links: Annotated[dict[str, Any], Field(title="Links")]
     results: Annotated[list[CoordinateSystemCategory], Field(title="Results")]
+
+
+class ListInstanceUsersResponse(CustomBaseModel):
+    links: PaginationLinksWithoutTotal
+    results: Annotated[list[BaseInstanceUserResponse], Field(title="Results")]
 
 
 class ListUserRoleResponse(CustomBaseModel):

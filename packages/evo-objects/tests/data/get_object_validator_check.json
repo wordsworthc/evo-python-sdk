@@ -42,14 +42,17 @@
         "download": "http://unittest.localhost/path/geoscience-object/orgs/00000000-0000-0000-0000-0000000004d2/workspaces/00000000-0000-0000-0000-00000000162e/objects/path/A/m.json",
         "data": [
             {
+                "name": "995f2e6cab5ad17147d9c5fddf371189bef4b623f657dde91f175a0734ed17dc",
                 "id": "00000000-0000-0000-0000-000000000003",
                 "download_url": "https://storage.unittest.localhost/wheres/my/data/00000000-0000-0000-0000-000000000003"
             },
             {
+                "name": "3bf11627a3bf2d15ef8c903a22e6d869c007128fb4aad73ccc20f78c050f2bf3",
                 "id": "00000000-0000-0000-0000-000000000004",
                 "download_url": "https://storage.unittest.localhost/wheres/my/data/00000000-0000-0000-0000-000000000004"
             },
             {
+                "name": "453970d9133b8567c46ddb87ceac0a41e7cb67842aa77d7de791d89c947700bc",
                 "id": "00000000-0000-0000-0000-000000000005",
                 "download_url": "https://storage.unittest.localhost/wheres/my/data/00000000-0000-0000-0000-000000000005"
             }

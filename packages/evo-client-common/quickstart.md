@@ -6,11 +6,11 @@ Just want to get going? This is the simplest setup to interact with an Evo servi
 
 ``` python 
 from evo.aio import AioTransport
-from evo.common import ApiConnector, BaseServiceClient
+from evo.common import APIConnector, BaseAPIClient
 from evo.common.utils import BackoffIncremental
-from evo.discovery import DiscoveryApiClient
+from evo.discovery import DiscoveryAPIClient
 from evo.oauth import AuthorizationCodeAuthorizer, OIDCConnector
-from evo.workspaces import WorkspaceServiceClient
+from evo.workspaces import WorkspaceAPIClient
 
 # Configure the transport.
 transport = AioTransport(
@@ -34,18 +34,18 @@ authorizer = AuthorizationCodeAuthorizer(
 await authorizer.login()
 
 # Select an Organization.
-async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as api_connector:
-    discovery_client = DiscoveryApiClient(api_connector)
+async with APIConnector("https://discover.api.seequent.com", transport, authorizer) as api_connector:
+    discovery_client = DiscoveryAPIClient(api_connector)
     organizations = await discovery_client.list_organizations()
 
 selected_org = organizations[0]
 
 # Select a hub and create a connector.
-hub_connector = ApiConnector(selected_org.hubs[0].url, transport, authorizer)
+hub_connector = APIConnector(selected_org.hubs[0].url, transport, authorizer)
 
 # Select a Workspace.
 async with hub_connector:
-    workspace_client = WorkspaceServiceClient(hub_connector, selected_org.id)
+    workspace_client = WorkspaceAPIClient(hub_connector, selected_org.id)
     workspaces = await workspace_client.list_workspaces()
 
 workspace = workspaces[0]
@@ -53,7 +53,7 @@ workspace_env = workspace.get_environment()
 
 # Interact with a service.
 async with hub_connector:
-    service_client = BaseServiceClient(workspace_env, hub_connector)
+    service_client = BaseAPIClient(workspace_env, hub_connector)
     ...
 
 ```
@@ -135,24 +135,24 @@ await authorizer.authorize()
 ### Using the Discovery API
 
 The discovery API is used to find the organizations and hubs that a user has access to. This is done using the
-`evo.discovery.DiscoveryApiClient` class. The `list_organizations()` method is used to get a
+`evo.discovery.DiscoveryAPIClient` class. The `list_organizations()` method is used to get a
 list of organizations. Each listed organization includes a list of hubs that are used by that organization.
 
 ``` python
-async with ApiConnector("https://discover.api.seequent.com", transport, authorizer) as api_connector:
-    discovery_client = DiscoveryApiClient(api_connector)
+async with APIConnector("https://discover.api.seequent.com", transport, authorizer) as api_connector:
+    discovery_client = DiscoveryAPIClient(api_connector)
     organizations = await discovery_client.list_organizations()
 ```
 
 ### Using the Workspace API
 
 The Workspace API is used to find the workspaces that a user has access to. This is done using the
-`evo.workspaces.WorkspaceServiceClient` class. The `list_workspaces()` method is used to get
+`evo.workspaces.WorkspaceAPIClient` class. The `list_workspaces()` method is used to get
 a list of workspaces belonging to the specified organization on the specified hub.
 
 ``` python
 async with hub_connector:
-    workspace_client = WorkspaceServiceClient(hub_connector, selected_org.id)
+    workspace_client = WorkspaceAPIClient(hub_connector, selected_org.id)
     workspaces = await workspace_client.list_workspaces()
 ```
 
@@ -165,7 +165,7 @@ reused for interacting with services.
 
 ``` python
 async with hub_connector:
-    service_client = BaseServiceClient(workspace_env, hub_connector)
+    service_client = BaseAPIClient(workspace_env, hub_connector)
     ...
 ```
 
@@ -178,7 +178,7 @@ connector and environment objects.
 from uuid import UUID
 
 from evo.aio import AioTransport
-from evo.common import ApiConnector, BaseServiceClient, Environment
+from evo.common import APIConnector, BaseAPIClient, Environment
 from evo.common.utils import BackoffIncremental
 from evo.oauth import AuthorizationCodeAuthorizer, OIDCConnector
 
@@ -204,9 +204,9 @@ environment = Environment(
     org_id=UUID("<organization-id>"),
     workspace_id=UUID("<workspace-id>"),
 )
-hub_connector = ApiConnector(environment.hub_url, transport, authorizer)
+hub_connector = APIConnector(environment.hub_url, transport, authorizer)
 async with hub_connector:
-    service_client = BaseServiceClient(environment, hub_connector)
+    service_client = BaseAPIClient(environment, hub_connector)
     ...
 ```
 

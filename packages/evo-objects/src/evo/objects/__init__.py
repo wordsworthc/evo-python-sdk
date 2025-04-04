@@ -9,7 +9,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import ObjectServiceClient, DownloadedObject
+from .client import ObjectAPIClient, DownloadedObject
 from .data import ObjectMetadata, ObjectSchema, ObjectVersion, SchemaVersion
 from .io import ObjectDataDownload, ObjectDataUpload
 
@@ -19,7 +19,7 @@ __all__ = [
     "ObjectDataUpload",
     "ObjectMetadata",
     "ObjectSchema",
-    "ObjectServiceClient",
+    "ObjectAPIClient",
     "ObjectVersion",
     "SchemaVersion",
 ]

@@ -21,13 +21,13 @@ from uuid import UUID
 from parameterized import parameterized
 from pydantic import BaseModel
 
-from evo.common import ApiConnector, EmptyResponse, HTTPHeaderDict, HTTPResponse, RequestMethod
+from evo.common import APIConnector, EmptyResponse, HTTPHeaderDict, HTTPResponse, RequestMethod
 from evo.common.exceptions import (
     BadRequestException,
     ClientValueError,
     CustomTypedError,
     DefaultTypedError,
-    EvoApiException,
+    EvoAPIException,
     ForbiddenException,
     NotFoundException,
     UnauthorizedException,
@@ -68,7 +68,7 @@ class _ResponseType203(_ResponseType200):
     other_value: str
 
 
-class TestApiConnector(TestWithConnector):
+class TestAPIConnector(TestWithConnector):
     def setUp(self) -> None:
         super().setUp()
         self.transport.request.return_value = MockResponse(status_code=200)
@@ -858,7 +858,7 @@ class TestApiConnector(TestWithConnector):
         self,
         _name: str,
         response: MockResponse,
-        exc_type: type[EvoApiException],
+        exc_type: type[EvoAPIException],
         expected_message: str,
     ) -> None:
         with self.assertRaises(exc_type) as cm:
@@ -969,7 +969,7 @@ class TestApiConnector(TestWithConnector):
     )
     def test_sanitization(self, _name: str, input_value: Any, expected_value: Any) -> None:
         expected_type = type(expected_value)
-        actual_value = ApiConnector._sanitize_for_serialization(input_value)
+        actual_value = APIConnector._sanitize_for_serialization(input_value)
         self.assertIsInstance(actual_value, expected_type)
         self.assertEqual(actual_value, expected_value)
 

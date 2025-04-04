@@ -14,117 +14,110 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from enum import Enum
-from typing import Literal
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import (
-    AwareDatetime,
-    Field,
-    RootModel,
-    StrictBool,
-    StrictFloat,
-    StrictInt,
-    StrictStr,
-)
+from pydantic import Field, RootModel, StrictBool, StrictFloat, StrictInt, StrictStr
 
 from .._model_config import CustomBaseModel
 
 
 class CoordinateItem(RootModel[list[StrictFloat]]):
-    root: list[StrictFloat] = Field(..., max_length=2, min_length=2, title="GeoJSON Point")
+    root: Annotated[list[StrictFloat], Field(max_length=2, min_length=2, title="GeoJSON Point")]
     """
     A WGS84 coordinate pair [longitude, latitude]. The longitude must come before the latitude, in order to be considered a valid GeoJSON Point
     """
 
 
 class Coordinate(RootModel[list[CoordinateItem]]):
-    root: list[CoordinateItem] = Field(..., max_length=5, min_length=5, title="GeoJSON LinearRing")
+    root: Annotated[
+        list[CoordinateItem],
+        Field(max_length=5, min_length=5, title="GeoJSON LinearRing"),
+    ]
     """
     A list of GeoJSON points defining a closed linear ring. In order for the ring to be closed, the last point must be the same as the first point. Only a rectangle is supported, so the ring must be defined by 5 points.
     """
 
 
 class DataDownloadUrl(CustomBaseModel):
-    download_url: StrictStr | None = Field(None, title="Download Url")
-    id: StrictStr = Field(..., title="Id")
+    download_url: Annotated[StrictStr | None, Field(title="Download Url")] = None
+    id: Annotated[UUID, Field(title="Id")]
+    name: Annotated[StrictStr, Field(title="Name")]
 
 
 class DataUploadRequestBody(CustomBaseModel):
-    name: StrictStr = Field(..., title="Name")
+    name: Annotated[StrictStr, Field(title="Name")]
     """
-    SHA256 or UUID "name" for the data file. SHA256 is preferred as it allows other clients to deduplicate data.
+    SHA256 or UUID "name" for the data blob. SHA256 is preferred as it allows other clients to deduplicate data.
     """
 
 
 class DataUploadResponseBody(CustomBaseModel):
-    exists: StrictBool = Field(..., title="Exists")
-    id: UUID = Field(..., title="Id")
+    exists: Annotated[StrictBool, Field(title="Exists")]
+    id: Annotated[UUID, Field(title="Id")]
     """
     Server-generated unique identifier for the data
     """
-    name: StrictStr = Field(..., title="Name")
+    name: Annotated[StrictStr, Field(title="Name")]
     """
     client-provided name for the data (SHA256 or UUID)
     """
-    upload_url: StrictStr | None = Field(None, title="Upload Url")
+    upload_url: Annotated[StrictStr | None, Field(title="Upload Url")] = None
 
 
-class DataUploadUrl(CustomBaseModel):
-    exists: StrictBool | None = Field(None, title="Exists")
-    id: StrictStr = Field(..., title="Id")
-    upload_url: StrictStr | None = Field(None, title="Upload Url")
-
-
-class GeoJSONType(RootModel[Literal["Polygon"]]):
-    root: Literal["Polygon"] = Field("Polygon", title="GeoJSONType")
+class GeoJSONType(Enum):
+    Polygon = "Polygon"
 
 
 class GeoscienceObject(CustomBaseModel):
     """
     The geoscience object with the additional required schema properties.
 
-    This object is largely defined by the schemas in the evo-schemas repository.
+    This object is largely defined by the schemas in the geoscience-object-schemas repository.
     There are some default, required values listed here explicitly.
     """
 
-    schema_: StrictStr = Field(..., alias="schema", title="Schema")
+    name: Annotated[StrictStr, Field(title="Name")]
+    """
+    The name of the geoscience object.
+    """
+    schema_: Annotated[StrictStr, Field(alias="schema", title="Schema")]
     """
     The geoscience object schema.
     """
-    uuid: UUID | None = Field(None, title="Uuid")
+    uuid: Annotated[UUID | None, Field(title="Uuid")] = None
     """
     Unique object UUID.
     """
 
 
 class LatestObjectVersionIdResponse(CustomBaseModel):
-    object_id: StrictStr = Field(..., title="Object Id")
-    version_id: StrictStr | None = Field(None, title="Version Id")
+    object_id: Annotated[StrictStr, Field(title="Object Id")]
+    version_id: Annotated[StrictStr | None, Field(title="Version Id")] = None
 
 
 class ListObjectsResponseLinks(CustomBaseModel):
-    next: StrictStr | None = Field(None, title="Next")
-    prev: StrictStr | None = Field(None, title="Prev")
+    next: Annotated[StrictStr | None, Field(title="Next")] = None
+    prev: Annotated[StrictStr | None, Field(title="Prev")] = None
 
 
 class ListedObjectLinks(CustomBaseModel):
-    download: StrictStr = Field(..., title="Download")
+    download: Annotated[StrictStr, Field(title="Download")]
 
 
-class NamedDataDownloadUrl(CustomBaseModel):
-    download_url: StrictStr | None = Field(None, title="Download Url")
-    id: UUID = Field(..., title="Id")
-    name: StrictStr = Field(..., title="Name")
+class MetadataUpdateBody(CustomBaseModel):
+    stage_id: Annotated[UUID | None, Field(title="Stage Id")] = None
 
 
 class ObjectResponseLinks(CustomBaseModel):
-    data: list[DataDownloadUrl | NamedDataDownloadUrl] = Field(..., title="Data")
-    download: StrictStr = Field(..., title="Download")
+    data: Annotated[list[DataDownloadUrl], Field(title="Data")]
+    download: Annotated[StrictStr, Field(title="Download")]
 
 
 class ObjectVersionResponseLinks(CustomBaseModel):
-    download: StrictStr = Field(..., title="Download")
+    download: Annotated[StrictStr, Field(title="Download")]
 
 
 class RoleEnum(Enum):
@@ -133,20 +126,34 @@ class RoleEnum(Enum):
     viewer = "viewer"
 
 
+class StageListItem(CustomBaseModel):
+    name: Annotated[StrictStr, Field(title="Name")]
+    stage_id: Annotated[UUID, Field(title="Stage Id")]
+
+
+class StageResponse(CustomBaseModel):
+    name: Annotated[StrictStr, Field(title="Name")]
+    stage_id: Annotated[UUID, Field(title="Stage Id")]
+
+
 class UpdateGeoscienceObject(CustomBaseModel):
     """
     The geoscience object with the additional required schema properties.
 
     The uuid field must be set when updating a geoscience object.
-    This object is largely defined by the schemas in the evo-schemas repository.
+    This object is largely defined by the schemas in the geoscience-object-schemas repository.
     There are some default, required values listed here explicitly.
     """
 
-    schema_: StrictStr = Field(..., alias="schema", title="Schema")
+    name: Annotated[StrictStr, Field(title="Name")]
+    """
+    The name of the geoscience object.
+    """
+    schema_: Annotated[StrictStr, Field(alias="schema", title="Schema")]
     """
     The geoscience object schema.
     """
-    uuid: UUID = Field(..., title="Uuid")
+    uuid: Annotated[UUID, Field(title="Uuid")]
     """
     Unique object UUID.
     """
@@ -157,9 +164,9 @@ class User(CustomBaseModel):
     User details.
     """
 
-    email: StrictStr | None = Field(None, title="Email")
-    id: UUID = Field(..., title="Id")
-    name: StrictStr | None = Field(None, title="Name")
+    email: Annotated[StrictStr | None, Field(title="Email")] = None
+    id: Annotated[UUID, Field(title="Id")]
+    name: Annotated[StrictStr | None, Field(title="Name")] = None
 
 
 class BoundingBox(CustomBaseModel):
@@ -167,11 +174,14 @@ class BoundingBox(CustomBaseModel):
     The bounding box for a geoscience object, represented by a GeoJSON polygon.
     """
 
-    coordinates: list[Coordinate] = Field(..., max_length=1, min_length=1, title="GeoJSON Polygon Coordinates")
+    coordinates: Annotated[
+        list[Coordinate],
+        Field(max_length=1, min_length=1, title="GeoJSON Polygon Coordinates"),
+    ]
     """
     A list containing one exterior ring of a GeoJSON polygon
     """
-    type: GeoJSONType = Field(default_factory=lambda: GeoJSONType.model_validate("Polygon"))
+    type: GeoJSONType = "Polygon"
 
 
 class GeoscienceObjectVersion(CustomBaseModel):
@@ -179,87 +189,104 @@ class GeoscienceObjectVersion(CustomBaseModel):
     Geoscience object version.
     """
 
-    created_at: AwareDatetime = Field(..., title="Created At")
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: User | None = None
-    etag: StrictStr = Field(..., title="Etag")
+    etag: Annotated[StrictStr, Field(title="Etag")]
     links: ObjectVersionResponseLinks
-    version_id: StrictStr = Field(..., title="Version Id")
+    stage: StageResponse | None = None
+    version_id: Annotated[StrictStr, Field(title="Version Id")]
 
 
 class GetObjectResponse(CustomBaseModel):
-    created_at: AwareDatetime = Field(..., title="Created At")
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: User | None = None
-    etag: StrictStr = Field(..., title="Etag")
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_by: User | None = None
+    etag: Annotated[StrictStr, Field(title="Etag")]
     geojson_bounding_box: BoundingBox | None = None
     links: ObjectResponseLinks
-    modified_at: AwareDatetime = Field(..., title="Modified At")
+    modified_at: Annotated[datetime, Field(title="Modified At")]
     modified_by: User | None = None
     object: GeoscienceObject
-    object_id: UUID = Field(..., title="Object Id")
-    object_path: StrictStr | None = Field(None, title="Object Path")
-    version_id: StrictStr = Field(..., title="Version Id")
-    versions: list[GeoscienceObjectVersion] | None = Field(None, title="Versions")
+    object_id: Annotated[UUID, Field(title="Object Id")]
+    object_path: Annotated[StrictStr | None, Field(title="Object Path")] = None
+    stage: StageResponse | None = None
+    version_id: Annotated[StrictStr, Field(title="Version Id")]
+    versions: Annotated[list[GeoscienceObjectVersion] | None, Field(title="Versions")] = None
+
+
+class ListStagesResponse(CustomBaseModel):
+    stages: Annotated[list[StageListItem], Field(title="Stages")]
 
 
 class ListedObject(CustomBaseModel):
-    created_at: AwareDatetime = Field(..., title="Created At")
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: User | None = None
-    etag: StrictStr = Field(..., title="Etag")
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_by: User | None = None
+    etag: Annotated[StrictStr, Field(title="Etag")]
     geojson_bounding_box: BoundingBox | None = None
     links: ListedObjectLinks
-    modified_at: AwareDatetime = Field(..., title="Modified At")
+    modified_at: Annotated[datetime, Field(title="Modified At")]
     modified_by: User | None = None
-    name: StrictStr = Field(..., title="Name")
-    object_id: UUID = Field(..., title="Object Id")
-    path: StrictStr = Field(..., title="Path")
-    schema_: StrictStr = Field(..., alias="schema", title="Schema")
+    name: Annotated[StrictStr, Field(title="Name")]
+    object_id: Annotated[UUID, Field(title="Object Id")]
+    path: Annotated[StrictStr, Field(title="Path")]
+    schema_: Annotated[StrictStr, Field(alias="schema", title="Schema")]
     """
     The geoscience object schema.
     """
-    version_id: StrictStr = Field(..., title="Version Id")
+    stage: StageResponse | None = None
+    version_id: Annotated[StrictStr, Field(title="Version Id")]
 
 
 class OrgListedObject(CustomBaseModel):
-    created_at: AwareDatetime = Field(..., title="Created At")
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: User | None = None
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_by: User | None = None
     geojson_bounding_box: BoundingBox | None = None
-    modified_at: AwareDatetime = Field(..., title="Modified At")
+    modified_at: Annotated[datetime, Field(title="Modified At")]
     modified_by: User | None = None
-    name: StrictStr = Field(..., title="Name")
-    object_id: UUID = Field(..., title="Object Id")
-    schema_: StrictStr = Field(..., alias="schema", title="Schema")
+    name: Annotated[StrictStr, Field(title="Name")]
+    object_id: Annotated[UUID, Field(title="Object Id")]
+    schema_: Annotated[StrictStr, Field(alias="schema", title="Schema")]
+    stage: StageResponse | None = None
     workspace_access: RoleEnum | None = None
-    workspace_id: UUID = Field(..., title="Workspace Id")
-    workspace_name: StrictStr | None = Field(None, title="Workspace Name")
+    workspace_id: Annotated[UUID, Field(title="Workspace Id")]
+    workspace_name: Annotated[StrictStr | None, Field(title="Workspace Name")] = None
 
 
 class PostObjectResponse(CustomBaseModel):
-    created_at: AwareDatetime = Field(..., title="Created At")
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: User | None = None
-    etag: StrictStr = Field(..., title="Etag")
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_by: User | None = None
+    etag: Annotated[StrictStr, Field(title="Etag")]
     geojson_bounding_box: BoundingBox | None = None
     links: ObjectResponseLinks
-    modified_at: AwareDatetime = Field(..., title="Modified At")
+    modified_at: Annotated[datetime, Field(title="Modified At")]
     modified_by: User | None = None
     object: GeoscienceObject
-    object_id: UUID | None = Field(None, title="Object Id")
-    object_path: StrictStr | None = Field(None, title="Object Path")
-    version_id: StrictStr = Field(..., title="Version Id")
+    object_id: Annotated[UUID | None, Field(title="Object Id")] = None
+    object_path: Annotated[StrictStr | None, Field(title="Object Path")] = None
+    stage: StageResponse | None = None
+    version_id: Annotated[StrictStr, Field(title="Version Id")]
 
 
 class ListObjectsResponse(CustomBaseModel):
-    count: StrictInt = Field(0, title="Count")
-    limit: StrictInt = Field(0, title="Limit")
+    count: Annotated[StrictInt, Field(title="Count")] = 0
+    limit: Annotated[StrictInt, Field(title="Limit")] = 0
     links: ListObjectsResponseLinks
-    objects: list[ListedObject] = Field(..., title="Objects")
-    offset: StrictInt = Field(0, title="Offset")
-    total: StrictInt = Field(0, title="Total")
+    objects: Annotated[list[ListedObject], Field(title="Objects")]
+    offset: Annotated[StrictInt, Field(title="Offset")] = 0
+    total: Annotated[StrictInt, Field(title="Total")] = 0
 
 
 class ListOrgObjectsResponse(CustomBaseModel):
-    count: StrictInt = Field(0, title="Count")
-    limit: StrictInt = Field(0, title="Limit")
+    count: Annotated[StrictInt, Field(title="Count")] = 0
+    limit: Annotated[StrictInt, Field(title="Limit")] = 0
     links: ListObjectsResponseLinks
-    objects: list[OrgListedObject] = Field(..., title="Objects")
-    offset: StrictInt = Field(0, title="Offset")
-    total: StrictInt = Field(0, title="Total")
+    objects: Annotated[list[OrgListedObject], Field(title="Objects")]
+    offset: Annotated[StrictInt, Field(title="Offset")] = 0
+    total: Annotated[StrictInt, Field(title="Total")] = 0

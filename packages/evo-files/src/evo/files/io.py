@@ -15,15 +15,15 @@ import asyncio
 from pathlib import Path
 from uuid import UUID
 
-from evo.common import ApiConnector, Environment, ICache
+from evo.common import APIConnector, Environment, ICache
 from evo.common.io import Download, Upload
 
 from .data import FileMetadata
 from .endpoints import FileV2Api
 
 __all__ = [
-    "FileApiDownload",
-    "FileApiUpload",
+    "FileAPIDownload",
+    "FileAPIUpload",
 ]
 
 _CACHE_SCOPE = "filev2"
@@ -76,7 +76,7 @@ def _make_name_safe(name: str) -> str:
 
 
 class _FileIOMixin:
-    def __init__(self, connector: ApiConnector, initial_url: str) -> None:
+    def __init__(self, connector: APIConnector, initial_url: str) -> None:
         self._api = FileV2Api(connector)
         self._mutex = asyncio.Lock()
         self._initial_url = initial_url
@@ -88,14 +88,14 @@ class _FileIOMixin:
                 return url
 
 
-class FileApiUpload(Upload, _FileIOMixin):
+class FileAPIUpload(Upload, _FileIOMixin):
     """A context for uploading a file to the File API.
 
     Do not use this class directly. Instead, use the `FileAPIClient.prepare_upload_by_*` methods.
     """
 
     def __init__(
-        self, connector: ApiConnector, environment: Environment, file_id: UUID, version_id: str, initial_url: str
+        self, connector: APIConnector, environment: Environment, file_id: UUID, version_id: str, initial_url: str
     ) -> None:
         """
         :param connector: The connector to use for the API calls.
@@ -135,13 +135,13 @@ class FileApiUpload(Upload, _FileIOMixin):
         return response.upload
 
 
-class FileApiDownload(Download[FileMetadata], _FileIOMixin):
+class FileAPIDownload(Download[FileMetadata], _FileIOMixin):
     """A context for downloading a file from the File API.
 
     Do not use this class directly. Instead, use the `FileAPIClient.prepare_download_by_*` methods.
     """
 
-    def __init__(self, connector: ApiConnector, metadata: FileMetadata, initial_url: str) -> None:
+    def __init__(self, connector: APIConnector, metadata: FileMetadata, initial_url: str) -> None:
         """
         :param connector: The connector to use for the API calls.
         :param metadata: The metadata of the file that wil be downloaded.

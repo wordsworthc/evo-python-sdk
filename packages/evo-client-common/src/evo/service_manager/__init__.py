@@ -9,11 +9,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import DiscoveryAPIClient
-from .data import Hub, Organization
+from .manager import ServiceManager
 
-__all__ = [
-    "DiscoveryAPIClient",
-    "Hub",
-    "Organization",
-]
+__all__ = ["ServiceManager"]

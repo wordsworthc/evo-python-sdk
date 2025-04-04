@@ -17,7 +17,7 @@ from parameterized import param, parameterized
 
 from evo.common.data import RequestMethod
 from evo.common.test_tools import MockResponse, TestWithConnector
-from evo.discovery import DiscoveryApiClient, Hub, Organization
+from evo.discovery import DiscoveryAPIClient, Hub, Organization
 
 
 def _sample_data_as_response_content(sample_data: dict) -> str:
@@ -55,10 +55,10 @@ def _sample_data_as_expected_orgs(sample_data: dict) -> list[Organization]:
     ]
 
 
-class TestDiscoveryApiClient(TestWithConnector):
+class TestDiscoveryAPIClient(TestWithConnector):
     def setUp(self) -> None:
         super().setUp()
-        self.discovery_client = DiscoveryApiClient(self.connector)
+        self.discovery_client = DiscoveryAPIClient(self.connector)
         self.transport.request.return_value = MockResponse(status_code=500)
 
     async def test_list_organizations_default_service_code(self) -> None:

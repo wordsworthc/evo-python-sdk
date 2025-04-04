@@ -16,11 +16,11 @@ from typing import Any, TypeVar
 from uuid import UUID
 
 from evo import logging
-from evo.common import ApiConnector, BaseServiceClient, Environment
+from evo.common import APIConnector, BaseAPIClient, Environment
 from evo.common.exceptions import SelectionError
 from evo.common.interfaces import IAuthorizer, ITransport
-from evo.discovery import DiscoveryApiClient, Hub, Organization
-from evo.workspaces import Workspace, WorkspaceServiceClient
+from evo.discovery import DiscoveryAPIClient, Hub, Organization
+from evo.workspaces import Workspace, WorkspaceAPIClient
 
 __all__ = ["ServiceManager"]
 
@@ -28,7 +28,7 @@ logger = logging.getLogger("common.utils.manager")
 
 
 # Generic type variable for the client factory method.
-T_client = TypeVar("T_client", bound=BaseServiceClient)
+T_client = TypeVar("T_client", bound=BaseAPIClient)
 
 
 class _State:
@@ -266,8 +266,8 @@ class ServiceManager:
         self.__state_mutex = asyncio.Lock()
         self.__state = _State([])
 
-    def _get_connector(self, base_url: str) -> ApiConnector:
-        return ApiConnector(base_url, self._transport, self._authorizer)
+    def _get_connector(self, base_url: str) -> APIConnector:
+        return APIConnector(base_url, self._transport, self._authorizer)
 
     async def refresh_organizations(self) -> None:
         """Refresh the list of organizations.
@@ -278,7 +278,7 @@ class ServiceManager:
         """
         logger.debug("Refreshing organizations")
         async with self.__state_mutex, self._get_connector(self._discovery_url) as connector:
-            client = DiscoveryApiClient(connector)
+            client = DiscoveryAPIClient(connector)
             try:
                 self.__state = self.__state.update_organizations(await client.list_organizations())
             except Exception:
@@ -352,7 +352,7 @@ class ServiceManager:
                 return  # Cannot refresh workspaces without a hub.
 
             async with self._get_connector(hub.url) as connector:
-                client = WorkspaceServiceClient(connector, org.id)
+                client = WorkspaceAPIClient(connector, org.id)
                 try:
                     self.__state = self.__state.update_workspaces(await client.list_workspaces())
                 except Exception:
@@ -385,7 +385,7 @@ class ServiceManager:
         """
         self.__state = self.__state.with_workspace(workspace_id)
 
-    def get_connector(self) -> ApiConnector:
+    def get_connector(self) -> APIConnector:
         """Get an API connector for the currently selected hub.
 
         :returns: The API connector.

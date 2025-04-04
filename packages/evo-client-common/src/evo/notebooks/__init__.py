@@ -9,11 +9,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import DiscoveryAPIClient
-from .data import Hub, Organization
+from .widgets import FeedbackWidget, HubSelectorWidget, OrgSelectorWidget, ServiceManagerWidget, WorkspaceSelectorWidget
 
 __all__ = [
-    "DiscoveryAPIClient",
-    "Hub",
-    "Organization",
+    "FeedbackWidget",
+    "HubSelectorWidget",
+    "OrgSelectorWidget",
+    "ServiceManagerWidget",
+    "WorkspaceSelectorWidget",
 ]

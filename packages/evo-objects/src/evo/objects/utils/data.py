@@ -15,7 +15,7 @@ from typing import Any
 from uuid import UUID
 
 from evo import logging
-from evo.common import ApiConnector, Environment, ICache, IFeedback
+from evo.common import APIConnector, Environment, ICache, IFeedback
 from evo.common.exceptions import StorageFileNotFoundError
 from evo.common.io.exceptions import DataExistsError
 from evo.common.utils import NoFeedback, PartialFeedback
@@ -66,7 +66,7 @@ class ObjectDataClient:
     by default. This dependency can be installed with `pip install evo-objects[utils]`.
     """
 
-    def __init__(self, environment: Environment, connector: ApiConnector, cache: ICache) -> None:
+    def __init__(self, environment: Environment, connector: APIConnector, cache: ICache) -> None:
         """
         :param environment: The environment to upload and download data from.
         :param connector: The API connector to use for uploading and downloading data.
@@ -207,13 +207,13 @@ class ObjectDataClient:
         :raises TableFormatError: If the data does not match the expected format.
         :raises SchemaValidationError: If the data has a different number of rows than expected.
         """
-        from ..client import ObjectServiceClient  # Import here to avoid circular import.
+        from ..client import ObjectAPIClient  # Import here to avoid circular import.
         from .tables import KnownTableFormat  # Import here to avoid import error if pyarrow is not installed.
 
         parquet_file = self.cache_location / str(table_info["data"])
         if not parquet_file.exists():  # Only download it if it isn't already there.
-            # Reusing the implementation for preparing a download from ObjectServiceClient to avoid code duplication.
-            client = ObjectServiceClient(self._environment, self._connector)
+            # Reusing the implementation for preparing a download from ObjectAPIClient to avoid code duplication.
+            client = ObjectAPIClient(self._environment, self._connector)
             (download,) = [d async for d in client.prepare_data_download(object_id, version_id, [table_info["data"]])]
             await download.download_to_cache(cache=self._cache, transport=self._connector.transport, fb=fb)
         else:

@@ -9,11 +9,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import DiscoveryAPIClient
-from .data import Hub, Organization
+from importlib.abc import Traversable
+from importlib.resources import files
 
-__all__ = [
-    "DiscoveryAPIClient",
-    "Hub",
-    "Organization",
-]
+_ROOT = files(__name__)
+
+
+def get(filename: str) -> Traversable:
+    """Get the path to a file in this directory.
+
+    :param filename: The name of the file.
+
+    :return: A Traversable object representing the file.
+    """
+    return _ROOT / filename

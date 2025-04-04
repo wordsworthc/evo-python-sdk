@@ -8,7 +8,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 """
 File API
 =============
@@ -25,7 +24,7 @@ For more information on using the File API, see [Overview](https://developer.see
 
 
 This code is generated from the OpenAPI specification for File API.
-API version: 2.7.3
+API version: 2.8.0
 """
 
 # Import endpoint apis.

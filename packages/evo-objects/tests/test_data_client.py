@@ -395,11 +395,13 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
             mock.patch("evo.common.io.download.HTTPSource", autospec=True) as mock_source,
         ):
             mock_table_info = {}
-            mock_table_info["data"] = mock_data_id = UUID("00000000-0000-0000-0000-000000000003")
+            mock_table_info["data"] = mock_data_name = (
+                "995f2e6cab5ad17147d9c5fddf371189bef4b623f657dde91f175a0734ed17dc"
+            )
             mock_known_table_format.load_table = mock_load_table = mock.Mock()
 
             async def _mock_download_file_side_effect(*args, **kwargs):
-                expected_filename = self.data_client.cache_location / str(mock_data_id)
+                expected_filename = self.data_client.cache_location / str(mock_data_name)
                 expected_download_url = get_object_response["links"]["data"][0]["download_url"]
                 actual_download_url = await kwargs["url_generator"]()
                 self.assertEqual(expected_filename, kwargs["filename"])
@@ -429,11 +431,13 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
             mock.patch("evo.common.io.download.HTTPSource", autospec=True) as mock_source,
         ):
             mock_table_info = {}
-            mock_table_info["data"] = mock_data_id = UUID("00000000-0000-0000-0000-000000000003")
+            mock_table_info["data"] = mock_data_name = (
+                "995f2e6cab5ad17147d9c5fddf371189bef4b623f657dde91f175a0734ed17dc"
+            )
             mock_known_table_format.load_table = mock_load_table = mock.Mock()
 
             async def _mock_download_file_side_effect(*args, **kwargs):
-                expected_filename = self.data_client.cache_location / str(mock_data_id)
+                expected_filename = self.data_client.cache_location / str(mock_data_name)
                 expected_download_url = get_object_response["links"]["data"][0]["download_url"]
                 actual_download_url = await kwargs["url_generator"]()
                 self.assertEqual(expected_filename, kwargs["filename"])

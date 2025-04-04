@@ -16,7 +16,7 @@ from uuid import UUID
 from data import load_test_data
 from evo.common import Environment, HealthCheckType, Page, RequestMethod, ServiceUser
 from evo.common.test_tools import BASE_URL, ORG, WORKSPACE_ID, MockResponse, TestWithConnector, utc_datetime
-from evo.files import FileAPIClient, FileApiDownload, FileApiUpload, FileMetadata, FileVersion
+from evo.files import FileAPIClient, FileAPIDownload, FileAPIUpload, FileMetadata, FileVersion
 
 
 class TestFileApiClient(TestWithConnector):
@@ -309,7 +309,7 @@ class TestFileApiClient(TestWithConnector):
         ):
             download = await self.file_api_client.prepare_download_by_path(path)
 
-        self.assertIsInstance(download, FileApiDownload)
+        self.assertIsInstance(download, FileAPIDownload)
         self.assertEqual(expected_metadata, download.metadata)
         self.assert_request_made(
             method=RequestMethod.GET,
@@ -382,7 +382,7 @@ class TestFileApiClient(TestWithConnector):
         ):
             download = await self.file_api_client.prepare_download_by_id(file_id)
 
-        self.assertIsInstance(download, FileApiDownload)
+        self.assertIsInstance(download, FileAPIDownload)
         self.assertEqual(expected_metadata, download.metadata)
         self.assert_request_made(
             method=RequestMethod.GET,
@@ -485,7 +485,7 @@ class TestFileApiClient(TestWithConnector):
         ):
             upload = await self.file_api_client.prepare_upload_by_path("points.csv")
 
-        self.assertIsInstance(upload, FileApiUpload)
+        self.assertIsInstance(upload, FileAPIUpload)
         self.assertEqual(upsert_file_response["file_id"], str(upload._id))
         self.assertEqual(upsert_file_response["version_id"], upload._version_id)
         self.assert_request_made(
@@ -502,7 +502,7 @@ class TestFileApiClient(TestWithConnector):
         ):
             upload = await self.file_api_client.prepare_upload_by_id(file_id)
 
-        self.assertIsInstance(upload, FileApiUpload)
+        self.assertIsInstance(upload, FileAPIUpload)
         self.assertEqual(update_file_response["file_id"], str(upload._id))
         self.assertEqual(update_file_response["version_id"], upload._version_id)
         self.assert_request_made(

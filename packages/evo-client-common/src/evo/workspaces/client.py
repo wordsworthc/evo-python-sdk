@@ -13,7 +13,7 @@ from uuid import UUID
 
 from pydantic.type_adapter import TypeAdapter
 
-from evo.common import ApiConnector, HealthCheckType, ServiceHealth, ServiceUser, Page
+from evo.common import APIConnector, HealthCheckType, ServiceHealth, ServiceUser, Page
 from evo.common.utils import get_service_health
 
 from pydantic import ValidationError
@@ -44,12 +44,12 @@ from .endpoints.models import UserRole as PydanticUserRole
 from .endpoints.models import User as PydanticUser
 
 
-class WorkspaceServiceClient:
+class WorkspaceAPIClient:
     """
     The Workspace Service API client.
     """
 
-    def __init__(self, connector: ApiConnector, org_id: UUID) -> None:
+    def __init__(self, connector: APIConnector, org_id: UUID) -> None:
         self._connector = connector
         self._org_id = org_id
         self._workspaces_api = WorkspacesApi(connector)
@@ -61,7 +61,7 @@ class WorkspaceServiceClient:
         """Get the health of the workspace service.
         :param check_type: The type of health check to perform.
         :return: A ServiceHealth object.
-        :raises EvoApiException: If the API returns an unexpected status code.
+        :raises EvoAPIException: If the API returns an unexpected status code.
         :raises ClientValueError: If the response is not a valid service health check response.
         """
         return await get_service_health(self._connector, "workspace", check_type=check_type)

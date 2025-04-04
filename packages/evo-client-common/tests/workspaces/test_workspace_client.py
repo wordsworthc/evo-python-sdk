@@ -16,7 +16,7 @@ from uuid import UUID
 from data import load_test_data
 from evo.common import HealthCheckType, RequestMethod
 from evo.common.test_tools import BASE_URL, MockResponse, TestHTTPHeaderDict, TestWithConnector, utc_datetime
-from evo.workspaces import ServiceUser, Workspace, WorkspaceRole, WorkspaceServiceClient, User, UserRole
+from evo.workspaces import ServiceUser, Workspace, WorkspaceRole, WorkspaceAPIClient, User, UserRole
 
 ORG_UUID = UUID(int=0)
 USER_ID = UUID(int=2)
@@ -49,7 +49,7 @@ TEST_WORKSPACE_C = _test_workspace(UUID(int=0xC), "Test Workspace C")
 class TestWorkspaceClient(TestWithConnector):
     def setUp(self) -> None:
         super().setUp()
-        self.workspace_client = WorkspaceServiceClient(connector=self.connector, org_id=ORG_UUID)
+        self.workspace_client = WorkspaceAPIClient(connector=self.connector, org_id=ORG_UUID)
 
     async def test_get_service_health(self) -> None:
         with mock.patch("evo.workspaces.client.get_service_health") as mock_get_service_health:
@@ -185,7 +185,12 @@ class TestWorkspaceClient(TestWithConnector):
             json.dumps(
                 {
                     "results": [
-                        {"user_id": str(USER_ID), "role": "owner", "full_name": "Test User", "email": "test@test.com"},
+                        {
+                            "user_id": str(USER_ID),
+                            "role": "owner",
+                            "full_name": "Test User",
+                            "email": "test@example.com",
+                        },
                     ],
                     "links": {"self": "dummy-link.com"},
                 }
@@ -201,7 +206,7 @@ class TestWorkspaceClient(TestWithConnector):
         self.assertEqual(
             response,
             [
-                User(user_id=USER_ID, role=WorkspaceRole.owner, full_name="Test User", email="test@test.com"),
+                User(user_id=USER_ID, role=WorkspaceRole.owner, full_name="Test User", email="test@example.com"),
             ],
         )
 

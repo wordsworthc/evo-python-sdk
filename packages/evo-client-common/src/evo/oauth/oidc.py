@@ -19,8 +19,8 @@ from urllib.parse import urlparse
 from pydantic import ValidationError
 
 from evo import logging
-from evo.common import ApiConnector, RequestMethod
-from evo.common.exceptions import EvoApiException
+from evo.common import APIConnector, RequestMethod
+from evo.common.exceptions import EvoAPIException
 from evo.common.interfaces import ITransport
 
 from .data import AccessToken, DeviceFlowResponse, OAuthScopes, OIDCConfig
@@ -80,7 +80,7 @@ class OIDCConnector:
                 f"OIDC issuer should not include the .well-known path. Assuming the issuer is {issuer.geturl()}."
             )
 
-        self._connector = ApiConnector(issuer.geturl(), transport)  # No authorization for OIDC discovery.
+        self._connector = APIConnector(issuer.geturl(), transport)  # No authorization for OIDC discovery.
         self.__client_id = client_id
         self.__client_secret = client_secret
 
@@ -131,7 +131,7 @@ class OIDCConnector:
 
                 if self.config.issuer != self.issuer:
                     raise OIDCError("OIDC issuer does not match the issuer in the configuration.")
-            except EvoApiException as e:
+            except EvoAPIException as e:
                 raise OIDCError("Failed to fetch OIDC configuration.") from e
 
     async def begin_device_flow(self, scopes: OAuthScopes) -> DeviceFlowResponse:
@@ -157,7 +157,7 @@ class OIDCConnector:
                         post_params=data,
                         response_types_map={"200": DeviceFlowResponse},
                     )
-                except EvoApiException as e:
+                except EvoAPIException as e:
                     error_json: dict = e.content
                     title = error_json.get("error", "Unexpected response from server")
                     detail = error_json.get("error_description", str(e))
@@ -197,7 +197,7 @@ class OIDCConnector:
                         post_params=data,
                         response_types_map={"200": expected_response_model},
                     )
-                except EvoApiException as e:
+                except EvoAPIException as e:
                     error_json: dict = e.content
                     title = error_json.get("error", "Unexpected response from server")
                     detail = error_json.get("error_description", str(e))
