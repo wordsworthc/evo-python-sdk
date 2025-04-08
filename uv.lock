@@ -8,10 +8,10 @@ resolution-markers = [
 
 [manifest]
 members = [
-    "evo-client-common",
     "evo-files",
     "evo-objects",
     "evo-python-sdk",
+    "evo-sdk-common",
 ]
 
 [[package]]
@@ -576,98 +576,20 @@ wheels = [
 ]
 
 [[package]]
-name = "evo-client-common"
-version = "0.1.0"
-source = { editable = "packages/evo-client-common" }
-dependencies = [
-    { name = "pure-interface" },
-    { name = "pydantic" },
-    { name = "python-dateutil" },
-]
-
-[package.optional-dependencies]
-aiohttp = [
-    { name = "aiohttp" },
-]
-notebooks = [
-    { name = "aiohttp" },
-    { name = "ipython", version = "8.34.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "ipython", version = "9.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "ipywidgets" },
-    { name = "python-dotenv" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "bumpver" },
-    { name = "coverage", extra = ["toml"] },
-    { name = "evo-client-common", extra = ["aiohttp"] },
-    { name = "freezegun" },
-    { name = "parameterized" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "ruff" },
-]
-notebooks = [
-    { name = "evo-client-common", extra = ["aiohttp", "notebooks"] },
-    { name = "jupyter" },
-]
-test = [
-    { name = "evo-client-common", extra = ["aiohttp"] },
-    { name = "freezegun" },
-    { name = "parameterized" },
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", marker = "extra == 'aiohttp'" },
-    { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'notebooks'", editable = "packages/evo-client-common" },
-    { name = "ipython", marker = "extra == 'notebooks'" },
-    { name = "ipywidgets", marker = "extra == 'notebooks'" },
-    { name = "pure-interface", specifier = ">=8.0.0" },
-    { name = "pydantic", specifier = ">=2" },
-    { name = "python-dateutil" },
-    { name = "python-dotenv", marker = "extra == 'notebooks'" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "bumpver" },
-    { name = "coverage", extras = ["toml"] },
-    { name = "evo-client-common", extras = ["aiohttp"], editable = "packages/evo-client-common" },
-    { name = "freezegun" },
-    { name = "parameterized", specifier = "==0.9.0" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "ruff", specifier = "==0.9.1" },
-]
-notebooks = [
-    { name = "evo-client-common", extras = ["aiohttp", "notebooks"], editable = "packages/evo-client-common" },
-    { name = "jupyter" },
-]
-test = [
-    { name = "evo-client-common", extras = ["aiohttp"], editable = "packages/evo-client-common" },
-    { name = "freezegun" },
-    { name = "parameterized", specifier = "==0.9.0" },
-    { name = "pytest" },
-]
-
-[[package]]
 name = "evo-files"
 version = "0.1.0"
 source = { editable = "packages/evo-files" }
 dependencies = [
-    { name = "evo-client-common" },
+    { name = "evo-sdk-common" },
     { name = "pydantic" },
 ]
 
 [package.optional-dependencies]
 aiohttp = [
-    { name = "evo-client-common", extra = ["aiohttp"] },
+    { name = "evo-sdk-common", extra = ["aiohttp"] },
 ]
 notebooks = [
-    { name = "evo-client-common", extra = ["notebooks"] },
+    { name = "evo-sdk-common", extra = ["notebooks"] },
 ]
 
 [package.dev-dependencies]
@@ -691,9 +613,9 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "evo-client-common", editable = "packages/evo-client-common" },
-    { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'aiohttp'", editable = "packages/evo-client-common" },
-    { name = "evo-client-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "packages/evo-client-common" },
+    { name = "evo-sdk-common", editable = "packages/evo-sdk-common" },
+    { name = "evo-sdk-common", extras = ["aiohttp"], marker = "extra == 'aiohttp'", editable = "packages/evo-sdk-common" },
+    { name = "evo-sdk-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "packages/evo-sdk-common" },
     { name = "pydantic", specifier = ">=2,<3" },
 ]
 
@@ -721,16 +643,16 @@ name = "evo-objects"
 version = "0.1.0"
 source = { editable = "packages/evo-objects" }
 dependencies = [
-    { name = "evo-client-common" },
+    { name = "evo-sdk-common" },
     { name = "pydantic" },
 ]
 
 [package.optional-dependencies]
 aiohttp = [
-    { name = "evo-client-common", extra = ["aiohttp"] },
+    { name = "evo-sdk-common", extra = ["aiohttp"] },
 ]
 notebooks = [
-    { name = "evo-client-common", extra = ["notebooks"] },
+    { name = "evo-sdk-common", extra = ["notebooks"] },
 ]
 utils = [
     { name = "pandas" },
@@ -760,9 +682,9 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "evo-client-common", editable = "packages/evo-client-common" },
-    { name = "evo-client-common", extras = ["aiohttp"], marker = "extra == 'aiohttp'", editable = "packages/evo-client-common" },
-    { name = "evo-client-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "packages/evo-client-common" },
+    { name = "evo-sdk-common", editable = "packages/evo-sdk-common" },
+    { name = "evo-sdk-common", extras = ["aiohttp"], marker = "extra == 'aiohttp'", editable = "packages/evo-sdk-common" },
+    { name = "evo-sdk-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "packages/evo-sdk-common" },
     { name = "pandas", marker = "extra == 'utils'" },
     { name = "pyarrow", marker = "extra == 'utils'" },
     { name = "pydantic", specifier = ">=2,<3" },
@@ -794,14 +716,14 @@ name = "evo-python-sdk"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "evo-client-common", extra = ["aiohttp"] },
     { name = "evo-files" },
     { name = "evo-objects", extra = ["utils"] },
+    { name = "evo-sdk-common", extra = ["aiohttp"] },
 ]
 
 [package.optional-dependencies]
 notebooks = [
-    { name = "evo-client-common", extra = ["notebooks"] },
+    { name = "evo-sdk-common", extra = ["notebooks"] },
 ]
 
 [package.dev-dependencies]
@@ -826,10 +748,10 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "evo-client-common", extras = ["aiohttp"], editable = "packages/evo-client-common" },
-    { name = "evo-client-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "packages/evo-client-common" },
     { name = "evo-files", editable = "packages/evo-files" },
     { name = "evo-objects", extras = ["utils"], editable = "packages/evo-objects" },
+    { name = "evo-sdk-common", extras = ["aiohttp"], editable = "packages/evo-sdk-common" },
+    { name = "evo-sdk-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "packages/evo-sdk-common" },
 ]
 
 [package.metadata.requires-dev]
@@ -847,6 +769,84 @@ notebooks = [
     { name = "jupyter" },
 ]
 test = [
+    { name = "freezegun" },
+    { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pytest" },
+]
+
+[[package]]
+name = "evo-sdk-common"
+version = "0.1.0"
+source = { editable = "packages/evo-sdk-common" }
+dependencies = [
+    { name = "pure-interface" },
+    { name = "pydantic" },
+    { name = "python-dateutil" },
+]
+
+[package.optional-dependencies]
+aiohttp = [
+    { name = "aiohttp" },
+]
+notebooks = [
+    { name = "aiohttp" },
+    { name = "ipython", version = "8.34.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "ipython", version = "9.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "ipywidgets" },
+    { name = "python-dotenv" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "bumpver" },
+    { name = "coverage", extra = ["toml"] },
+    { name = "evo-sdk-common", extra = ["aiohttp"] },
+    { name = "freezegun" },
+    { name = "parameterized" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+notebooks = [
+    { name = "evo-sdk-common", extra = ["aiohttp", "notebooks"] },
+    { name = "jupyter" },
+]
+test = [
+    { name = "evo-sdk-common", extra = ["aiohttp"] },
+    { name = "freezegun" },
+    { name = "parameterized" },
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", marker = "extra == 'aiohttp'" },
+    { name = "evo-sdk-common", extras = ["aiohttp"], marker = "extra == 'notebooks'", editable = "packages/evo-sdk-common" },
+    { name = "ipython", marker = "extra == 'notebooks'" },
+    { name = "ipywidgets", marker = "extra == 'notebooks'" },
+    { name = "pure-interface", specifier = ">=8.0.0" },
+    { name = "pydantic", specifier = ">=2" },
+    { name = "python-dateutil" },
+    { name = "python-dotenv", marker = "extra == 'notebooks'" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "bumpver" },
+    { name = "coverage", extras = ["toml"] },
+    { name = "evo-sdk-common", extras = ["aiohttp"], editable = "packages/evo-sdk-common" },
+    { name = "freezegun" },
+    { name = "parameterized", specifier = "==0.9.0" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "ruff", specifier = "==0.9.1" },
+]
+notebooks = [
+    { name = "evo-sdk-common", extras = ["aiohttp", "notebooks"], editable = "packages/evo-sdk-common" },
+    { name = "jupyter" },
+]
+test = [
+    { name = "evo-sdk-common", extras = ["aiohttp"], editable = "packages/evo-sdk-common" },
     { name = "freezegun" },
     { name = "parameterized", specifier = "==0.9.0" },
     { name = "pytest" },

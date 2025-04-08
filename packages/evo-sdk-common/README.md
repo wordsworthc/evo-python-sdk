@@ -1,6 +1,6 @@
 # Evo Client Common
 
-`evo-client-common`
+`evo-sdk-common`
 
 Evo Client Common is a Python package that establishes a common framework for use by client libraries that interact
 with Evo APIs. 

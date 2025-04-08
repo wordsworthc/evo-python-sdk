@@ -2,7 +2,7 @@
 
 ## Basic Usage
 
-Just want to get going? See [the Getting Started guide for evo-client-common](../evo-client-common/quickstart.md) for information on how to authenticate, then select the organisation, hub and workspace that you would like to use.
+Just want to get going? See [the Getting Started guide for evo-sdk-common](../evo-sdk-common/quickstart.md) for information on how to authenticate, then select the organisation, hub and workspace that you would like to use.
 
 ### Interacting with the Geoscience Object Service
 
