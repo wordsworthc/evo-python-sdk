@@ -24,7 +24,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/publish
-        with:
-          PACKAGE: evo-objects
-          TAG: ${{ github.event.release.tag_name }}
+
+      - name: Build package
+        shell: bash
+        run: uv build --package evo-objects
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Upload artifact to GitHub Release
+        shell: bash
+        run: gh release upload ${{ github.event.release.tag_name }} dist/*
+
