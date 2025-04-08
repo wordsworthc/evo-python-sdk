@@ -1,0 +1,23 @@
+changelog:
+  exclude:
+    authors:
+      - github-actions[bot]
+    labels:
+      - ignore-for-release
+  categories:
+    - title: evo-client-common
+      labels:
+        - evo-client-common
+    - title: evo-files
+      labels:
+        - evo-files
+    - title: evo-objects
+      labels:
+        - evo-objects
+    - title: Breaking Changes 🛠
+      labels:
+        - semver-major
+        - breaking-change
+    - title: Other Changes
+      labels:
+        - "*"

@@ -17,12 +17,12 @@ from base64 import urlsafe_b64decode
 from datetime import datetime, timedelta, timezone
 from enum import Flag, auto
 from typing import Literal, Optional
+from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 from evo.common.utils import BackoffLinear, Retry
 from evo.oauth.exceptions import OAuthError, OIDCError
-from urllib.parse import urlparse
 
 __all__ = [
     "AccessToken",
