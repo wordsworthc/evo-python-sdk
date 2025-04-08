@@ -10,6 +10,9 @@ on:
   release:
     types: [released]
 
+env:
+  GH_TOKEN: ${{ github.token }}
+
 jobs:
   run-tests:
     if: startsWith(github.event.release.tag_name, 'evo-files@')
@@ -24,3 +27,4 @@ jobs:
       - uses: ./.github/actions/publish
         with:
           PACKAGE: evo-files
+          TAG: ${{ github.event.release.tag_name }}
