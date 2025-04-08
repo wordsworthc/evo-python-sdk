@@ -1,6 +1,6 @@
 # OAuth Examples
 
-The OAuth implementation provided requires additional dependencies to be installed. To install the required dependencies, make sure you depend on `evo-client-common[all]`.
+The OAuth implementation provided requires additional dependencies to be installed. To install the required dependencies, make sure you depend on `evo-sdk-common[all]`.
 
 ## OpenID Connect
 

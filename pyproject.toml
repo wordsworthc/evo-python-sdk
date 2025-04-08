@@ -5,14 +5,14 @@ description = "Monorepo containing independently versioned Evo Python SDKs"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "evo-client-common[aiohttp]",
+    "evo-sdk-common[aiohttp]",
     "evo-objects[utils]",
     "evo-files",
 ]
 
 [project.optional-dependencies]
 notebooks = [
-    "evo-client-common[notebooks]",
+    "evo-sdk-common[notebooks]",
 ]
 
 [dependency-groups]
@@ -36,7 +36,7 @@ line-length = 120
 extend-select = ["I", "RUF022"]
 
 [tool.uv.sources]
-evo-client-common = { workspace = true }
+evo-sdk-common = { workspace = true }
 evo-files = { workspace = true }
 evo-objects = { workspace = true }
 

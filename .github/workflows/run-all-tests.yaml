@@ -20,7 +20,7 @@ jobs:
           - ubuntu-latest
           - macos-latest
         package:
-          - evo-client-common
+          - evo-sdk-common
           - evo-files
           - evo-objects
         python-version:

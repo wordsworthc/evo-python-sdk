@@ -5,9 +5,9 @@ changelog:
     labels:
       - ignore-for-release
   categories:
-    - title: evo-client-common
+    - title: evo-sdk-common
       labels:
-        - evo-client-common
+        - evo-sdk-common
     - title: evo-files
       labels:
         - evo-files

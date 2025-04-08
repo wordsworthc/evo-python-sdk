@@ -14,7 +14,7 @@ from evo.workspaces import WorkspaceAPIClient
 
 # Configure the transport.
 transport = AioTransport(
-    user_agent="evo-client-common-poc",
+    user_agent="evo-sdk-common-poc",
     max_attempts=3,
     backoff_method=BackoffIncremental(2),
     num_pools=4,
@@ -77,7 +77,7 @@ from evo.common.utils import BackoffIncremental
 
 # Configure the transport.
 transport = AioTransport(
-    user_agent="evo-client-common-poc",
+    user_agent="evo-sdk-common-poc",
     max_attempts=3,
     backoff_method=BackoffIncremental(2),
     num_pools=4,
@@ -183,7 +183,7 @@ from evo.common.utils import BackoffIncremental
 from evo.oauth import AuthorizationCodeAuthorizer, OIDCConnector
 
 transport = AioTransport(
-    user_agent="evo-client-common-poc",
+    user_agent="evo-sdk-common-poc",
     max_attempts=3,
     backoff_method=BackoffIncremental(2),
     num_pools=4,

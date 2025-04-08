@@ -45,7 +45,7 @@ uv run pre-commit install
 ```
 
 ## SDKs
-- [evo-client-common](packages/evo-client-common/README.md)
+- [evo-sdk-common](packages/evo-sdk-common/README.md)
   - A shared library that provides common functionality for integrating with Seequent's client SDKs. 
 - [evo-files](packages/evo-files/README.md)
   - A service client for interacting with the Evo File API.
