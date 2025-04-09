@@ -14,7 +14,19 @@ Evo is a unified platform for geoscience teams. It enables access, connection, c
 
 Evo is powered by Seequent, a Bentley organisation.
 
-## Getting started
+## SDKs
+
+| Package | Version | Description |
+| --- | --- | --- |
+| [evo-sdk-common](packages/evo-sdk-common/README.md) | <a href="https://pypi.org/project/evo-sdk-common/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-sdk-common" /></a> | A shared library that provides common functionality for integrating with Seequent's client SDKs. |
+| [evo-files](packages/evo-files/README.md) | <a href="https://pypi.org/project/evo-files/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-files" /></a> | A service client for interacting with the Evo File API. |
+| [evo-objects](packages/evo-objects/README.md) | <a href="https://pypi.org/project/evo-objects/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-objects" /></a> | A geoscience object service client library designed to help get up and running with geoscience objects. |
+
+## Contributing
+
+Thank you for your interest in contributing to Seequent software. Please have a look over our [contribution guide](./CONTRIBUTING.md).
+
+### Getting started
 
 All Python SDKs in this monorepo are managed with [uv](https://docs.astral.sh/uv/). 
 We use [workspaces](https://docs.astral.sh/uv/concepts/projects/workspaces/) in order to manage the different SDKs
@@ -22,7 +34,7 @@ published out of this repository.
 
 With workspaces, `uv lock` operates on the entire workspace at once. `uv run` and `uv sync` operate on the workspace root by default, though both accept a `--package` argument allowing you to run a command in a particular workspace member from any workspace directory.
 
-## Install UV
+### Install UV
 To install uv on your machine, run one of the following convenience scripts from the root of the repo. These scripts ensure everyone is using the same version.
 
 Windows:
@@ -36,25 +48,13 @@ UNIX-like:
 ```
 You can run the same script again whenever the version in the UV_VERSION file changes. It will replace your existing installation of uv.
 
-### Install pre-commit hooks
+#### Install pre-commit hooks
 
 Once you've installed UV, install pre-commit hooks. These are used to standardise development workflows for all contributors:
 
 ```
 uv run pre-commit install
 ```
-
-## SDKs
-- [evo-sdk-common](packages/evo-sdk-common/README.md)
-  - A shared library that provides common functionality for integrating with Seequent's client SDKs. 
-- [evo-files](packages/evo-files/README.md)
-  - A service client for interacting with the Evo File API.
-- [evo-objects](packages/evo-objects/README.md)
-  - A geoscience object service client library designed to help get up and running with geoscience objects. 
-
-## Contributing
-
-Thank you for your interest in contributing to Seequent software. Please have a look over our [contribution guide](./CONTRIBUTING.md).
 
 ## Code of conduct
 
