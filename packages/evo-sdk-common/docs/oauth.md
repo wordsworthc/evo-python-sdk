@@ -1,6 +1,12 @@
-# OAuth Examples
+# OAuth examples
 
 The OAuth implementation provided requires additional dependencies to be installed. To install the required dependencies, make sure you depend on `evo-sdk-common[all]`.
+
+```
+pip install evo-sdk-common[all]
+```
+
+**Note:** If you'd like to run these examples interactively, you can use the [OAuth Jupyter notebook](examples/oauth.ipynb).
 
 ## OpenID Connect
 
@@ -29,9 +35,10 @@ connector = OIDCConnector(
 )
 ```
 
-## Manage Access Tokens
+## Manage access tokens
 
 The `OAuth` library provides authorizer classes to handle different OAuth flows. The `AuthorizationCodeAuthorizer` can be used for user access tokens, and the `ClientCredientialsAuthorizer` can be used for service to service authentication.
+
 ### Simplest way to manage user access tokens
 
 `AuthorizationCodeAuthorizer` is the simplest way to manage user access tokens. Logging in will open a browser window to the authorisation URL and wait for the user to authenticate and authorise the application. The `AuthorizationCodeAuthorizer` object allows the user access token to be used in API requests.
@@ -54,7 +61,7 @@ print(await authorizer.get_default_headers())
 
 This is how `APIConnector` automatically refreshes the access token when it expires.
 
-> Note: You MUST request the `offline_access` scope at login to get a refresh token. Offline access is not included by default in any of the predefined scope groups.
+**Note:** You MUST request the `offline_access` scope at login to get a refresh token. Offline access is not included by default in any of the predefined scope groups.
 
 ``` python
 refreshed = await authorizer.refresh_token()
@@ -74,7 +81,7 @@ async with OAuthRedirectHandler(connector, REDIRECT_URL) as handler:
 print(f"Access token: {result.access_token}")
 ```
 
-## Client Credientials Authentication
+## Client credentials authentication
 
 Using `ClientCredientialsAuthorizer` we can handle service to service authentication.
 
@@ -105,7 +112,7 @@ authorizer = ClientCredentialsAuthorizer(
 print(await authorizer.get_default_headers())
 ```
 
-## Device Flow Authentication
+## Device flow authentication
 
 Using `DeviceFlowAuthorizer` we can handle device flow authentication. This is useful for devices that do not have a browser or a keyboard.
 
