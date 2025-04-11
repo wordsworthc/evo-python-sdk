@@ -1,5 +1,13 @@
 # Changelog
 
+## evo-sdk-common@v0.1.2
+### What's changed
+#### evo-sdk-common
+* Add PyPI version badges to readmes by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/41
+* Add export for assets in evo.notebooks, bump version by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/44
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.1.1...evo-sdk-comon@v0.1.2
+
 ## evo-sdk-common@v0.1.1
 ### What's changed
 #### evo-sdk-common
