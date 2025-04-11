@@ -22,7 +22,7 @@ pip install evo-objects
 
 ## Usage
 
-See the [Getting started guide](docs/quickstart.md) for how to use this library.
+See the [Getting started guide](docs/quickstart.md) to learn how to use this library.
 
 
 

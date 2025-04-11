@@ -83,7 +83,7 @@ print(f"Access token: {result.access_token}")
 
 ## Client credentials authentication
 
-Using `ClientCredientialsAuthorizer` we can handle service to service authentication.
+Using `ClientCredientialsAuthorizer` we can handle service-to-service authentication.
 
 ``` python
 import logging
