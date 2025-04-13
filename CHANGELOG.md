@@ -18,8 +18,7 @@
 ## evo-sdk-common@v0.1.0
 ### What's changed
 #### evo-sdk-common
-* Apply changes from v2.0.8 to v2.0.9 by @rachelcarpenterseequent in #11
-* Update changes from v2.0.9 to v2.1.0 by @rachelcarpenterseequent in #14
+* Import library changes from internal repo by @rachelcarpenterseequent in #14
 * Parse `issuer` as a URL to ensure it is not malicious by @robbieaverill in #31
 * Add evo.notebooks utility module, to improve Jupyter notebook experience by @robbieaverill in #29
 * Change port binding to be more specific in aio test by @robbieaverill in #30
