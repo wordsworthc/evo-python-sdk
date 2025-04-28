@@ -354,7 +354,7 @@ class ServiceManager:
             async with self._get_connector(hub.url) as connector:
                 client = WorkspaceAPIClient(connector, org.id)
                 try:
-                    self.__state = self.__state.update_workspaces(await client.list_workspaces())
+                    self.__state = self.__state.update_workspaces(await client.list_all_workspaces())
                 except Exception:
                     logger.exception("Failed to refresh workspaces.", exc_info=True)
                     self.__state = self.__state.without_workspaces()
