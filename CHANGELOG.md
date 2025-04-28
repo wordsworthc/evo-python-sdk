@@ -1,5 +1,13 @@
 # Changelog
 
+## evo-sdk-common@v0.1.3
+### What's changed
+#### evo-sdk-common
+* Manually re-compile changelog by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/43
+* Add Jupyter notebook examples for using evo-sdk-common by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/42
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.1.2...evo-sdk-common@v0.1.3
+
 ## evo-sdk-common@v0.1.2
 ### What's changed
 #### evo-sdk-common
