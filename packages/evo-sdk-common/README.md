@@ -16,7 +16,6 @@ with Seequent Evo APIs.
 
 ## Installation
 
-To install only the essential SDK components:
 ```
 pip install evo-sdk-common
 ```
