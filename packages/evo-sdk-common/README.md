@@ -16,8 +16,14 @@ with Seequent Evo APIs.
 
 ## Installation
 
+To install only the essential SDK components:
 ```
 pip install evo-sdk-common
+```
+
+To use the SDK within a Jupyter notebook, include the `notebooks` optional dependency:
+```
+pip install evo-sdk-common[notebooks]
 ```
 
 ## Usage
