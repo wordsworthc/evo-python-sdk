@@ -1,5 +1,35 @@
 # Changelog
 
+## evo-sdk-common@v0.2.0
+### What's changed
+#### evo-sdk-common
+* Fixed notebook markdown by @davidknight-seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/70
+* Improvements to file path error handling by @davidknight-seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/68
+* py.typed files are added as specified in PEP-561 so that type checkers like mypy will fully analyze the package when it's included in a project by @mikecowie-seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/71
+#### New contributors
+* @davidknight-seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/70
+* @mikecowie-seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/71
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.1.3...evo-sdk-common@v0.2.0
+
+## evo-files@v0.2.0
+### What's changed
+#### evo-files
+* py.typed files are added as specified in PEP-561 so that type checkers like mypy will fully analyze the package when it's included in a project by @mikecowie-seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/71
+## New contributors
+* @mikecowie-seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/71
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-files@v0.1.1...evo-files@v0.2.0
+
+## evo-objects@v0.2.0
+### What's changed
+#### evo-objects
+* py.typed files are added as specified in PEP-561 so that type checkers like mypy will fully analyze the package when it's included in a project by @mikecowie-seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/71
+## New contributors
+* @mikecowie-seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/71
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-objects@v0.1.1...evo-objects@v0.2.0
+
 ## evo-objects@v0.1.1
 ### What's changed
 #### evo-objects
@@ -49,7 +79,7 @@
 * Rename classes to use `API` consistently by @robbieaverill in #24
 * Rename service classes by @wordsworthc in #33
 * evo-client-common package is now evo-sdk-common by @robbieaverill in #35
-#### New Contributors
+#### New contributors
 * @rachelcarpenterseequent made their first contribution in #2
 * @robbieaverill made their first contribution in #5
 * @l-macdonald made their first contribution in #25
