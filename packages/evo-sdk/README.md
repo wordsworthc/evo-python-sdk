@@ -1,6 +1,6 @@
 <p align="center"><a href="https://seequent.com" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://developer.seequent.com/img/seequent-logo-dark.svg" alt="Seequent logo" width="400" /><img src="https://developer.seequent.com/img/seequent-logo.svg" alt="Seequent logo" width="400" /></picture></a></p>
 <p align="center">
-    <a href="https://pypi.org/project/evo-sdk-common/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-sdk-common" /></a>
+    <a href="https://pypi.org/project/evo-sdk/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-sdk" /></a>
     <a href="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/run-all-tests.yaml"><img src="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/run-all-tests.yaml/badge.svg" alt="" /></a>
 </p>
 <p align="center">
@@ -9,26 +9,29 @@
     &bull; <a href="https://seequent.com" target="_blank">Seequent website</a>
 </p>
 
-# Evo SDK Common
+# Evo SDK
 
-Evo SDK Common is a Python package that establishes a common framework for use by client libraries that interact
+Evo SDK is a Python package that establishes a common framework for use by client libraries that interact
 with Seequent Evo APIs.
+
+This package installs all available Evo SDK subpackages, including development dependencies such as Jupyter notebook
+examples:
+
+* [evo-objects](https://pypi.org/project/evo-objects)
+* [evo-files](https://pypi.org/project/evo-files)
+* [evo-sdk-common](https://pypi.org/project/evo-sdk-common)
+
+If you need a subset of these features, you may opt to install a smaller and more targetted SDK instead.
 
 ## Installation
 
 ```
-pip install evo-sdk-common
-```
-
-To use the SDK within a Jupyter notebook, include the `notebooks` optional dependency:
-```
-pip install evo-sdk-common[notebooks]
+pip install evo-sdk
 ```
 
 ## Usage
 
-See the [Getting Started](docs/quickstart.md) guide to learn how to use this library. There is more detailed information about authentication options in the [OAuth examples](docs/oauth.md), and a selection of interactive Jupyter notebooks in the [examples folder](docs/examples).
-
+See the [Getting started guide](https://github.com/seequentevo/evo-python-sdk/blob/main/packages/evo-sdk-common/docs/quickstart.md) to learn how to use this library.
 
 ## Developing the library
 

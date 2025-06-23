@@ -4,8 +4,9 @@ version = "0.1.0"
 description = "Monorepo containing independently versioned Evo Python SDKs"
 requires-python = ">=3.10"
 dependencies = [
-    "evo-sdk-common[aiohttp]",
-    "evo-objects[utils]",
+    "evo-sdk",
+    "evo-sdk-common",
+    "evo-objects",
     "evo-files",
 ]
 dynamic = ["readme"]
@@ -15,11 +16,6 @@ Source = "https://github.com/SeequentEvo/evo-python-sdk"
 Tracker = "https://github.com/SeequentEvo/evo-python-sdk/issues"
 Homepage = "https://www.seequent.com/"
 Documentation = "https://developer.seequent.com/"
-
-[project.optional-dependencies]
-notebooks = [
-    "evo-sdk-common[notebooks]",
-]
 
 [dependency-groups]
 test = ["pytest", "freezegun", "parameterized==0.9.0"]
@@ -43,6 +39,7 @@ line-length = 120
 extend-select = ["I", "RUF022"]
 
 [tool.uv.sources]
+evo-sdk = { workspace = true }
 evo-sdk-common = { workspace = true }
 evo-files = { workspace = true }
 evo-objects = { workspace = true }
