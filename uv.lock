@@ -10,7 +10,7 @@ resolution-markers = [
 members = [
     "evo-files",
     "evo-objects",
-    "evo-python-sdk",
+    "evo-sdk",
     "evo-sdk-common",
 ]
 
@@ -577,7 +577,7 @@ wheels = [
 
 [[package]]
 name = "evo-files"
-version = "0.1.1"
+version = "0.2.0"
 source = { editable = "packages/evo-files" }
 dependencies = [
     { name = "evo-sdk-common" },
@@ -640,7 +640,7 @@ test = [
 
 [[package]]
 name = "evo-objects"
-version = "0.1.1"
+version = "0.2.0"
 source = { editable = "packages/evo-objects" }
 dependencies = [
     { name = "evo-sdk-common" },
@@ -712,35 +712,25 @@ test = [
 ]
 
 [[package]]
-name = "evo-python-sdk"
+name = "evo-sdk"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "evo-files" },
-    { name = "evo-objects", extra = ["utils"] },
-    { name = "evo-sdk-common", extra = ["aiohttp"] },
-]
-
-[package.optional-dependencies]
-notebooks = [
-    { name = "evo-sdk-common", extra = ["notebooks"] },
+    { name = "evo-files", extra = ["aiohttp", "notebooks"] },
+    { name = "evo-objects", extra = ["aiohttp", "notebooks", "utils"] },
+    { name = "evo-sdk-common", extra = ["aiohttp", "notebooks"] },
+    { name = "jupyter" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "bumpver" },
     { name = "coverage", extra = ["toml"] },
-    { name = "evo-python-sdk", extra = ["notebooks"] },
     { name = "freezegun" },
-    { name = "jupyter" },
     { name = "parameterized" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "ruff" },
-]
-notebooks = [
-    { name = "evo-python-sdk", extra = ["notebooks"] },
-    { name = "jupyter" },
 ]
 test = [
     { name = "freezegun" },
@@ -750,27 +740,21 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "evo-files", editable = "packages/evo-files" },
-    { name = "evo-objects", extras = ["utils"], editable = "packages/evo-objects" },
-    { name = "evo-sdk-common", extras = ["aiohttp"], editable = "packages/evo-sdk-common" },
-    { name = "evo-sdk-common", extras = ["notebooks"], marker = "extra == 'notebooks'", editable = "packages/evo-sdk-common" },
+    { name = "evo-files", extras = ["aiohttp", "notebooks"], editable = "packages/evo-files" },
+    { name = "evo-objects", extras = ["aiohttp", "notebooks", "utils"], editable = "packages/evo-objects" },
+    { name = "evo-sdk-common", extras = ["aiohttp", "notebooks"], editable = "packages/evo-sdk-common" },
+    { name = "jupyter" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "bumpver" },
     { name = "coverage", extras = ["toml"] },
-    { name = "evo-python-sdk", extras = ["notebooks"] },
     { name = "freezegun" },
-    { name = "jupyter" },
     { name = "parameterized", specifier = "==0.9.0" },
     { name = "pre-commit", specifier = ">=4" },
     { name = "pytest" },
     { name = "ruff", specifier = "==0.9.1" },
-]
-notebooks = [
-    { name = "evo-python-sdk", extras = ["notebooks"] },
-    { name = "jupyter" },
 ]
 test = [
     { name = "freezegun" },
@@ -780,7 +764,7 @@ test = [
 
 [[package]]
 name = "evo-sdk-common"
-version = "0.1.4"
+version = "0.2.0"
 source = { editable = "packages/evo-sdk-common" }
 dependencies = [
     { name = "pure-interface" },

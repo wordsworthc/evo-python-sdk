@@ -1,6 +1,6 @@
 <p align="center"><a href="https://seequent.com" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://developer.seequent.com/img/seequent-logo-dark.svg" alt="Seequent logo" width="400" /><img src="https://developer.seequent.com/img/seequent-logo.svg" alt="Seequent logo" width="400" /></picture></a></p>
 <p align="center">
-    <a href="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/on-push.yaml"><img src="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/on-push.yaml/badge.svg" alt="" /></a>
+    <a href="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/run-all-tests.yaml"><img src="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/run-all-tests.yaml/badge.svg" alt="" /></a>
 </p>
 <p align="center">
     <a href="https://developer.seequent.com/" target="_blank">Seequent Developer Portal</a>
@@ -18,6 +18,7 @@ Evo is powered by Seequent, a Bentley organisation.
 
 | Package | Version | Description |
 | --- | --- | --- |
+| [evo-sdk](packages/evo-sdk-/README.md) | <a href="https://pypi.org/project/evo-sdk/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-sdk" /></a> | A metapackage that installs all available Seequent Evo SDKs, including Jupyter notebook examples. |
 | [evo-sdk-common](packages/evo-sdk-common/README.md) | <a href="https://pypi.org/project/evo-sdk-common/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-sdk-common" /></a> | A shared library that provides common functionality for integrating with Seequent's client SDKs. |
 | [evo-files](packages/evo-files/README.md) | <a href="https://pypi.org/project/evo-files/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-files" /></a> | A service client for interacting with the Evo File API. |
 | [evo-objects](packages/evo-objects/README.md) | <a href="https://pypi.org/project/evo-objects/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-objects" /></a> | A geoscience object service client library designed to help get up and running with geoscience objects. |

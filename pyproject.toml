@@ -1,12 +1,13 @@
 [project]
-name = "evo-python-sdk"
+name = "evo-sdk"
 version = "0.1.0"
-description = "Monorepo containing independently versioned Evo Python SDKs"
+description = "Python SDK for using Seequent Evo"
 requires-python = ">=3.10"
 dependencies = [
-    "evo-sdk-common[aiohttp]",
-    "evo-objects[utils]",
-    "evo-files",
+    "evo-sdk-common[aiohttp,notebooks]",
+    "evo-objects[aiohttp,notebooks,utils]",
+    "evo-files[aiohttp,notebooks]",
+    "jupyter"
 ]
 dynamic = ["readme"]
 
@@ -16,11 +17,6 @@ Tracker = "https://github.com/SeequentEvo/evo-python-sdk/issues"
 Homepage = "https://www.seequent.com/"
 Documentation = "https://developer.seequent.com/"
 
-[project.optional-dependencies]
-notebooks = [
-    "evo-sdk-common[notebooks]",
-]
-
 [dependency-groups]
 test = ["pytest", "freezegun", "parameterized==0.9.0"]
 dev = [
@@ -29,11 +25,6 @@ dev = [
     "bumpver",
     "coverage[toml]",
     { include-group = "test" },
-    { include-group = "notebooks" },
-]
-notebooks = [
-    "evo-python-sdk[notebooks]",
-    "jupyter",
 ]
 
 [tool.ruff]
