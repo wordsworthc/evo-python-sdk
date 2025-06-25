@@ -1,5 +1,12 @@
 # Changelog
 
+## evo-sdk@v0.1.1
+## What's changed
+### evo-sdk
+* Add configuration for publishing evo-sdk readme to PyPI, update changelog by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/75
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk@v0.1.0...evo-sdk@v0.1.1
+
 ## evo-sdk@v0.1.0
 ## What's changed
 ### evo-sdk
