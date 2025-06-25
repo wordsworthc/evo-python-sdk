@@ -14,16 +14,8 @@ import unittest
 from parameterized import parameterized
 
 from evo.oauth import OAuthScopes
-from evo.oauth.data import OIDCConfig
-from evo.oauth.exceptions import OIDCError
 
 EXPECTED_SCOPE_NAMES = {
-    OAuthScopes.openid: "openid",
-    OAuthScopes.profile: "profile",
-    OAuthScopes.organization: "organization",
-    OAuthScopes.email: "email",
-    OAuthScopes.address: "address",
-    OAuthScopes.phone: "phone",
     OAuthScopes.offline_access: "offline_access",
     OAuthScopes.evo_discovery: "evo.discovery",
     OAuthScopes.evo_workspace: "evo.workspace",
@@ -36,11 +28,6 @@ EXPECTED_SCOPE_NAMES = {
 class TestOAuthScopes(unittest.TestCase):
     @parameterized.expand(
         [
-            (OAuthScopes.openid,),
-            (OAuthScopes.profile,),
-            (OAuthScopes.email,),
-            (OAuthScopes.address,),
-            (OAuthScopes.phone,),
             (OAuthScopes.offline_access,),
             (OAuthScopes.evo_discovery,),
             (OAuthScopes.evo_workspace,),
@@ -75,16 +62,8 @@ class TestOAuthScopes(unittest.TestCase):
     @parameterized.expand(
         [
             (
-                OAuthScopes.openid | OAuthScopes.profile,
-                (OAuthScopes.openid, OAuthScopes.profile),
-            ),
-            (
                 OAuthScopes.default,
                 (
-                    OAuthScopes.openid,
-                    OAuthScopes.profile,
-                    OAuthScopes.email,
-                    OAuthScopes.organization,
                     OAuthScopes.evo_discovery,
                     OAuthScopes.evo_workspace,
                 ),
@@ -109,40 +88,3 @@ class TestOAuthScopes(unittest.TestCase):
             self.assertIn(scope, scopes)
 
         self.assertEqual(len(self.expand_scopes(expected_scopes)), len(scopes))
-
-
-class TestOIDCConfig(unittest.TestCase):
-    @parameterized.expand(
-        [
-            (
-                "invalid issuer for authorization_endpoint",
-                "http://test.com",
-                "http://wrong/auth",
-                "http://test.com/token",
-                "OIDC field authorization_endpoint must be a URL under the issuer",
-            ),
-            (
-                "invalid issuer for token_endpoint",
-                "http://test.com",
-                "http://test.com/auth",
-                "http://wrong/token",
-                "OIDC field token_endpoint must be a URL under the issuer",
-            ),
-            (
-                "missing issuer",
-                None,
-                "http://test.com/auth",
-                "http://test.com/token",
-                "Missing issuer url in OIDC config.",
-            ),
-        ]
-    )
-    def test_config_validation_errors(self, _, issuer, authorization_endpoint, token_endpoint, expected_msg):
-        with self.assertRaises(OIDCError) as ex:
-            OIDCConfig(
-                issuer=issuer,
-                authorization_endpoint=authorization_endpoint,
-                token_endpoint=token_endpoint,
-                response_types_supported=set(["code"]),
-            )
-        self.assertEqual(str(ex.exception), expected_msg)

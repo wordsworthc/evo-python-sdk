@@ -19,7 +19,7 @@ from uuid import UUID
 
 import ipywidgets as widgets
 from aiohttp.typedefs import StrOrURL
-from IPython.display import display, display_html
+from IPython.display import display
 
 from evo import logging
 from evo.aio import AioTransport
@@ -27,18 +27,18 @@ from evo.common import APIConnector, BaseAPIClient, Environment
 from evo.common.exceptions import UnauthorizedException
 from evo.common.interfaces import IAuthorizer, ICache, IFeedback, ITransport
 from evo.discovery import Hub, Organization
-from evo.oauth import OAuthScopes, OIDCConnector
+from evo.oauth import OAuthConnector, OAuthScopes
 from evo.service_manager import ServiceManager
 from evo.workspaces import Workspace
 
 from ._consts import (
+    DEFAULT_BASE_URI,
     DEFAULT_CACHE_LOCATION,
     DEFAULT_DISCOVERY_URL,
-    DEFAULT_ISSUER_URL,
     DEFAULT_REDIRECT_URL,
 )
 from ._helpers import FileName, build_button_widget, build_img_widget, init_cache
-from .authorizer import AuthorizationCodeAuthorizer, DeviceFlowAuthorizer
+from .authorizer import AuthorizationCodeAuthorizer
 from .env import DotEnv
 
 T = TypeVar("T")
@@ -278,7 +278,7 @@ class ServiceManagerWidget(widgets.HBox):
     def with_auth_code(
         cls,
         client_id: str,
-        oidc_issuer: str = DEFAULT_ISSUER_URL,
+        base_uri: str = DEFAULT_BASE_URI,
         discovery_url: str = DEFAULT_DISCOVERY_URL,
         redirect_url: str = DEFAULT_REDIRECT_URL,
         client_secret: str | None = None,
@@ -298,7 +298,7 @@ class ServiceManagerWidget(widgets.HBox):
         ```
 
         :param client_id: The client ID to use for authentication.
-        :param oidc_issuer: The OIDC issuer URL.
+        :param base_uri: The OAuth server base URI.
         :param discovery_url: The URL of the Evo Discovery service.
         :param redirect_url: The local URL to redirect the user back to after authorisation.
         :param client_secret: The client secret to use for authentication.
@@ -311,56 +311,13 @@ class ServiceManagerWidget(widgets.HBox):
         cache = init_cache(cache_location)
         transport = AioTransport(user_agent=client_id, proxy=proxy)
         authorizer = AuthorizationCodeAuthorizer(
-            oidc_connector=OIDCConnector(
+            oauth_connector=OAuthConnector(
                 transport=transport,
-                oidc_issuer=oidc_issuer,
+                base_uri=base_uri,
                 client_id=client_id,
                 client_secret=client_secret,
             ),
             redirect_url=redirect_url,
-            scopes=oauth_scopes,
-            env=DotEnv(cache),
-        )
-        return cls(transport, authorizer, discovery_url, cache)
-
-    @classmethod
-    def with_device_flow(
-        cls,
-        client_id: str,
-        client_secret: str | None = None,
-        oidc_issuer: str = DEFAULT_ISSUER_URL,
-        discovery_url: str = DEFAULT_DISCOVERY_URL,
-        cache_location: FileName = DEFAULT_CACHE_LOCATION,
-        oauth_scopes: OAuthScopes = OAuthScopes.all_evo,
-        proxy: StrOrURL | None = None,
-    ) -> ServiceManagerWidget:
-        """Create a ServiceManagerWidget with a device flow authorizer.
-
-        Chain this method with the login method to authenticate the user and obtain an access token:
-
-        ```python
-        manager = await ServiceManagerWidget.with_device_flow(client_id="your-client-id").login()
-        ```
-
-        :param client_id: The client ID to use for authentication.
-        :param client_secret: The client secret to use for authentication.
-        :param oidc_issuer: The OIDC issuer URL.
-        :param discovery_url: The URL of the Evo Discovery service.
-        :param cache_location: The location of the cache file.
-        :param oauth_scopes: The OAuth scopes to request.
-        :param proxy: The proxy URL to use for API requests.
-
-        :returns: The new ServiceManagerWidget.
-        """
-        cache = init_cache(cache_location)
-        transport = AioTransport(user_agent=client_id, proxy=proxy)
-        authorizer = DeviceFlowAuthorizer(
-            oidc_connector=OIDCConnector(
-                transport=transport,
-                oidc_issuer=oidc_issuer,
-                client_id=client_id,
-                client_secret=client_secret,
-            ),
             scopes=oauth_scopes,
             env=DotEnv(cache),
         )
@@ -377,28 +334,6 @@ class ServiceManagerWidget(widgets.HBox):
         authorizer = cast(AuthorizationCodeAuthorizer, self._authorizer)
         if not await authorizer.reuse_token():
             await authorizer.login(timeout_seconds=timeout_seconds)
-
-    async def _login_with_device_flow(self, timeout_seconds: int) -> None:
-        authorizer = cast(DeviceFlowAuthorizer, self._authorizer)
-        if not await authorizer.reuse_token():
-            with self._prompt() as prompt:
-                async with authorizer.login(timeout_seconds=timeout_seconds) as flow:
-                    # Fall back to the verification_uri if verification_uri_complete is not available.
-                    href = flow.verification_uri_complete or flow.verification_uri
-                    html = f"""
-                        <div style="font-size: 1rem;">
-                            <p>
-                                Using a browser, visit:</br>
-                                <b><a href="{href}" rel="external" target="_blank">{flow.verification_uri}</a></b>
-                            </p>
-                            <p>
-                                And enter the code:</br>
-                                <b>{flow.user_code}</b>
-                            </p>
-                        </div>
-                    """
-                    with prompt:
-                        display_html(html, raw=True)
 
     async def login(self, timeout_seconds: int = 180) -> ServiceManagerWidget:
         """Authenticate the user and obtain an access token.
@@ -421,8 +356,6 @@ class ServiceManagerWidget(widgets.HBox):
             match self._authorizer:
                 case AuthorizationCodeAuthorizer():
                     await self._login_with_auth_code(timeout_seconds)
-                case DeviceFlowAuthorizer():
-                    await self._login_with_device_flow(timeout_seconds)
                 case unknown:
                     raise NotImplementedError(f"ServiceManagerWidget cannot login using {type(unknown).__name__}.")
 

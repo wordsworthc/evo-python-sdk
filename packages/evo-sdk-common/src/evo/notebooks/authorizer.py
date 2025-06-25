@@ -15,8 +15,6 @@ import warnings
 from collections.abc import AsyncIterator
 from typing import Generic, TypeVar
 
-from pydantic import ValidationError
-
 from evo import logging, oauth
 from evo.oauth.authorizer import _BaseAuthorizer
 
@@ -44,12 +42,7 @@ class _OAuthEnv(Generic[_T_token]):
 
         try:
             token_dict = json.loads(token_str)
-            try:
-                # Attempt to parse the token as a UserAccessToken first.
-                return oauth.UserAccessToken.model_validate(token_dict)
-            except ValidationError:
-                # Fall back to AccessToken.
-                return oauth.AccessToken.model_validate(token_dict)
+            return oauth.AccessToken.model_validate(token_dict)
 
         except Exception:
             # The token is invalid.
@@ -77,18 +70,9 @@ class _NotebookAuthorizerMixin(_BaseAuthorizer[_T_token]):
             if (token := self._env.get_token()) is None:
                 return False
 
-            if isinstance(token, oauth.UserAccessToken):
-                try:
-                    token.validate_id_token(
-                        issuer=self._connector.issuer,
-                        client_id=self._connector.client_id,
-                        ignore_iat=True,
-                    )
-                except oauth.OAuthError as exc:
-                    logger.warning(f"Invalid token found in the environment file: {exc}")
-                    # The token is invalid. Clear it from the environment and return False.
-                    self._env.set_token(None)
-                    return False
+            if token.is_expired:
+                self._env.set_token(None)
+                return False
 
             return True
 
@@ -100,7 +84,7 @@ class _NotebookAuthorizerMixin(_BaseAuthorizer[_T_token]):
         self._env.set_token(new_token)
 
 
-class AuthorizationCodeAuthorizer(_NotebookAuthorizerMixin[oauth.UserAccessToken], oauth.AuthorizationCodeAuthorizer):
+class AuthorizationCodeAuthorizer(_NotebookAuthorizerMixin[oauth.AccessToken], oauth.AuthorizationCodeAuthorizer):
     """An authorization code authorizer for use in Jupyter notebooks.
 
     This authorizer is not secure, and should only ever be used in Jupyter notebooks. It stores the access token in the
@@ -110,13 +94,13 @@ class AuthorizationCodeAuthorizer(_NotebookAuthorizerMixin[oauth.UserAccessToken
 
     def __init__(
         self,
-        oidc_connector: oauth.OIDCConnector,
+        oauth_connector: oauth.OAuthConnector,
         redirect_url: str,
         scopes: oauth.OAuthScopes,
         env: DotEnv,
     ) -> None:
         """
-        :param oidc_connector: The OIDC connector to use for authentication.
+        :param oauth_connector: The OAuth connector to use for authentication.
         :param redirect_url: The local URL to redirect the user back to after authorisation.
         :param scopes: The OAuth scopes to request.
         :param env: The environment to store the OAuth token in.
@@ -125,11 +109,11 @@ class AuthorizationCodeAuthorizer(_NotebookAuthorizerMixin[oauth.UserAccessToken
             "The evo.notebooks.AuthorizationCodeAuthorizer is not secure, and should only ever be used in Jupyter"
             " notebooks in a private environment."
         )
-        super().__init__(oidc_connector=oidc_connector, redirect_url=redirect_url, scopes=scopes)
+        super().__init__(oauth_connector=oauth_connector, redirect_url=redirect_url, scopes=scopes)
         self._env = _OAuthEnv(env)
 
     @contextlib.asynccontextmanager
-    async def _unwrap_token(self) -> AsyncIterator[oauth.UserAccessToken]:
+    async def _unwrap_token(self) -> AsyncIterator[oauth.AccessToken]:
         # Overrides the parent implementation so that we can automatically login at startup.
         async with self._mutex:
             if (token := self._env.get_token()) is None:
@@ -143,36 +127,3 @@ class AuthorizationCodeAuthorizer(_NotebookAuthorizerMixin[oauth.UserAccessToken
             # The refresh token has expired. Clear the token from the environment.
             self._env.set_token(None)
         return succeeded
-
-
-class DeviceFlowAuthorizer(_NotebookAuthorizerMixin[oauth.AccessToken], oauth.DeviceFlowAuthorizer):
-    """A device flow authorizer for use in Jupyter notebooks.
-
-    This authorizer is not secure, and should only ever be used in Jupyter notebooks. It stores the access token in the
-    environment file, which is not secure. It is intended for use in a development environment only. The environment
-    file must not be committed to source control.
-    """
-
-    def __init__(
-        self,
-        oidc_connector: oauth.OIDCConnector,
-        scopes: oauth.OAuthScopes,
-        env: DotEnv,
-    ) -> None:
-        """
-        :param oidc_connector: The OIDC connector to use for authentication.
-        :param scopes: The OAuth scopes to request.
-        :param env: The environment to store the OAuth token in.
-        """
-        warnings.warn(
-            "The evo.notebooks.DeviceFlowAuthorizer is not secure, and should only ever be used in Jupyter"
-            "notebooks in a private environment."
-        )
-        super().__init__(oidc_connector=oidc_connector, scopes=scopes)
-        self._env = _OAuthEnv(env)
-
-    async def refresh_token(self) -> bool:
-        # The access token has expired. Clear the token from the environment.
-        self._env.set_token(None)
-        # We are unable to refresh the access token because refresh tokens are not supported for device flow.
-        return False

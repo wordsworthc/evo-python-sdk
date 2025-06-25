@@ -10,7 +10,7 @@
 #  limitations under the License.
 
 DEFAULT_DISCOVERY_URL = "https://discover.api.seequent.com"
-DEFAULT_ISSUER_URL = "https://ims.bentley.com"
+DEFAULT_BASE_URI = "https://ims.bentley.com"
 DEFAULT_REDIRECT_URL = "http://localhost:3000/signin-oidc"
 
 DEFAULT_CACHE_LOCATION = "./notebook-data"

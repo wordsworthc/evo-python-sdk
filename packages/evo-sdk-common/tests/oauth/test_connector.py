@@ -10,17 +10,22 @@
 #  limitations under the License.
 
 import unittest
+from typing import Literal
 
-from evo.oauth.authorizer import AccessTokenAuthorizer
+from parameterized import parameterized
+
+from evo.aio import AioTransport
+from evo.oauth import OAuthConnector
 
 
-class TestAccessTokenAuthorizer(unittest.IsolatedAsyncioTestCase):
-    def setUp(self) -> None:
-        self.authorizer = AccessTokenAuthorizer(access_token="abc-123")
-
-    async def test_get_default_headers(self) -> None:
-        headers = await self.authorizer.get_default_headers()
-        assert headers == {"Authorization": "Bearer abc-123"}
-
-    async def test_refresh_token(self) -> None:
-        assert not await self.authorizer.refresh_token()
+class TestOAuthConnector(unittest.TestCase):
+    @parameterized.expand(
+        [
+            ("authorize", "/connect/authorize"),
+            ("token", "/connect/token"),
+        ],
+    )
+    def test_endpoint(self, endpoint_type: Literal["authorize", "token"], expected: str) -> None:
+        transport = AioTransport(user_agent="test")
+        connector = OAuthConnector(transport, client_id="test")
+        assert connector.endpoint(endpoint_type) == expected

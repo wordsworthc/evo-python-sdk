@@ -10,39 +10,33 @@
 #  limitations under the License.
 
 import asyncio
-from datetime import timedelta
 from unittest import mock
 from urllib.parse import parse_qs, urlparse
 
 from parameterized import parameterized
 
 from evo.common.test_tools import long_test
-from evo.oauth import OAuthError, OAuthRedirectHandler, OAuthScopes, OIDCConnector
-from evo.oauth.data import AccessToken, OIDCConfig
+from evo.oauth import OAuthError, OAuthRedirectHandler, OAuthScopes
 
 from ._helpers import (
     AUTHORIZATION_CODE,
-    CLIENT_ID,
-    CLIENT_SECRET,
-    ISSUED_AT,
-    ISSUER_URL,
     REDIRECT_URL,
     STATE_TOKEN,
     VERIFIER_TOKEN,
-    TestWithMockOIDCConnector,
-    TestWithOIDCConnector,
+    TestWithMockOAuthConnector,
+    TestWithOAuthConnector,
+    get_access_token,
     get_redirect,
-    get_user_access_token,
     patch_urlsafe_tokens,
     patch_webbrowser_open,
 )
 
 
-class TestOAuthRedirectHandlerWithMockOIDC(TestWithMockOIDCConnector):
+class TestOAuthRedirectHandlerWithMockOAuth(TestWithMockOAuthConnector):
     def setUp(self) -> None:
         super().setUp()
-        self.handler = OAuthRedirectHandler(oidc_connector=self.connector, redirect_url=REDIRECT_URL)
-        self.handler.get_token = mock.AsyncMock(return_value=get_user_access_token())
+        self.handler = OAuthRedirectHandler(oauth_connector=self.connector, redirect_url=REDIRECT_URL)
+        self.handler.get_token = mock.AsyncMock(return_value=get_access_token())
 
     async def authenticate(self) -> None:
         """Authenticate and return the access token."""
@@ -84,7 +78,7 @@ class TestOAuthRedirectHandlerWithMockOIDC(TestWithMockOIDCConnector):
             self.assertTrue(auth.done())
 
         self.handler.get_token.assert_called_once_with(STATE_TOKEN, AUTHORIZATION_CODE)
-        self.assertEqual(get_user_access_token(), result)
+        self.assertEqual(get_access_token(), result)
 
     @parameterized.expand(
         [
@@ -126,7 +120,7 @@ class TestOAuthRedirectHandlerWithMockOIDC(TestWithMockOIDCConnector):
 
         mock_webbrowser_open.assert_called_once_with(expect_auth_url)
         self.handler.get_token.assert_called_once_with(STATE_TOKEN, AUTHORIZATION_CODE)
-        self.assertEqual(get_user_access_token(), result)
+        self.assertEqual(get_access_token(), result)
 
     @parameterized.expand(
         [
@@ -152,11 +146,6 @@ class TestOAuthRedirectHandlerWithMockOIDC(TestWithMockOIDCConnector):
         mock_webbrowser_open.assert_called_once_with(expect_auth_url)
         self.handler.get_token.assert_not_called()
 
-    async def test_create_authorization_url_fails_if_unconfigured(self) -> None:
-        """Test creating the authorization URL fails if OIDC Discovery has not been run"""
-        with self.assertRaises(OAuthError):
-            await self.handler.login(OAuthScopes.default)
-
     def test_create_authorization_url(self) -> None:
         """Test creating the authorization URL"""
         expected_url = self.get_expected_auth_url(
@@ -181,102 +170,12 @@ class TestOAuthRedirectHandlerWithMockOIDC(TestWithMockOIDCConnector):
         self.assertNotEqual(query_one["code_challenge"], query_two["code_challenge"])
 
 
-class TestOAuthRedirectHandler(TestWithOIDCConnector):
+class TestOAuthRedirectHandler(TestWithOAuthConnector):
     def setUp(self) -> None:
         super().setUp()
-        self.handler = OAuthRedirectHandler(oidc_connector=self.connector, redirect_url=REDIRECT_URL)
-        self.connector._config = OIDCConfig(
-            issuer=self.connector.issuer,
-            authorization_endpoint=f"{self.connector.issuer}/authorization",
-            token_endpoint=f"{self.connector.issuer}/token",
-            response_types_supported=set(["code"]),
-        )
-
-    async def test_get_token_fails_if_unconfigured(self) -> None:
-        """Test getting an access token fails if OIDC Discovery has not been run"""
-        self.connector._config = None
-        with self.assertRaises(OAuthError):
-            await self.handler.get_token(STATE_TOKEN, AUTHORIZATION_CODE)
+        self.handler = OAuthRedirectHandler(oauth_connector=self.connector, redirect_url=REDIRECT_URL)
 
     async def test_get_token_fails_without_state(self) -> None:
         """Test getting an access token fails if the state token has not been generated"""
         with self.assertRaises(OAuthError):
             await self.handler.get_token(AUTHORIZATION_CODE, VERIFIER_TOKEN)
-
-    @parameterized.expand(
-        [
-            ("happy day", ISSUER_URL, get_user_access_token()),
-            ("no refresh token", ISSUER_URL, get_user_access_token(refresh_token=None)),
-            (
-                "sqid wrong issuer still works",
-                # *.seequent.com issuer urls are not validated because the issuer ID in the ID token does not match the
-                # openid configuration (which is not compliant with the OIDC spec). This has been acknowledged and is
-                # not considered an issue because Seequent ID login with Evo is deprecated - use Bentley ID.
-                "https://sqid.wrong.seequent.com",
-                get_user_access_token(id_issuer="https://sqid.wrong.issuer.test"),
-            ),
-            (
-                "nearly expired",
-                ISSUER_URL,
-                get_user_access_token(id_issued_at=ISSUED_AT - timedelta(minutes=4, seconds=59)),
-            ),
-            (
-                "max allowable clock drift",
-                ISSUER_URL,
-                get_user_access_token(id_issued_at=ISSUED_AT + timedelta(minutes=4, seconds=59)),
-            ),
-            ("multiple audiences", ISSUER_URL, get_user_access_token(id_audience=["other", CLIENT_ID])),
-        ]
-    )
-    async def test_get_token(self, _label: str, issuer_url: str, expect_token: AccessToken) -> None:
-        """Test getting an access token"""
-        # Replace the connector so that we can use a new issuer URL.
-        self.connector = OIDCConnector(self.transport, issuer_url, CLIENT_ID, CLIENT_SECRET)
-        self.connector._config = OIDCConfig(
-            issuer=self.connector.issuer,
-            authorization_endpoint=f"{self.connector.issuer}/authorization",
-            token_endpoint=f"{self.connector.issuer}/token",
-            response_types_supported=set(["code"]),
-        )
-
-        self.handler = OAuthRedirectHandler(oidc_connector=self.connector, redirect_url=REDIRECT_URL)
-        with patch_urlsafe_tokens(state=STATE_TOKEN, verifier=VERIFIER_TOKEN):
-            self.handler.create_authorization_url(OAuthScopes.default)
-
-        with self.transport.set_http_response(200, expect_token.model_dump_json(by_alias=True, exclude_unset=True)):
-            token = await self.handler.get_token(STATE_TOKEN, AUTHORIZATION_CODE)
-        self.assert_fetched_token(
-            path=issuer_url + "/token",
-            grant_type="authorization_code",
-            code=AUTHORIZATION_CODE,
-            code_verifier=VERIFIER_TOKEN,
-            redirect_uri=REDIRECT_URL,
-            client_id=CLIENT_ID,
-            client_secret=CLIENT_SECRET,
-        )
-        self.assertEqual(expect_token, token)
-
-    @parameterized.expand(
-        [
-            ("wrong issuer", get_user_access_token(id_issuer="https://wrong.issuer.test")),
-            ("wrong audience", get_user_access_token(id_audience=["wrong", "audience"])),
-            ("expired id token", get_user_access_token(id_issued_at=ISSUED_AT - timedelta(minutes=5))),
-            ("id token from the future", get_user_access_token(id_issued_at=ISSUED_AT + timedelta(minutes=5))),
-        ]
-    )
-    async def test_get_token_fails_with_invalid_id_token(self, _label: str, access_token: AccessToken) -> None:
-        """Test getting an access token fails if the ID token is invalid"""
-        with patch_urlsafe_tokens(state=STATE_TOKEN, verifier=VERIFIER_TOKEN):
-            self.handler.create_authorization_url(OAuthScopes.default)
-
-        with self.transport.set_http_response(200, access_token.model_dump_json(by_alias=True, exclude_unset=True)):
-            with self.assertRaises(OAuthError):
-                await self.handler.get_token(STATE_TOKEN, AUTHORIZATION_CODE)
-        self.assert_fetched_token(
-            grant_type="authorization_code",
-            code=AUTHORIZATION_CODE,
-            code_verifier=VERIFIER_TOKEN,
-            redirect_uri=REDIRECT_URL,
-            client_id=CLIENT_ID,
-            client_secret=CLIENT_SECRET,
-        )

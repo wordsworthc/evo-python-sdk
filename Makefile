@@ -3,6 +3,7 @@ lint:
 	uv run --only-dev ruff format --check
 
 lint-fix:
+	uv run --only-dev ruff check --fix
 	uv run --only-dev ruff format
 
 test-common:
