@@ -1,5 +1,12 @@
 # Changelog
 
+## evo-sdk@v0.1.0
+## What's changed
+### evo-sdk
+* Add evo-sdk metapackage, which installs all other packages with dev dependencies by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/74
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-files@v0.2.0...evo-sdk@v0.1.0
+
 ## evo-sdk-common@v0.2.0
 ### What's changed
 #### evo-sdk-common
