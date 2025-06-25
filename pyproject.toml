@@ -42,7 +42,7 @@ evo-objects = { workspace = true }
 members = ["packages/*"]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
