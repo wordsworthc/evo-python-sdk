@@ -1,36 +1,32 @@
 # OAuth examples
 
-The OAuth implementation provided requires additional dependencies to be installed. To install the required dependencies, make sure you depend on `evo-sdk-common[all]`.
+The OAuth implementation provided requires additional dependencies to be installed. To install the required dependencies, make sure you depend on `evo-sdk-common[notebooks]`.
 
 ```
-pip install evo-sdk-common[all]
+pip install evo-sdk-common[notebooks]
 ```
 
 **Note:** If you'd like to run these examples interactively, you can use the [OAuth Jupyter notebook](examples/oauth.ipynb).
 
-## OpenID Connect
+## Configure the connector
 
-The provided OAuth implementation depends on OpenID Connect discovery to retrieve the OAuth endpoints. This approach means we can support multiple OAuth providers without needing to hardcode the endpoints for each provider. For an OAuth provider to be supported, it must support the OpenID Connect discovery, in addition to the `code` response type, and the `authorization_code` grant type.
-
-The `OIDCConnector` is the central component for all of our OAuth workflows.
+The `OAuthConnector` is the central component for all of our OAuth workflows.
 
 ``` python
 import logging
 from evo.aio import AioTransport
-from evo.oauth import OIDCConnector
+from evo.oauth import OAuthConnector
 
 logging.basicConfig(level=logging.DEBUG)
 
-ISSUER_URI = "https://ims.bentley.com"
+# OAuth client app credentials
+# See: https://developer.seequent.com/docs/guides/getting-started/apps-and-tokens
 REDIRECT_URL = "http://localhost:3000/signin-oidc"
-USER_AGENT = "EvoPythonSDK"
+CLIENT_NAME = "Your Client Name"
 CLIENT_ID = "<client-id>"
 
-connector = OIDCConnector(
-    transport=AioTransport(
-        user_agent=USER_AGENT,
-    ),
-    oidc_issuer=ISSUER_URI,
+connector = OAuthConnector(
+    transport=AioTransport(user_agent=CLIENT_NAME),
     client_id=CLIENT_ID,
 )
 ```
@@ -47,7 +43,7 @@ The `OAuth` library provides authorizer classes to handle different OAuth flows.
 from evo.oauth import AuthorizationCodeAuthorizer, OAuthScopes
 
 authorizer = AuthorizationCodeAuthorizer(
-    oidc_connector=connector,
+    oauth_connector=connector,
     redirect_url=REDIRECT_URL,
     scopes=OAuthScopes.all_evo | OAuthScopes.offline_access,
 )
@@ -70,7 +66,7 @@ print(f"The token was {'' if refreshed else 'not '}refreshed.")
 
 ## Using the OAuthRedirectHandler
 
-The `OAuthRedirectHandler` wraps the `OIDCConnector` and implements a localhost HTTP server to handle the OAuth redirect. This is useful for applications that cannot open a browser window, such as a command-line application. The `OAuthRedirectHandler` is an asynchronous context manager that manages the lifecycle of the HTTP server.
+The `OAuthRedirectHandler` wraps the `OAuthConnector` and implements a localhost HTTP server to handle the OAuth redirect. This is useful for applications that cannot open a browser window, such as a command-line application. The `OAuthRedirectHandler` is an asynchronous context manager that manages the lifecycle of the HTTP server.
 
 ``` python
 from evo.oauth import OAuthRedirectHandler, OAuthScopes
@@ -83,30 +79,28 @@ print(f"Access token: {result.access_token}")
 
 ## Client credentials authentication
 
-Using `ClientCredientialsAuthorizer` we can handle service-to-service authentication.
+The `ClientCredientialsAuthorizer` allows you to handle service-to-service authentication.
 
 ``` python
 import logging
 from evo.aio import AioTransport
-from evo.oauth import ClientCredentialsAuthorizer, OAuthScopes, OIDCConnector
+from evo.oauth import ClientCredentialsAuthorizer, OAuthScopes, OAuthConnector
 
 logging.basicConfig(level=logging.DEBUG)
 
-ISSUER_URI = "https://ims.bentley.com"
-USER_AGENT = "EvoPythonSDK"
+# OAuth client app credentials
+# See: https://developer.seequent.com/docs/guides/getting-started/apps-and-tokens
+CLIENT_NAME = "Your Client Name"
 CLIENT_ID = "<client-id>"
 CLIENT_SECRET = "<client-secret>"
 
 authorizer = ClientCredentialsAuthorizer(
-    oidc_connector=OIDCConnector(
-        transport=AioTransport(
-            user_agent=USER_AGENT,
-        ),
-        oidc_issuer=ISSUER_URI,
+    oauth_connector=OAuthConnector(
+        transport=AioTransport(user_agent=USER_AGENT),
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
     ),
-    scopes=OAuthScopes.openid | OAuthScopes.profile | OAuthScopes.evo_discovery | OAuthScopes.evo_workspace,
+    scopes=OAuthScopes.evo_discovery | OAuthScopes.evo_workspace,
 )
 
 print(await authorizer.get_default_headers())

@@ -16,19 +16,17 @@ from typing import Generic, TypeVar
 
 from evo import logging
 from evo.common.data import HTTPHeaderDict
-from evo.common.exceptions import RetryError
 from evo.common.interfaces import IAuthorizer
 
-from .data import AccessToken, DeviceFlowResponse, OAuthScopes, UserAccessToken
-from .exceptions import OAuthError, OIDCError
+from .connector import OAuthConnector
+from .data import AccessToken, OAuthScopes
+from .exceptions import OAuthError
 from .oauth_redirect_handler import OAuthRedirectHandler
-from .oidc import OIDCConnector
 
 __all__ = [
     "AccessTokenAuthorizer",
     "AuthorizationCodeAuthorizer",
     "ClientCredentialsAuthorizer",
-    "DeviceFlowAuthorizer",
 ]
 
 logger = logging.getLogger("oauth")
@@ -39,14 +37,14 @@ T = TypeVar("T", bound=AccessToken)
 class _BaseAuthorizer(IAuthorizer, Generic[T]):
     pi_partial_implementation = True  # Suppress warning about missing interface methods.
 
-    def __init__(self, oidc_connector: OIDCConnector, scopes: OAuthScopes = OAuthScopes.default) -> None:
+    def __init__(self, oauth_connector: OAuthConnector, scopes: OAuthScopes = OAuthScopes.default) -> None:
         """
-        :param oidc_connector: The OIDC connector to use for fetching tokens.
+        :param oauth_connector: The connector to use for fetching tokens.
         :param scopes: The OAuth scopes to request.
         """
         self._mutex = asyncio.Lock()
 
-        self._connector = oidc_connector
+        self._connector = oauth_connector
         self.__token: T | None = None
 
         assert isinstance(scopes, OAuthScopes), "Scopes must be an instance of OAuthScopes."
@@ -89,7 +87,7 @@ class _BaseAuthorizer(IAuthorizer, Generic[T]):
 
 
 class ClientCredentialsAuthorizer(_BaseAuthorizer[AccessToken]):
-    """An OAuth authorizer that uses a client credientials to authorize a client.
+    """An OAuth authorizer that uses a client credentials to authorize a client.
 
     The authorizer will automatically refresh the access token when it expires.
     """
@@ -114,8 +112,6 @@ class ClientCredentialsAuthorizer(_BaseAuthorizer[AccessToken]):
 
         :raises OAuthError: If token cannot be fetched.
         """
-        await self._connector.load_config()
-        self._validate_configuration()
         data = {  # The payload to send to the OAuth server in the token request.
             "grant_type": "client_credentials",
             "scope": str(self._scopes),
@@ -153,21 +149,8 @@ class ClientCredentialsAuthorizer(_BaseAuthorizer[AccessToken]):
         else:
             return True
 
-    def _validate_configuration(self):
-        """Validate an OIDC configuration against the issuer.
 
-        https://openid.net/specs/openid-connect-discovery-1_0.html#rfc.section.3
-
-        :raises OIDCError: If the configuration is invalid.
-        """
-        if (
-            self._connector.config.grant_types_supported
-            and "client_credentials" not in self._connector.config.grant_types_supported
-        ):
-            raise OIDCError("Authorization provider does not support the 'client_credentials' grant type.")
-
-
-class AuthorizationCodeAuthorizer(_BaseAuthorizer[UserAccessToken]):
+class AuthorizationCodeAuthorizer(_BaseAuthorizer[AccessToken]):
     """An OAuth authorizer that uses a localhost callback to authenticate the user.
 
     This authorizer launches a local web browser to authenticate the user and obtain an access token. The user is
@@ -184,21 +167,20 @@ class AuthorizationCodeAuthorizer(_BaseAuthorizer[UserAccessToken]):
     """
 
     def __init__(
-        self, oidc_connector: OIDCConnector, redirect_url: str, scopes: OAuthScopes = OAuthScopes.default
+        self, oauth_connector: OAuthConnector, redirect_url: str, scopes: OAuthScopes = OAuthScopes.default
     ) -> None:
         """
-        :param oidc_connector: The OIDC connector to use for fetching tokens.
+        :param oauth_connector: The OAuth connector to use for fetching tokens.
         :param redirect_url: The local URL to redirect the user back to after authorisation.
         :param scopes: The OAuth scopes to request.
         """
-        super().__init__(oidc_connector, scopes)
+        super().__init__(oauth_connector, scopes)
         self._redirect_url = redirect_url
 
-    def _update_token(self, new_token: UserAccessToken) -> None:
-        new_token.validate_id_token(issuer=self._connector.issuer, client_id=self._connector.client_id)
+    def _update_token(self, new_token: AccessToken) -> None:
         return super()._update_token(new_token)
 
-    async def _handle_login(self, timeout_seconds: int) -> UserAccessToken:
+    async def _handle_login(self, timeout_seconds: int) -> AccessToken:
         """Internal method to handle the login process without acquiring the mutex.
 
         :param timeout_seconds: The maximum time (in seconds) to wait for the authorisation process to complete.
@@ -208,7 +190,6 @@ class AuthorizationCodeAuthorizer(_BaseAuthorizer[UserAccessToken]):
         :raises OAuthError: If the user does not authenticate within the timeout.
         """
         async with OAuthRedirectHandler(self._connector, self._redirect_url) as handler:
-            self._validate_configuration()
             return await handler.login(scopes=self._scopes, timeout_seconds=timeout_seconds)
 
     async def login(self, timeout_seconds: int = 180) -> None:
@@ -236,131 +217,13 @@ class AuthorizationCodeAuthorizer(_BaseAuthorizer[UserAccessToken]):
                     "refresh_token": old_token.refresh_token,
                 }
                 logger.debug("Refreshing access token...")
-                new_token = await self._connector.fetch_token(data, UserAccessToken)
+                new_token = await self._connector.fetch_token(data, AccessToken)
                 self._update_token(new_token)
             except Exception:  # noqa
                 logger.exception("Failed to refresh the access token.", exc_info=True)
                 return False
             else:
                 return True
-
-    def _validate_configuration(self):
-        """Validate an OIDC configuration against the issuer.
-
-        https://openid.net/specs/openid-connect-discovery-1_0.html#rfc.section.3
-
-        :raises OIDCError: If the configuration is invalid.
-        """
-        if "code" not in self._connector.config.response_types_supported:
-            raise OIDCError("Authorization provider does not support the 'code' response type.")
-
-        if (
-            self._connector.config.grant_types_supported
-            and "authorization_code" not in self._connector.config.grant_types_supported
-        ):
-            raise OIDCError("Authorization provider does not support the 'authorization_code' grant type.")
-
-
-class DeviceFlowAuthorizer(_BaseAuthorizer[AccessToken]):
-    """An OAuth authorizer that uses the device flow to authenticate the user.
-
-    https://datatracker.ietf.org/doc/html/rfc8628
-
-    The device flow is a two-step process. The first step is to begin the device flow and obtain a device code. The
-    second step is to wait for the user to authorize the device flow. The access token is then obtained and stored
-    in the authorizer.
-
-    After receiving a successful authorization response, the client must display the "user_code" and the
-    "verification_uri" to the end user and instruct them to visit the URI in a user agent on another device and
-    enter the user code.
-
-    The "verification_uri_complete" value, if available, can be used in any non-textual manner that results in a
-    browser being used to open the URI. For example, the URI could be placed in a QR code or NFC tag to save the user
-    from manually typing it.
-
-    https://datatracker.ietf.org/doc/html/rfc8628#section-3.3.1
-    """
-
-    async def _begin_device_flow(self) -> DeviceFlowResponse:
-        """Begin the device flow.
-
-        Send a device authorization request to the authorization server.
-
-        :return: The device authorization response.
-
-        :raises OIDCError: If the authorization provider does not support device flow.
-        :raises OAuthError: If the device flow cannot be started.
-        """
-        await self._connector.load_config()
-        self._validate_configuration()
-        return await self._connector.begin_device_flow(self._scopes)
-
-    async def _wait_for_authorization(self, flow: DeviceFlowResponse) -> None:
-        """Wait for the user to authorize the device flow.
-
-        :param flow: The device authorization response.
-
-        :raises OAuthError: If the user does not authorize the device flow within the required time.
-        """
-        data = {
-            "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
-            "device_code": flow.device_code,
-        }
-        try:
-            async for handler in flow._retry:
-                with handler.suppress_errors():
-                    token = await self._connector.fetch_token(data, AccessToken)
-        except RetryError:
-            raise OAuthError("Failed to authenticate the user.")
-
-        self._update_token(token)
-
-    @contextlib.asynccontextmanager
-    async def login(self, timeout_seconds: int = 180) -> AsyncIterator[DeviceFlowResponse]:
-        """A context manager to authenticate the user using the device flow.
-
-        The device flow is a two-step process. The first step is to begin the device flow and obtain a device code. The
-        second step is to wait for the user to authorize the device flow. The access token is then obtained and stored
-        in the authorizer.
-
-        After receiving a successful authorization response, the client must display the "user_code" and the
-        "verification_uri" to the end user and instruct them to visit the URI in a user agent on another device and
-        enter the user code.
-
-        This authorizer will wait for the user to authorize the device flow upon exiting the context manager.
-
-        https://datatracker.ietf.org/doc/html/rfc8628#section-3.3
-
-        :param timeout_seconds: The maximum time (in seconds) to wait for the authorisation process to complete.
-            The OAuth provider may specify a shorter timeout in the device authorization response, in which case that
-            value will be used.
-
-        :yield: The device authorization response.
-
-        :raises OIDCError: If the authorization provider does not support device flow.
-        :raises OAuthError: If the device flow cannot be started.
-        :raises OAuthError: If the user does not authorize the device flow within the required time.
-        """
-        async with self._mutex:
-            logger.debug("Starting device flow...")
-            flow = await self._begin_device_flow()
-            # Override the expires_in value with the timeout_seconds value if it is less than the expires_in value.
-            flow.expires_in = min(flow.expires_in, timeout_seconds)
-            logger.debug(f"Verification URI: {flow.verification_uri}")
-            logger.debug(f"User code: {flow.user_code}")
-            yield flow
-            await self._wait_for_authorization(flow)
-
-    async def refresh_token(self) -> bool:
-        logger.exception("Unable to refresh the access token because refresh tokens are not supported for device flow.")
-        return False
-
-    def _validate_configuration(self):
-        if (
-            self._connector.config.grant_types_supported
-            and "urn:ietf:params:oauth:grant-type:device_code" not in self._connector.config.grant_types_supported
-        ):
-            raise OIDCError("Authorization provider does not support the 'device_code' grant type.")
 
 
 class AccessTokenAuthorizer(IAuthorizer):

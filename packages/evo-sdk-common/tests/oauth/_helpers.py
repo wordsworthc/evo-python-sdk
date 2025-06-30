@@ -18,7 +18,7 @@ import unittest
 from base64 import urlsafe_b64encode
 from collections.abc import Iterator
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 from unittest import mock
 from urllib.parse import urlencode
 
@@ -26,11 +26,11 @@ from aiohttp.client import ClientSession
 
 from evo.common import RequestMethod
 from evo.common.test_tools import TestTransport, utc_datetime
-from evo.oauth import AccessToken, OAuthScopes, OIDCConnector
-from evo.oauth.data import OIDCConfig, UserAccessToken
+from evo.oauth import OAuthConnector, OAuthScopes
+from evo.oauth.data import AccessToken
 
 ACCESS_TOKEN = "TestAccessToken"
-ISSUER_URL = "https://auth.unittest.test"
+BASE_URI = "https://auth.unittest.test"
 CLIENT_ID = "TestClientID"
 CLIENT_SECRET = "TestClientSecret"
 REFRESH_TOKEN = "TestRefreshToken"
@@ -58,75 +58,31 @@ def _get_jwt(issuer: str, subject: str, audience: str | list[str], expiry: int, 
 
 def get_user_access_token(
     access_token: str = ACCESS_TOKEN,
-    id_issuer: str = ISSUER_URL,
-    id_audience: str | list[str] = CLIENT_ID,
-    id_issued_at: datetime = ISSUED_AT,
     refresh_token: str | None = REFRESH_TOKEN,
-    expires_in: int = EXPIRES_IN,
-    issued_at: datetime = ISSUED_AT,
-) -> UserAccessToken:
-    iat = round(id_issued_at.timestamp())
-    exp = iat + expires_in
-    return UserAccessToken(
-        token_type="Bearer",
-        access_token=access_token,
-        id_token=_get_jwt(id_issuer, "TestSubject", id_audience, exp, iat),
-        refresh_token=refresh_token,
-        expires_in=expires_in,
-        issued_at=issued_at,
-        scope=str(OAUTH_SCOPES),
-    )
-
-
-def get_access_token(
-    access_token: str = ACCESS_TOKEN,
     expires_in: int = EXPIRES_IN,
     issued_at: datetime = ISSUED_AT,
 ) -> AccessToken:
     return AccessToken(
         token_type="Bearer",
         access_token=access_token,
+        refresh_token=refresh_token,
         expires_in=expires_in,
         issued_at=issued_at,
-        scope=str(OAUTH_SCOPES),
     )
 
 
-def oidc_config(
-    issuer: str | None = ISSUER_URL,
-    authorization_endpoint: str | None = f"{ISSUER_URL}/auth",
-    token_endpoint: str | None = f"{ISSUER_URL}/token",
-    response_types: list[str] | None = ["code"],
-    grant_types: list[str] | None = ["authorization_code", "refresh_token", "client_credentials"],
-) -> dict:
-    config = {
-        "issuer": issuer,
-        "authorization_endpoint": authorization_endpoint,
-        "token_endpoint": token_endpoint,
-        "response_types_supported": response_types,
-        "grant_types_supported": grant_types,
-    }
-    for key, value in config.copy().items():
-        if value is None:
-            del config[key]
-    return config
-
-
-def oidc_config_response(
-    issuer: str | None = ISSUER_URL,
-    authorization_endpoint: str | None = f"{ISSUER_URL}/auth",
-    token_endpoint: str | None = f"{ISSUER_URL}/token",
-    response_types: list[str] | None = ["code"],
-    grant_types: list[str] | None = ["authorization_code", "refresh_token", "client_credentials"],
-) -> str:
-    return json.dumps(
-        oidc_config(
-            issuer=issuer,
-            authorization_endpoint=authorization_endpoint,
-            token_endpoint=token_endpoint,
-            response_types=response_types,
-            grant_types=grant_types,
-        )
+def get_access_token(
+    access_token: str = ACCESS_TOKEN,
+    refresh_token: str | None = REFRESH_TOKEN,
+    expires_in: int = EXPIRES_IN,
+    issued_at: datetime = ISSUED_AT,
+) -> AccessToken:
+    return AccessToken(
+        token_type="Bearer",
+        access_token=access_token,
+        refresh_token=refresh_token,
+        expires_in=expires_in,
+        issued_at=issued_at,
     )
 
 
@@ -155,15 +111,20 @@ def patch_webbrowser_open(authenticate: bool) -> Iterator[mock.Mock]:
         yield mock_open
 
 
-class TestWithOIDCConnector(unittest.IsolatedAsyncioTestCase):
+class TestWithOAuthConnector(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.transport = TestTransport(base_url=ISSUER_URL)
-        self.connector = OIDCConnector(self.transport, ISSUER_URL, CLIENT_ID, CLIENT_SECRET)
+        self.transport = TestTransport(base_url=BASE_URI)
+        self.connector = OAuthConnector(
+            self.transport,
+            client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET,
+            base_uri=BASE_URI,
+        )
 
     def get_expected_auth_url(
         self, state: str = STATE_TOKEN, verifier: str = VERIFIER_TOKEN, scopes: OAuthScopes = OAuthScopes.default
     ) -> str:
-        base_url = self.connector.issuer + self.connector.config.authorization_endpoint
+        base_url = self.connector.base_uri + self.connector.endpoint("authorize")
 
         # urlsafe base64 encoded sha256 hash of the verifier token.
         expect_challenge = (
@@ -185,7 +146,7 @@ class TestWithOIDCConnector(unittest.IsolatedAsyncioTestCase):
         }
         return base_url + "?" + urlencode(sorted(query.items()))
 
-    def assert_fetched_token(self, path: str = "/token", **data: str) -> None:
+    def assert_fetched_token(self, path: str = "/connect/token", **data: str) -> None:
         """Assert that a token was fetched with the given data"""
         self.transport.assert_any_request_made(
             RequestMethod.POST,
@@ -198,42 +159,42 @@ class TestWithOIDCConnector(unittest.IsolatedAsyncioTestCase):
         )
 
 
-class MockOIDCConnector(mock.AsyncMock):
-    def __init__(self, issuer=ISSUER_URL, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, **kwargs):
+class MockOAuthConnector(mock.AsyncMock):
+    def __init__(self, base_uri=BASE_URI, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, **kwargs):
         super().__init__(kwargs=kwargs)
-        self._issuer = issuer
+        self._base_uri = base_uri
         self._client_id = client_id
         self._client_secret = client_secret
         self._config = None
 
     @property
-    def issuer(self):
-        return ISSUER_URL
-
-    @property
-    def config(self) -> OIDCConfig:
-        return self._config
+    def base_uri(self):
+        return BASE_URI
 
     @property
     def client_id(self):
         return self._client_id
 
+    def endpoint(self, endpoint_type: Literal["authorize", "token"]) -> str:
+        """
+        Returns the relevant OAuth endpoint by endpoint type. Possible values: "authorize", "token".
+        """
+        match endpoint_type:
+            case "authorize":
+                return "/connect/authorize"
+            case "token":
+                return "/connect/token"
 
-class TestWithMockOIDCConnector(unittest.IsolatedAsyncioTestCase):
+
+class TestWithMockOAuthConnector(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        self.transport = TestTransport(base_url=ISSUER_URL)
-        self.connector = MockOIDCConnector(spec=OIDCConnector)
-        self.connector._config = OIDCConfig(
-            issuer=self.connector.issuer,
-            authorization_endpoint=f"{self.connector.issuer}/authorization",
-            token_endpoint=f"{self.connector.issuer}/token",
-            response_types_supported=set(["code"]),
-        )
+        self.transport = TestTransport(base_url=BASE_URI)
+        self.connector = MockOAuthConnector(spec=OAuthConnector)
 
     def get_expected_auth_url(
         self, state: str = STATE_TOKEN, verifier: str = VERIFIER_TOKEN, scopes: OAuthScopes = OAuthScopes.default
     ) -> str:
-        base_url = self.connector.issuer + self.connector._config.authorization_endpoint
+        base_url = self.connector.base_uri + "/connect/authorize"
 
         # urlsafe base64 encoded sha256 hash of the verifier token.
         expect_challenge = (
@@ -255,7 +216,7 @@ class TestWithMockOIDCConnector(unittest.IsolatedAsyncioTestCase):
         }
         return base_url + "?" + urlencode(sorted(query.items()))
 
-    def assert_fetched_token(self, path: str = "/token", **data: str) -> None:
+    def assert_fetched_token(self, path: str = "/connect/token", **data: str) -> None:
         """Assert that a token was fetched with the given data"""
         self.transport.assert_any_request_made(
             RequestMethod.POST,

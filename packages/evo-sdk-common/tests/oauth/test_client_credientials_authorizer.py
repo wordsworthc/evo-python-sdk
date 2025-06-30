@@ -11,21 +11,15 @@
 
 from evo.common.test_tools import MockResponse
 from evo.oauth import ClientCredentialsAuthorizer
-from evo.oauth.data import AccessToken, OAuthScopes, OIDCConfig
-from oauth._helpers import CLIENT_ID, CLIENT_SECRET, TestWithOIDCConnector, get_access_token
+from evo.oauth.data import AccessToken, OAuthScopes
+
+from ._helpers import CLIENT_ID, CLIENT_SECRET, TestWithOAuthConnector, get_access_token
 
 
-class TestClientCredentialsAuthorizer(TestWithOIDCConnector):
+class TestClientCredentialsAuthorizer(TestWithOAuthConnector):
     def setUp(self):
         super().setUp()
-        self.connector._config = OIDCConfig(
-            issuer=self.connector.issuer,
-            authorization_endpoint=f"{self.connector.issuer}/authorization",
-            token_endpoint=f"{self.connector.issuer}/token",
-            response_types_supported=set(["code"]),
-            grant_types_supported=set(["client_credentials"]),
-        )
-        self.authorizer = ClientCredentialsAuthorizer(oidc_connector=self.connector, scopes=OAuthScopes.all_evo)
+        self.authorizer = ClientCredentialsAuthorizer(oauth_connector=self.connector, scopes=OAuthScopes.all_evo)
         self.first_token = get_access_token(access_token="first_token")
         self.second_token = get_access_token(access_token="second_token")
 
@@ -47,7 +41,7 @@ class TestClientCredentialsAuthorizer(TestWithOIDCConnector):
         self.assert_token_equals(self.first_token)
         self.assert_fetched_token(
             grant_type="client_credentials",
-            scope="openid profile organization email evo.discovery evo.workspace evo.blocksync evo.object evo.file",
+            scope="evo.discovery evo.workspace evo.blocksync evo.object evo.file",
             client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
         )
@@ -60,7 +54,7 @@ class TestClientCredentialsAuthorizer(TestWithOIDCConnector):
         self.assertTrue(result)
         self.assert_fetched_token(
             grant_type="client_credentials",
-            scope="openid profile organization email evo.discovery evo.workspace evo.blocksync evo.object evo.file",
+            scope="evo.discovery evo.workspace evo.blocksync evo.object evo.file",
             client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
         )

@@ -9,26 +9,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from datetime import timedelta
 from unittest import mock
 
 from parameterized import parameterized
 
 from evo.common import HTTPHeaderDict
 from evo.common.test_tools import MockResponse, TestHTTPHeaderDict, long_test
-from evo.oauth import AuthorizationCodeAuthorizer, OAuthError, OAuthScopes, UserAccessToken
-from evo.oauth.data import OIDCConfig
+from evo.oauth import AccessToken, AuthorizationCodeAuthorizer, OAuthError, OAuthScopes
 
 from ._helpers import (
     AUTHORIZATION_CODE,
     CLIENT_ID,
     CLIENT_SECRET,
-    ISSUED_AT,
     REDIRECT_URL,
     STATE_TOKEN,
     VERIFIER_TOKEN,
-    TestWithOIDCConnector,
-    get_user_access_token,
+    TestWithOAuthConnector,
+    get_access_token,
     patch_urlsafe_tokens,
     patch_webbrowser_open,
 )
@@ -36,18 +33,12 @@ from ._helpers import (
 AUTH_HOSTNAME = ...
 
 
-class TestAuthorizationCodeAuthorizer(TestWithOIDCConnector):
+class TestAuthorizationCodeAuthorizer(TestWithOAuthConnector):
     def setUp(self) -> None:
         super().setUp()
-        self.connector._config = OIDCConfig(
-            issuer=self.connector.issuer,
-            authorization_endpoint=f"{self.connector.issuer}/authorization",
-            token_endpoint=f"{self.connector.issuer}/token",
-            response_types_supported=set(["code"]),
-        )
-        self.authorizer = AuthorizationCodeAuthorizer(oidc_connector=self.connector, redirect_url=REDIRECT_URL)
-        self.first_token = get_user_access_token(access_token="first_token")
-        self.second_token = get_user_access_token(access_token="second_token")
+        self.authorizer = AuthorizationCodeAuthorizer(oauth_connector=self.connector, redirect_url=REDIRECT_URL)
+        self.first_token = get_access_token(access_token="first_token")
+        self.second_token = get_access_token(access_token="second_token")
         self.transport.request.side_effect = [
             MockResponse(status_code=200, content=self.first_token.model_dump_json(by_alias=True, exclude_unset=True)),
             MockResponse(
@@ -98,9 +89,9 @@ class TestAuthorizationCodeAuthorizer(TestWithOIDCConnector):
 
         return mock_open
 
-    def assert_token_equals(self, expected_token: UserAccessToken | None) -> None:
+    def assert_token_equals(self, expected_token: AccessToken | None) -> None:
         """Check that the access token is as expected."""
-        actual_token: UserAccessToken | None = self.authorizer._BaseAuthorizer__token
+        actual_token: AccessToken | None = self.authorizer._BaseAuthorizer__token
         self.assertEqual(expected_token, actual_token)
 
     async def test_login_defaults(self) -> None:
@@ -171,7 +162,7 @@ class TestAuthorizationCodeAuthorizer(TestWithOIDCConnector):
         mock_open.assert_called_once_with(expected_auth_url)
         self.assert_token_equals(None)
 
-    async def test_login_invalid_oidc_configuration(self) -> None:
+    async def test_login(self) -> None:
         """Test the login method of the AuthorizationCodeAuthorizer."""
         mock_open = await self.login()
         expected_auth_url = self.get_expected_auth_url(
@@ -242,28 +233,3 @@ class TestAuthorizationCodeAuthorizer(TestWithOIDCConnector):
         with self.assertRaises(OAuthError):
             await self.authorizer.refresh_token()
         self.transport.assert_no_requests()
-
-    @parameterized.expand(
-        [
-            ("wrong issuer", get_user_access_token(id_issuer="https://wrong.issuer.test")),
-            ("wrong audience", get_user_access_token(id_audience=["wrong", "audience"])),
-            ("expired id token", get_user_access_token(id_issued_at=ISSUED_AT - timedelta(minutes=5))),
-            ("id token from the future", get_user_access_token(id_issued_at=ISSUED_AT + timedelta(minutes=5))),
-        ]
-    )
-    async def test_refresh_token_fails_with_invalid_id_token(self, _label: str, access_token: UserAccessToken) -> None:
-        """Test getting an access token fails if the ID token is invalid"""
-        await self.login()
-        self.assert_token_equals(self.first_token)
-        self.transport.request.reset_mock()
-        self.transport.request.side_effect = [
-            MockResponse(200, access_token.model_dump_json(by_alias=True, exclude_unset=True))
-        ]
-        self.assertFalse(await self.authorizer.refresh_token())
-        self.assert_fetched_token(
-            grant_type="refresh_token",
-            refresh_token=self.first_token.refresh_token,
-            client_id=CLIENT_ID,
-            client_secret=CLIENT_SECRET,
-        )
-        self.assert_token_equals(self.first_token)

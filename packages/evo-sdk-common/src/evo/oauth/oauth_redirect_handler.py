@@ -21,9 +21,9 @@ from urllib.parse import urlencode, urlparse
 
 from evo import logging
 
-from .data import OAuthScopes, UserAccessToken
+from .connector import OAuthConnector
+from .data import AccessToken, OAuthScopes
 from .exceptions import OAuthError
-from .oidc import OIDCConnector
 
 try:
     from aiohttp import web
@@ -53,13 +53,13 @@ class OAuthRedirectHandler:
 </html>
 """.encode("UTF-8")
 
-    def __init__(self, oidc_connector: OIDCConnector, redirect_url: str) -> None:
+    def __init__(self, oauth_connector: OAuthConnector, redirect_url: str) -> None:
         """
-        :param oidc_connector: The OIDC connector to use for authorisation.
+        :param oauth_connector: The OAuth connector to use for authorisation.
         """
-        self.__oidc_connector = oidc_connector
+        self.__oauth_connector = oauth_connector
         self.__runner: web.AppRunner | None = None  # The HTTP server runner.
-        self.__authorisation: asyncio.Future[UserAccessToken] = asyncio.get_event_loop().create_future()
+        self.__authorisation: asyncio.Future[AccessToken] = asyncio.get_event_loop().create_future()
         self.__redirect_url = redirect_url
         self.__state: str | None = None
         self.__verifier: str | None = None
@@ -87,8 +87,8 @@ class OAuthRedirectHandler:
         if self.__runner is not None:
             raise OAuthError("OAuth redirect server cannot be reused.")
 
-        logger.debug("Opening OIDC connector...")
-        await self.__oidc_connector.__aenter__()
+        logger.debug("Opening connector...")
+        await self.__oauth_connector.__aenter__()
 
         logger.debug("Configuring OAuth HTTP server...")
         app = web.Application(logger=logger)
@@ -113,8 +113,8 @@ class OAuthRedirectHandler:
         await self.__runner.cleanup()
         logger.debug("OAuth HTTP server stopped.")
 
-        logger.debug("Closing OIDC connector...")
-        await self.__oidc_connector.__aexit__(exc_type, exc_val, exc_tb)
+        logger.debug("Closing connector...")
+        await self.__oauth_connector.__aexit__(exc_type, exc_val, exc_tb)
 
     async def __handle_request(self, request: web.Request) -> web.StreamResponse:
         """Handle the in-browser redirect from the OAuth server.
@@ -145,7 +145,7 @@ class OAuthRedirectHandler:
         finally:  # Always return the response to the web client.
             return response
 
-    async def get_result(self, timeout_seconds: int | float = 60) -> UserAccessToken:
+    async def get_result(self, timeout_seconds: int | float = 60) -> AccessToken:
         """Get the result of the authorisation process.
 
         This method will block until the authorisation process is complete or the timeout is reached.
@@ -163,7 +163,7 @@ class OAuthRedirectHandler:
         except asyncio.TimeoutError:
             raise OAuthError("Timed out waiting for OAuth response.")
 
-    async def login(self, scopes: OAuthScopes, timeout_seconds: int | float = 60) -> UserAccessToken:
+    async def login(self, scopes: OAuthScopes, timeout_seconds: int | float = 60) -> AccessToken:
         """Authenticate the user and obtain an access token.
 
         This method will launch a web browser to authenticate the user and obtain an access token.
@@ -189,15 +189,13 @@ class OAuthRedirectHandler:
         :param scopes: The scopes to request.
 
         :return: The authorization URL.
-
-        :raises OIDCError: If the endpoints have not been configured.
         """
         assert isinstance(scopes, OAuthScopes), "Scopes must be an instance of OAuthScopes."
-        base_url = self.__oidc_connector.issuer + self.__oidc_connector.config.authorization_endpoint
+        base_url = self.__oauth_connector.base_uri + self.__oauth_connector.endpoint("authorize")
         challenge, state = self._get_challenge_and_state()
         qs_params = {  # The query string parameters for the authorisation URL.
             "response_type": "code",
-            "client_id": self.__oidc_connector.client_id,
+            "client_id": self.__oauth_connector.client_id,
             "redirect_uri": self.__redirect_url,
             "scope": str(scopes),
             "state": state,
@@ -222,7 +220,7 @@ class OAuthRedirectHandler:
         digest = hashlib.sha256(code_verifier).digest()
         return urlsafe_b64encode(digest).decode("utf-8").rstrip("="), state
 
-    async def get_token(self, state: str, code: str) -> UserAccessToken:
+    async def get_token(self, state: str, code: str) -> AccessToken:
         """Get an access token from the server.
 
         https://www.oauth.com/oauth2-servers/access-tokens/authorization-code-request/
@@ -249,8 +247,6 @@ class OAuthRedirectHandler:
         }
 
         logger.debug("Fetching access token...")
-        token = await self.__oidc_connector.fetch_token(data, UserAccessToken)
-
-        token.validate_id_token(self.__oidc_connector.issuer, self.__oidc_connector.client_id)
+        token = await self.__oauth_connector.fetch_token(data, AccessToken)
 
         return token

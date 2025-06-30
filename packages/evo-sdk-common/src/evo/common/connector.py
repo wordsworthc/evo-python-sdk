@@ -211,6 +211,7 @@ class APIConnector:
         body = self._sanitize_for_serialization(body) if body else None
 
         # Perform request.
+        logger.debug(f"Making {method} request to {resource_url}")
         response = await self._transport.request(
             method=method,
             url=resource_url,

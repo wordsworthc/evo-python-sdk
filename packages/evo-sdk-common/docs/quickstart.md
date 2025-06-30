@@ -11,12 +11,12 @@ from evo.aio import AioTransport
 from evo.common import APIConnector, BaseAPIClient
 from evo.common.utils import BackoffIncremental
 from evo.discovery import DiscoveryAPIClient
-from evo.oauth import AuthorizationCodeAuthorizer, OIDCConnector
+from evo.oauth import AuthorizationCodeAuthorizer, OAuthConnector
 from evo.workspaces import WorkspaceAPIClient
 
 # Configure the transport.
 transport = AioTransport(
-    user_agent="evo-sdk-common-examples",
+    user_agent="your-app-name",
     max_attempts=3,
     backoff_method=BackoffIncremental(2),
     num_pools=4,
@@ -27,9 +27,8 @@ transport = AioTransport(
 # User Login
 authorizer = AuthorizationCodeAuthorizer(
     redirect_url="<redirect_url>",
-    oidc_connector=OIDCConnector(
+    oauth_connector=OAuthConnector(
         transport=transport,
-        oidc_issuer="<issuer_url>",
         client_id="<client_id>",
     ),
 )
@@ -84,7 +83,7 @@ from evo.common.utils import BackoffIncremental
 
 # Configure the transport
 transport = AioTransport(
-    user_agent="evo-sdk-common-example",
+    user_agent="your-app-name",
     max_attempts=3,
     backoff_method=BackoffIncremental(2),
     num_pools=4,
@@ -106,9 +105,8 @@ token is used to make requests to the Evo service.
 ``` python
 authorizer = AuthorizationCodeAuthorizer(
     redirect_url="<redirect_url>",
-    oidc_connector=OIDCConnector(
+    oauth_connector=OAuthConnector(
         transport=transport,
-        oidc_issuer="<issuer_url>",
         client_id="<client_id>",
     ),
 )
@@ -121,17 +119,15 @@ If you already have an access token, and don't need to worry about whether it's 
 Alternatively, a client of `client credentials` grant type can use the `ClientCredentialsAuthorizer` for authorization into Evo. This allows for service to service requests, instead of user login and redirects.
 
 ``` python
-from evo.oauth import OIDCConnector, ClientCredentialsAuthorizer, OAuthScopes
+from evo.oauth import OAuthConnector, ClientCredentialsAuthorizer, OAuthScopes
 
-ISSUER_URI = "https://ims.bentley.com"
-CLIENT_NAME = "<client_name>"
-CLIENT_SECRET = "<client_secret>"
-CLIENT_ID = CLIENT_NAME.lower()
+CLIENT_NAME = "Your Client Name"
+CLIENT_ID = "your-client-id"
+CLIENT_SECRET = "your-client-secret"
 
 authorizer = ClientCredentialsAuthorizer(
-    oidc_connector=OIDCConnector(
+    oauth_connector=OAuthConnector(
         transport=transport,
-        oidc_issuer=ISSUER_URI,
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
     ),
@@ -190,10 +186,10 @@ from uuid import UUID
 from evo.aio import AioTransport
 from evo.common import APIConnector, BaseAPIClient, Environment
 from evo.common.utils import BackoffIncremental
-from evo.oauth import AuthorizationCodeAuthorizer, OIDCConnector
+from evo.oauth import AuthorizationCodeAuthorizer, OAuthConnector
 
 transport = AioTransport(
-    user_agent="evo-sdk-common-poc",
+    user_agent="your-app-name",
     max_attempts=3,
     backoff_method=BackoffIncremental(2),
     num_pools=4,
@@ -201,10 +197,9 @@ transport = AioTransport(
 )
 authorizer = AuthorizationCodeAuthorizer(
     redirect_url="<redirect_url>",
-    oidc_connector=OIDCConnector(
+    oauth_connector=OAuthConnector(
         transport=transport,
-        oidc_issuer="<issuer_url>",
-        client_id="<client_id>",
+        client_id="your-client-id",
     ),
 )
 await authorizer.login()
