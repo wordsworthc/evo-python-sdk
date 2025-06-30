@@ -19,7 +19,7 @@ from evo.oauth import OAuthConnector
 
 logging.basicConfig(level=logging.DEBUG)
 
-# iTwin app credentials
+# OAuth client app credentials
 # See: https://developer.seequent.com/docs/guides/getting-started/apps-and-tokens
 REDIRECT_URL = "http://localhost:3000/signin-oidc"
 CLIENT_NAME = "Your Client Name"
@@ -88,7 +88,7 @@ from evo.oauth import ClientCredentialsAuthorizer, OAuthScopes, OAuthConnector
 
 logging.basicConfig(level=logging.DEBUG)
 
-# iTwin app credentials
+# OAuth client app credentials
 # See: https://developer.seequent.com/docs/guides/getting-started/apps-and-tokens
 CLIENT_NAME = "Your Client Name"
 CLIENT_ID = "<client-id>"
