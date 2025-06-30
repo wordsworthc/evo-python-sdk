@@ -1,15 +1,22 @@
 # Changelog
 
+## evo-sdk-common@v0.3.0
+### What's changed
+#### evo-sdk-common
+* **Breaking change:** OIDC layer removed, OIDCConnector is now OAuthConnector, DeviceFlow removed by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/78
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.2.0...evo-sdk-common@v0.3.0
+
 ## evo-sdk@v0.1.1
-## What's changed
-### evo-sdk
+### What's changed
+#### evo-sdk
 * Add configuration for publishing evo-sdk readme to PyPI, update changelog by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/75
 
 **Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk@v0.1.0...evo-sdk@v0.1.1
 
 ## evo-sdk@v0.1.0
-## What's changed
-### evo-sdk
+### What's changed
+#### evo-sdk
 * Add evo-sdk metapackage, which installs all other packages with dev dependencies by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/74
 
 **Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-files@v0.2.0...evo-sdk@v0.1.0
