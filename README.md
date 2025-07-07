@@ -18,7 +18,7 @@ Evo is powered by Seequent, a Bentley organisation.
 
 | Package | Version | Description |
 | --- | --- | --- |
-| [evo-sdk](packages/evo-sdk-/README.md) | <a href="https://pypi.org/project/evo-sdk/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-sdk" /></a> | A metapackage that installs all available Seequent Evo SDKs, including Jupyter notebook examples. |
+| [evo-sdk](README.md) | <a href="https://pypi.org/project/evo-sdk/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-sdk" /></a> | A metapackage that installs all available Seequent Evo SDKs, including Jupyter notebook examples. |
 | [evo-sdk-common](packages/evo-sdk-common/README.md) | <a href="https://pypi.org/project/evo-sdk-common/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-sdk-common" /></a> | A shared library that provides common functionality for integrating with Seequent's client SDKs. |
 | [evo-files](packages/evo-files/README.md) | <a href="https://pypi.org/project/evo-files/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-files" /></a> | A service client for interacting with the Evo File API. |
 | [evo-objects](packages/evo-objects/README.md) | <a href="https://pypi.org/project/evo-objects/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-objects" /></a> | A geoscience object service client library designed to help get up and running with geoscience objects. |

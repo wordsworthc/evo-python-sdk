@@ -1,5 +1,12 @@
 # Changelog
 
+## evo-sdk@v0.1.2
+### What's changed
+#### evo-sdk
+* Fix broken link to evo-sdk metapackage in readme by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/81
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk@v0.1.1...evo-sdk@v0.1.2
+
 ## evo-sdk-common@v0.3.0
 ### What's changed
 #### evo-sdk-common
