@@ -48,6 +48,9 @@ class OAuthScopes(Flag):
     evo_workspace = auto()
     """Required for access to the Workspaces API."""
 
+    evo_audit = auto()
+    """Required for access to the Audit API."""
+
     evo_blocksync = auto()
     """Required for access to the BlockSync API."""
 
@@ -65,7 +68,7 @@ class OAuthScopes(Flag):
     default = evo_discovery | evo_workspace
 
     """All scopes for Evo applications."""
-    all_evo = default | evo_blocksync | evo_object | evo_file
+    all_evo = default | evo_blocksync | evo_object | evo_file | evo_audit
 
     def __str__(self) -> str:
         """Format a space-separated list of scopes for the OAuth request."""
@@ -84,6 +87,7 @@ scopes_map = {
     OAuthScopes.evo_blocksync: "evo.blocksync",
     OAuthScopes.evo_object: "evo.object",
     OAuthScopes.evo_file: "evo.file",
+    OAuthScopes.evo_audit: "evo.audit",
 }
 
 
