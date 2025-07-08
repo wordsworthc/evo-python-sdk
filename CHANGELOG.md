@@ -1,5 +1,16 @@
 # Changelog
 
+## evo-sdk-common@v0.4.0
+### What's changed
+#### evo-sdk-common
+* Adding list workspaces summary to the evo python sdk. by @Gibson-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/80
+* Add in scope for audit service by @lokkochan in https://github.com/SeequentEvo/evo-python-sdk/pull/82
+#### New Contributors
+* @Gibson-Seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/80
+* @lokkochan made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/82
+
+**Full Changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.3.0...evo-sdk-common@v0.4.0
+
 ## evo-sdk@v0.1.2
 ### What's changed
 #### evo-sdk
