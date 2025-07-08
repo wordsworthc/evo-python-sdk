@@ -22,6 +22,7 @@ EXPECTED_SCOPE_NAMES = {
     OAuthScopes.evo_blocksync: "evo.blocksync",
     OAuthScopes.evo_object: "evo.object",
     OAuthScopes.evo_file: "evo.file",
+    OAuthScopes.evo_audit: "evo.audit",
 }
 
 
@@ -34,6 +35,7 @@ class TestOAuthScopes(unittest.TestCase):
             (OAuthScopes.evo_blocksync,),
             (OAuthScopes.evo_object,),
             (OAuthScopes.evo_file,),
+            (OAuthScopes.evo_audit,),
         ],
         name_func=lambda func,
         index,
@@ -75,6 +77,7 @@ class TestOAuthScopes(unittest.TestCase):
                     OAuthScopes.evo_blocksync,
                     OAuthScopes.evo_object,
                     OAuthScopes.evo_file,
+                    OAuthScopes.evo_audit,
                 ),
             ),
         ],

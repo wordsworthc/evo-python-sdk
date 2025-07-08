@@ -41,7 +41,7 @@ class TestClientCredentialsAuthorizer(TestWithOAuthConnector):
         self.assert_token_equals(self.first_token)
         self.assert_fetched_token(
             grant_type="client_credentials",
-            scope="evo.discovery evo.workspace evo.blocksync evo.object evo.file",
+            scope="evo.discovery evo.workspace evo.audit evo.blocksync evo.object evo.file",
             client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
         )
@@ -54,7 +54,7 @@ class TestClientCredentialsAuthorizer(TestWithOAuthConnector):
         self.assertTrue(result)
         self.assert_fetched_token(
             grant_type="client_credentials",
-            scope="evo.discovery evo.workspace evo.blocksync evo.object evo.file",
+            scope="evo.discovery evo.workspace evo.audit evo.blocksync evo.object evo.file",
             client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
         )
