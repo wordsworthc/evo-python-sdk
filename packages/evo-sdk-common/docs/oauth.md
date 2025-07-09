@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 # OAuth client app credentials
 # See: https://developer.seequent.com/docs/guides/getting-started/apps-and-tokens
-REDIRECT_URL = "http://localhost:3000/signin-oidc"
+REDIRECT_URL = "http://localhost:3000/signin-callback"
 CLIENT_NAME = "Your Client Name"
 CLIENT_ID = "<client-id>"
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## evo-sdk-common@v0.4.1
+### What's changed
+#### evo-sdk-common
+* Update default redirect URL for OAuth in notebooks so it does not refer to OIDC by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/84
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.4.0...evo-sdk-common@v0.4.1
+
 ## evo-sdk-common@v0.4.0
 ### What's changed
 #### evo-sdk-common
@@ -9,7 +16,7 @@
 * @Gibson-Seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/80
 * @lokkochan made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/82
 
-**Full Changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.3.0...evo-sdk-common@v0.4.0
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.3.0...evo-sdk-common@v0.4.0
 
 ## evo-sdk@v0.1.2
 ### What's changed
