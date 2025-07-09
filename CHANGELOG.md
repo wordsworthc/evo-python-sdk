@@ -5,6 +5,7 @@
 #### evo-sdk-common
 * Update default redirect URL for OAuth in notebooks so it does not refer to OIDC by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/84
 * Remove debug logging from OAuth notebook example by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/85
+* Add pre-commit hook to strip outputs from Jupyter notebooks by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/86
 
 **Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.4.0...evo-sdk-common@v0.4.1
 
