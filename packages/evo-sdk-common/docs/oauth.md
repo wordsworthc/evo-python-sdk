@@ -13,11 +13,8 @@ pip install evo-sdk-common[notebooks]
 The `OAuthConnector` is the central component for all of our OAuth workflows.
 
 ``` python
-import logging
 from evo.aio import AioTransport
 from evo.oauth import OAuthConnector
-
-logging.basicConfig(level=logging.DEBUG)
 
 # OAuth client app credentials
 # See: https://developer.seequent.com/docs/guides/getting-started/apps-and-tokens
@@ -82,11 +79,8 @@ print(f"Access token: {result.access_token}")
 The `ClientCredientialsAuthorizer` allows you to handle service-to-service authentication.
 
 ``` python
-import logging
 from evo.aio import AioTransport
 from evo.oauth import ClientCredentialsAuthorizer, OAuthScopes, OAuthConnector
-
-logging.basicConfig(level=logging.DEBUG)
 
 # OAuth client app credentials
 # See: https://developer.seequent.com/docs/guides/getting-started/apps-and-tokens
