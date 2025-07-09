@@ -3,7 +3,12 @@ repos:
     rev: v0.9.1 # keep in sync with pyproject.toml
     hooks:
       - id: ruff
-        args: ["--fix", "--no-cache"]
-
+        name: Run linter
       - id: ruff-format
-        args: ["--no-cache"]
+        name: Run formatter
+        args: ["--check"]
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.8.1
+    hooks:
+      - id: nbstripout
+        name: Strip outputs from Jupyter notebooks
