@@ -10,10 +10,17 @@
 #  limitations under the License.
 
 
+from enum import Enum
+
 from evo.common.data import OrderByOperatorEnum
 
 
-def parse_order_by(order_by: dict[str, OrderByOperatorEnum] | None) -> str | None:
+def parse_order_by(order_by: dict[Enum | str, OrderByOperatorEnum] | None) -> str | None:
     if order_by is None:
         return None
-    return ",".join([f"{op}:{field}" for field, op in order_by.items()])
+    parts = []
+    for field, op in order_by.items():
+        if isinstance(field, Enum):
+            field = field.value
+        parts.append(f"{op.value}:{field}")
+    return ",".join(parts)
