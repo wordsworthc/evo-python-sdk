@@ -17,18 +17,19 @@ from uuid import UUID
 
 from evo import logging
 from evo.common import APIConnector, BaseAPIClient, HealthCheckType, ICache, Page, ServiceHealth
-from evo.common.data import EmptyResponse, Environment
+from evo.common.data import EmptyResponse, Environment, OrderByOperatorEnum
 from evo.common.io.exceptions import DataNotFoundError
-from evo.common.utils import get_service_health
+from evo.common.utils import get_service_health, parse_order_by
 from evo.workspaces import ServiceUser
 
-from .data import ObjectMetadata, ObjectSchema, ObjectVersion
+from .data import ObjectMetadata, ObjectOrderByEnum, ObjectSchema, ObjectVersion, OrgObjectMetadata
 from .endpoints import ObjectsApi
 from .endpoints.models import (
     GeoscienceObject,
     GeoscienceObjectVersion,
     GetObjectResponse,
     ListedObject,
+    OrgListedObject,
     PostObjectResponse,
     UpdateGeoscienceObject,
 )
@@ -144,6 +145,28 @@ class ObjectAPIClient(BaseAPIClient):
             version_id=model.version_id,
         )
 
+    def _metadata_from_org_listed_object(self, model: OrgListedObject) -> OrgObjectMetadata:
+        """Create an OrgObjectMetadata instance from a generated OrgListedObject model.
+
+        :param model: The model to create the OrgObjectMetadata instance from.
+
+        :return: An OrgObjectMetadata instance.
+        """
+        created_by = None if model.created_by is None else ServiceUser.from_model(model.created_by)
+        modified_by = None if model.modified_by is None else ServiceUser.from_model(model.modified_by)
+        return OrgObjectMetadata(
+            environment=self._environment,
+            workspace_id=model.workspace_id,
+            workspace_name=model.workspace_name,
+            id=model.object_id,
+            name=model.name,
+            created_at=model.created_at,
+            created_by=created_by,
+            modified_at=model.modified_at,
+            modified_by=modified_by,
+            schema_id=ObjectSchema.from_id(model.schema_),
+        )
+
     def _metadata_from_endpoint_model(self, model: GetObjectResponse | PostObjectResponse) -> ObjectMetadata:
         """Create an ObjectMetadata instance from a generated GetObjectResponse or PostObjectResponse model.
 
@@ -171,6 +194,8 @@ class ObjectAPIClient(BaseAPIClient):
         self,
         offset: int = 0,
         limit: int = 5000,
+        order_by: dict[ObjectOrderByEnum | str, OrderByOperatorEnum] | None = None,
+        schema_id: list[str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
     ) -> Page[ObjectMetadata]:
         """List up to `limit` geoscience objects, starting at `offset`.
@@ -180,6 +205,8 @@ class ObjectAPIClient(BaseAPIClient):
 
         :param offset: The number of objects to skip before listing.
         :param limit: Max number of objects to list.
+        :param order_by: A dictionary of fields to order the results by, with the field name as the key and the direction of ordering as the value.
+        :param schema_id: A list of schema IDs to filter the objects by. If None, objects of all schema types are returned.
         :param request_timeout: Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
 
@@ -187,11 +214,14 @@ class ObjectAPIClient(BaseAPIClient):
         """
         assert limit > 0
         assert offset >= 0
+        parsed_order_by = parse_order_by(order_by)
         response = await self._objects_api.list_objects(
             org_id=str(self._environment.org_id),
             workspace_id=str(self._environment.workspace_id),
             limit=limit,
             offset=offset,
+            order_by=parsed_order_by,
+            schema_id=schema_id,
             request_timeout=request_timeout,
         )
         return Page(
@@ -204,6 +234,8 @@ class ObjectAPIClient(BaseAPIClient):
     async def list_all_objects(
         self,
         limit_per_request: int = 5000,
+        order_by: dict[ObjectOrderByEnum | str, OrderByOperatorEnum] | None = None,
+        schema_id: list[str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
     ) -> list[ObjectMetadata]:
         """List all geoscience objects in the workspace.
@@ -211,6 +243,8 @@ class ObjectAPIClient(BaseAPIClient):
         This method makes multiple calls to the `list_objects` endpoint until all objects have been listed.
 
         :param limit_per_request: The maximum number of objects to list in one request.
+        :param order_by: A dictionary of fields to order the results by, with the field name as the key and the direction of ordering as the value.
+        :param schema_id: A list of schema IDs to filter the objects by. If None, objects of all schema types are returned.
         :param request_timeout: Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
 
@@ -219,12 +253,59 @@ class ObjectAPIClient(BaseAPIClient):
         items = []
         offset = 0
         while True:
-            page = await self.list_objects(offset=offset, limit=limit_per_request, request_timeout=request_timeout)
+            page = await self.list_objects(
+                offset=offset,
+                limit=limit_per_request,
+                order_by=order_by,
+                schema_id=schema_id,
+                request_timeout=request_timeout,
+            )
             items += page.items()
             if page.is_last:
                 break
             offset = page.next_offset
         return items
+
+    async def list_objects_for_instance(
+        self,
+        offset: int = 0,
+        limit: int = 5000,
+        order_by: dict[ObjectOrderByEnum | str, OrderByOperatorEnum] | None = None,
+        schema_id: list[str] | None = None,
+        request_timeout: int | float | tuple[int | float, int | float] | None = None,
+    ) -> Page[OrgObjectMetadata]:
+        """List up to `limit` geoscience objects for all accessible workspaces in the instance, starting at `offset`.
+
+        The geoscience objects will be the latest version of the object.
+        If there are no objects to list, the page will be empty.
+
+        :param offset: The number of objects to skip before listing.
+        :param limit: Max number of objects to list.
+        :param order_by: A dictionary of fields to order the results by, with the field name as the key and the direction of ordering as the value.
+        :param schema_id: A list of schema IDs to filter the objects by. If None, objects of all schema types are returned.
+        :param request_timeout: Timeout setting for this request. If one number is provided, it will be the
+            total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
+
+        :return: A page of all objects from the query.
+        """
+        assert limit > 0
+        assert offset >= 0
+        parsed_order_by = parse_order_by(order_by)
+        response = await self._objects_api.list_objects_by_org(
+            org_id=str(self._environment.org_id),
+            limit=limit,
+            offset=offset,
+            order_by=parsed_order_by,
+            schema_id=schema_id,
+            request_timeout=request_timeout,
+            permitted_workspaces_only=True,
+        )
+        return Page(
+            offset=offset,
+            limit=limit,
+            total=response.total,
+            items=[self._metadata_from_org_listed_object(model) for model in response.objects],
+        )
 
     @staticmethod
     def _get_object_versions(response: GetObjectResponse) -> list[ObjectVersion]:
