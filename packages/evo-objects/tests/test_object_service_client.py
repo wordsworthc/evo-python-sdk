@@ -244,7 +244,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assertFalse(page_one.is_last)
         self.assert_request_made(
             method=RequestMethod.GET,
-            path=f"{self.instance_base_path}/objects?offset=0&limit=2&order_by=asc%3Acreated_at&schema_id=test",
+            path=f"{self.instance_base_path}/objects?offset=0&limit=2&permitted_workspaces_only=True&order_by=asc%3Acreated_at&schema_id=test",
             headers={"Accept": "application/json"},
         )
         self.transport.request.reset_mock()
@@ -279,7 +279,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assertTrue(page_two.is_last)
         self.assert_request_made(
             method=RequestMethod.GET,
-            path=f"{self.instance_base_path}/objects?offset=2&limit=2",
+            path=f"{self.instance_base_path}/objects?offset=2&limit=2&permitted_workspaces_only=True",
             headers={"Accept": "application/json"},
         )
 
