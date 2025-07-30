@@ -1017,3 +1017,65 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         # Check geoscience object.
         self.assertEqual(expected_object_dict, actual_object.as_dict())
         self.assertIs(actual_object.schema, actual_metadata.schema_id)
+
+    async def test_delete_object_by_path(self) -> None:
+        expected_path = "A/m.json"
+        with self.transport.set_http_response(status_code=204):
+            actual_object = await self.object_client.delete_object_by_path(expected_path)
+
+        self.assert_request_made(
+            method=RequestMethod.DELETE,
+            path=f"{self.base_path}/objects/path/{expected_path}",
+            headers={"Accept-Encoding": "gzip"},
+        )
+        self.assertIsNone(actual_object)
+
+    async def test_delete_object_by_id(self) -> None:
+        expected_uuid = UUID(int=2)
+        with self.transport.set_http_response(status_code=204):
+            actual_object = await self.object_client.delete_object_by_id(expected_uuid)
+
+        self.assert_request_made(
+            method=RequestMethod.DELETE,
+            path=f"{self.base_path}/objects/{expected_uuid}",
+            headers={"Accept-Encoding": "gzip"},
+        )
+        self.assertIsNone(actual_object)
+
+    async def test_restore_geoscience_object(self) -> None:
+        expected_uuid = UUID(int=2)
+        with self.transport.set_http_response(status_code=204):
+            result = await self.object_client.restore_geoscience_object(expected_uuid)
+            # The service returns no content on a successful restore without rename.
+            assert result is None
+
+        self.assert_request_made(
+            method=RequestMethod.POST,
+            path=f"{self.base_path}/objects/{expected_uuid}?deleted=False",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+        )
+
+    async def test_restore_geoscience_object_with_rename(self) -> None:
+        get_object_response = load_test_data("get_object.json")
+        expected_uuid = UUID(int=2)
+        # Given a server response that is a 303 redirect with the updated (post-rename) object metadata...
+        with self.transport.set_http_response(status_code=303, content=json.dumps(get_object_response)):
+            # ...the restored object metadata should be returned.
+            restored_object_metadata = await self.object_client.restore_geoscience_object(expected_uuid)
+            assert restored_object_metadata is not None
+
+        self.assert_request_made(
+            method=RequestMethod.POST,
+            path=f"{self.base_path}/objects/{expected_uuid}?deleted=False",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+        )
+        self.assertEqual("A", restored_object_metadata.parent)
+        self.assertEqual("m.json", restored_object_metadata.name)
+        self.assertEqual(expected_uuid, restored_object_metadata.id)
+        self.assertEqual("2023-08-03T05:47:18.3402289Z", restored_object_metadata.version_id)
