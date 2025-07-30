@@ -15,12 +15,14 @@ from enum import Enum
 from evo.common.data import OrderByOperatorEnum
 
 
-def parse_order_by(order_by: dict[Enum | str, OrderByOperatorEnum] | None) -> str | None:
+def parse_order_by(order_by: dict[Enum | str, OrderByOperatorEnum | str] | None) -> str | None:
     if order_by is None:
         return None
     parts = []
     for field, op in order_by.items():
         if isinstance(field, Enum):
             field = field.value
-        parts.append(f"{op.value}:{field}")
+        if isinstance(op, Enum):
+            op = op.value
+        parts.append(f"{op}:{field}")
     return ",".join(parts)
