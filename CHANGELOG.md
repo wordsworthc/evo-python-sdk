@@ -1,5 +1,36 @@
 # Changelog
 
+## evo-sdk@v0.1.3
+### What's changed
+#### evo-sdk
+* Update readmes and documentation to better highlight steps for getting started by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/88
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk@v0.1.2...evo-sdk@v0.1.3
+
+## evo-sdk-common@v0.4.2
+### What's changed
+#### evo-sdk-common
+* Update readmes and documentation to better highlight steps for getting started by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/88
+* WS order_by allow both str and enum input by @lokkochan in https://github.com/SeequentEvo/evo-python-sdk/pull/87
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.4.1...evo-sdk-common@v0.4.2
+
+## evo-objects@v0.2.1
+### What's changed
+#### evo-objects
+* Update readmes and documentation to better highlight steps for getting started by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/88
+* Add pre-commit hook to strip outputs from Jupyter notebooks by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/86
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-objects@v0.2.0...evo-objects@v0.2.1
+
+## evo-files@v0.2.1
+### What's changed
+#### evo-files
+* Update readmes and documentation to better highlight steps for getting started by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/88
+* Add pre-commit hook to strip outputs from Jupyter notebooks by @robbieaverill in https://github.com/SeequentEvo/evo-python-sdk/pull/86
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-files@v0.2.0...evo-files@v0.2.1
+
 ## evo-sdk-common@v0.4.1
 ### What's changed
 #### evo-sdk-common
@@ -14,7 +45,7 @@
 #### evo-sdk-common
 * Adding list workspaces summary to the evo python sdk. by @Gibson-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/80
 * Add in scope for audit service by @lokkochan in https://github.com/SeequentEvo/evo-python-sdk/pull/82
-#### New Contributors
+#### New contributors
 * @Gibson-Seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/80
 * @lokkochan made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/82
 
@@ -73,7 +104,7 @@
 ### What's changed
 #### evo-objects
 * py.typed files are added as specified in PEP-561 so that type checkers like mypy will fully analyze the package when it's included in a project by @mikecowie-seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/71
-## New contributors
+#### New contributors
 * @mikecowie-seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/71
 
 **Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-objects@v0.1.1...evo-objects@v0.2.0
