@@ -68,7 +68,7 @@ class OAuthScopes(Flag):
     default = evo_discovery | evo_workspace
 
     """All scopes for Evo applications."""
-    all_evo = default | evo_blocksync | evo_object | evo_file | evo_audit
+    all_evo = default | evo_blocksync | evo_object | evo_file
 
     def __str__(self) -> str:
         """Format a space-separated list of scopes for the OAuth request."""
