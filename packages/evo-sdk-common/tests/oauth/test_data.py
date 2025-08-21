@@ -77,7 +77,6 @@ class TestOAuthScopes(unittest.TestCase):
                     OAuthScopes.evo_blocksync,
                     OAuthScopes.evo_object,
                     OAuthScopes.evo_file,
-                    OAuthScopes.evo_audit,
                 ),
             ),
         ],
