@@ -5,7 +5,7 @@
 #### evo-sdk-common
 * Object delete, restore, listing features, and timeouts by @chriscunningham-seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/89
 ### Other Changes
-* Move audit out of all evo scope by @lokkochan in https://github.com/SeequentEvo/evo-python-sdk/pull/92
+* Move audit out of all Evo scope by @lokkochan in https://github.com/SeequentEvo/evo-python-sdk/pull/92
 
 ## New Contributors
 * @chriscunningham-seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/89
