@@ -7,7 +7,7 @@
 ### Other Changes
 * Move audit out of all Evo scope by @lokkochan in https://github.com/SeequentEvo/evo-python-sdk/pull/92
 
-## New Contributors
+#### New Contributors
 * @chriscunningham-seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/89
 
 **Full Changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-files@v0.2.1...evo-sdk-common@v0.4.3
