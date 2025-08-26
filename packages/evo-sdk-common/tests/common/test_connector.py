@@ -29,6 +29,7 @@ from evo.common.exceptions import (
     DefaultTypedError,
     EvoAPIException,
     ForbiddenException,
+    GoneException,
     NotFoundException,
     UnauthorizedException,
     UnknownResponseError,
@@ -766,6 +767,16 @@ class TestAPIConnector(TestWithConnector):
                 ),
                 DefaultTypedError,
                 "Error: (409) Conflict\nType: about:blank\nTitle: Conflict title.",
+            ),
+            (
+                "Gone (410)",
+                MockResponse(
+                    status_code=410,
+                    content=json.dumps({"title": "Gone title."}),
+                    reason="Gone",
+                ),
+                GoneException,
+                "Error: (410) Gone\nType: about:blank\nTitle: Gone title.",
             ),
             (
                 "Internal server error (500)",

@@ -196,6 +196,7 @@ class ObjectAPIClient(BaseAPIClient):
         limit: int = 5000,
         order_by: dict[ObjectOrderByEnum | str, OrderByOperatorEnum] | None = None,
         schema_id: list[str] | None = None,
+        deleted: bool | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
     ) -> Page[ObjectMetadata]:
         """List up to `limit` geoscience objects, starting at `offset`.
@@ -207,6 +208,7 @@ class ObjectAPIClient(BaseAPIClient):
         :param limit: Max number of objects to list.
         :param order_by: A dictionary of fields to order the results by, with the field name as the key and the direction of ordering as the value.
         :param schema_id: A list of schema IDs to filter the objects by. If None, objects of all schema types are returned.
+        :param deleted: When true, only objects that have been deleted will be returned. If false or None, only non-deleted objects will be returned.
         :param request_timeout: Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
 
@@ -223,6 +225,7 @@ class ObjectAPIClient(BaseAPIClient):
             order_by=parsed_order_by,
             schema_id=schema_id,
             request_timeout=request_timeout,
+            deleted=deleted,
         )
         return Page(
             offset=offset,
@@ -236,6 +239,7 @@ class ObjectAPIClient(BaseAPIClient):
         limit_per_request: int = 5000,
         order_by: dict[ObjectOrderByEnum | str, OrderByOperatorEnum] | None = None,
         schema_id: list[str] | None = None,
+        deleted: bool | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
     ) -> list[ObjectMetadata]:
         """List all geoscience objects in the workspace.
@@ -245,6 +249,7 @@ class ObjectAPIClient(BaseAPIClient):
         :param limit_per_request: The maximum number of objects to list in one request.
         :param order_by: A dictionary of fields to order the results by, with the field name as the key and the direction of ordering as the value.
         :param schema_id: A list of schema IDs to filter the objects by. If None, objects of all schema types are returned.
+        :param deleted: When true, only objects that have been deleted will be returned. If false or None, only non-deleted objects will be returned.
         :param request_timeout: Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
 
@@ -259,6 +264,7 @@ class ObjectAPIClient(BaseAPIClient):
                 order_by=order_by,
                 schema_id=schema_id,
                 request_timeout=request_timeout,
+                deleted=deleted,
             )
             items += page.items()
             if page.is_last:
@@ -272,6 +278,7 @@ class ObjectAPIClient(BaseAPIClient):
         limit: int = 5000,
         order_by: dict[ObjectOrderByEnum | str, OrderByOperatorEnum] | None = None,
         schema_id: list[str] | None = None,
+        deleted: bool | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
     ) -> Page[OrgObjectMetadata]:
         """List up to `limit` geoscience objects for all accessible workspaces in the instance, starting at `offset`.
@@ -283,6 +290,7 @@ class ObjectAPIClient(BaseAPIClient):
         :param limit: Max number of objects to list.
         :param order_by: A dictionary of fields to order the results by, with the field name as the key and the direction of ordering as the value.
         :param schema_id: A list of schema IDs to filter the objects by. If None, objects of all schema types are returned.
+        :param deleted: When true, only objects that have been deleted will be returned. If false or None, only non-deleted objects will be returned.
         :param request_timeout: Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
 
@@ -299,6 +307,7 @@ class ObjectAPIClient(BaseAPIClient):
             schema_id=schema_id,
             request_timeout=request_timeout,
             permitted_workspaces_only=True,
+            deleted=deleted,
         )
         return Page(
             offset=offset,

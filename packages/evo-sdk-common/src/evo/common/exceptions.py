@@ -466,5 +466,11 @@ class NotFoundException(GeneralizedTypedError):
     STATUS_CODE = 404
 
 
+class GoneException(GeneralizedTypedError):
+    """The requested resource is deleted (410 - Gone)."""
+
+    STATUS_CODE = 410
+
+
 class SelectionError(EvoClientException):
     """Raised when a selection error occurs."""

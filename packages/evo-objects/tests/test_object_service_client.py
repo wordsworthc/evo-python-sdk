@@ -94,7 +94,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         ]
         self.transport.request.side_effect = responses
         page_one = await self.object_client.list_objects(
-            limit=2, order_by={ObjectOrderByEnum.created_at: OrderByOperatorEnum.asc}, schema_id=["test"]
+            limit=2, order_by={ObjectOrderByEnum.created_at: OrderByOperatorEnum.asc}, schema_id=["test"], deleted=False
         )
         expected_items_page_one = [
             ObjectMetadata(
@@ -145,7 +145,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assertFalse(page_one.is_last)
         self.assert_request_made(
             method=RequestMethod.GET,
-            path=f"{self.base_path}/objects?limit=2&offset=0&order_by=asc%3Acreated_at&schema_id=test",
+            path=f"{self.base_path}/objects?limit=2&offset=0&deleted=False&order_by=asc%3Acreated_at&schema_id=test",
             headers={"Accept": "application/json"},
         )
         self.transport.request.reset_mock()
@@ -193,7 +193,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         ]
         self.transport.request.side_effect = responses
         page_one = await self.object_client.list_objects_for_instance(
-            limit=2, order_by={ObjectOrderByEnum.created_at: OrderByOperatorEnum.asc}, schema_id=["test"]
+            limit=2, order_by={ObjectOrderByEnum.created_at: OrderByOperatorEnum.asc}, schema_id=["test"], deleted=False
         )
         expected_items_page_one = [
             OrgObjectMetadata(
@@ -244,7 +244,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assertFalse(page_one.is_last)
         self.assert_request_made(
             method=RequestMethod.GET,
-            path=f"{self.instance_base_path}/objects?offset=0&limit=2&permitted_workspaces_only=True&order_by=asc%3Acreated_at&schema_id=test",
+            path=f"{self.instance_base_path}/objects?offset=0&limit=2&deleted=False&permitted_workspaces_only=True&order_by=asc%3Acreated_at&schema_id=test",
             headers={"Accept": "application/json"},
         )
         self.transport.request.reset_mock()
@@ -292,7 +292,10 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         ]
         self.transport.request.side_effect = responses
         all_objects = await self.object_client.list_all_objects(
-            limit_per_request=2, order_by={ObjectOrderByEnum.created_at: OrderByOperatorEnum.asc}, schema_id=["test"]
+            limit_per_request=2,
+            order_by={ObjectOrderByEnum.created_at: OrderByOperatorEnum.asc},
+            schema_id=["test"],
+            deleted=False,
         )
         expected_objects = [
             ObjectMetadata(
@@ -359,12 +362,12 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assertEqual(expected_objects, all_objects)
         self.assert_any_request_made(
             method=RequestMethod.GET,
-            path=f"{self.base_path}/objects?limit=2&offset=0&order_by=asc%3Acreated_at&schema_id=test",
+            path=f"{self.base_path}/objects?limit=2&offset=0&deleted=False&order_by=asc%3Acreated_at&schema_id=test",
             headers={"Accept": "application/json"},
         )
         self.assert_any_request_made(
             method=RequestMethod.GET,
-            path=f"{self.base_path}/objects?limit=2&offset=2&order_by=asc%3Acreated_at&schema_id=test",
+            path=f"{self.base_path}/objects?limit=2&offset=2&deleted=False&order_by=asc%3Acreated_at&schema_id=test",
             headers={"Accept": "application/json"},
         )
 
