@@ -1,5 +1,18 @@
 # Changelog
 
+## evo-sdk@v0.1.4
+### What's Changed
+#### evo-sdk-common
+* Object delete, restore, listing features, and timeouts by @chriscunningham-seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/89
+* Move audit out of all Evo scope by @lokkochan in https://github.com/SeequentEvo/evo-python-sdk/pull/92
+* Version bump by @shivangj-10 in https://github.com/SeequentEvo/evo-python-sdk/pull/93
+
+#### New Contributors
+* @chriscunningham-seequent made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/89
+* @shivangj-10 made their first contribution in https://github.com/SeequentEvo/evo-python-sdk/pull/93
+
+**Full Changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk@v0.1.3...evo-sdk@v0.1.4
+
 ## evo-sdk-common@v0.4.3
 ### What's Changed
 #### evo-sdk-common
