@@ -60,9 +60,14 @@ class Scopes(str):
         return f"Scopes{self.members!r}"
 
     def __or__(self, other: str) -> Scopes:
+        # Support Scopes | str
         if isinstance(other, str):
             return Scopes(self, other)
         return NotImplemented
+
+    def __ror__(self, other: str) -> Scopes:
+        # Support str | Scopes
+        return self | other
 
     def __contains__(self, key: str) -> bool:
         members = set(self.members)
