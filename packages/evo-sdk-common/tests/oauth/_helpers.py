@@ -122,7 +122,7 @@ class TestWithOAuthConnector(unittest.IsolatedAsyncioTestCase):
         )
 
     def get_expected_auth_url(
-        self, state: str = STATE_TOKEN, verifier: str = VERIFIER_TOKEN, scopes: EvoScopes = EvoScopes.default
+        self, state: str = STATE_TOKEN, verifier: str = VERIFIER_TOKEN, scopes: AnyScopes = EvoScopes.default
     ) -> str:
         base_url = self.connector.base_uri + self.connector.endpoint("authorize")
 

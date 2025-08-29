@@ -15,7 +15,7 @@ from parameterized import parameterized
 
 from evo.common import HTTPHeaderDict
 from evo.common.test_tools import MockResponse, TestHTTPHeaderDict, long_test
-from evo.oauth import AccessToken, AuthorizationCodeAuthorizer, EvoScopes, OAuthError
+from evo.oauth import AccessToken, AnyScopes, AuthorizationCodeAuthorizer, EvoScopes, OAuthError
 
 from ._helpers import (
     AUTHORIZATION_CODE,
@@ -47,7 +47,7 @@ class TestAuthorizationCodeAuthorizer(TestWithOAuthConnector):
             ),
         ]
 
-    async def _login(self, scopes: EvoScopes | None = None, timeout_seconds: int | None = None) -> None:
+    async def _login(self, scopes: AnyScopes | None = None, timeout_seconds: int | None = None) -> None:
         if scopes is not None:
             self.authorizer._scopes = scopes
 
@@ -58,7 +58,7 @@ class TestAuthorizationCodeAuthorizer(TestWithOAuthConnector):
 
     async def login(
         self,
-        scopes: EvoScopes | None = None,
+        scopes: AnyScopes | None = None,
         timeout_seconds: int | None = None,
         authenticate: bool = True,
         state: str = STATE_TOKEN,
