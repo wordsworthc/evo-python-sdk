@@ -51,6 +51,7 @@ class AioTransport(ITransport):
         num_pools: int = 4,
         verify_ssl: bool = True,
         proxy: StrOrURL | None = None,
+        close_grace_period_ms: int = 250,
     ):
         """
         :param user_agent: The value to provide in the `User-Agent` header.
@@ -60,6 +61,7 @@ class AioTransport(ITransport):
         :param num_pools: Number of connection pools to cache before discarding the least recently used pool.
         :param verify_ssl: Verify SSL certificates. This should not be disabled unless you really absolutely have to,
             and never in production environments.
+        :param close_grace_period_ms: Grace period (in milliseconds) to wait for connections to close.
         """
         self.__config = Config(
             user_agent=user_agent,
@@ -67,6 +69,7 @@ class AioTransport(ITransport):
             verify_ssl=verify_ssl,
             retry=Retry(logger=logger, max_attempts=max_attempts, backoff_method=backoff_method),
             proxy=proxy,
+            close_grace_period_ms=close_grace_period_ms,
         )
         self.__context: Context | None = None
         self.__mutex = asyncio.Lock()
