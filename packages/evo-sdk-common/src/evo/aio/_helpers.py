@@ -43,14 +43,25 @@ class Config:
     proxy: StrOrURL | None
     """Proxy server to use for the request."""
 
+    close_grace_period_ms: int
+    """Grace period (in milliseconds) to wait for connections to close gracefully. 250 is used if not set"""
+
     async def create_context(self) -> Context:
-        return Context(num_pools=self.num_pools, verify_ssl=self.verify_ssl, retry_handler=self.retry, proxy=self.proxy)
+        return Context(
+            num_pools=self.num_pools,
+            verify_ssl=self.verify_ssl,
+            retry_handler=self.retry,
+            proxy=self.proxy,
+            close_grace_period_ms=self.close_grace_period_ms,
+        )
 
 
 class Context:
     """Inner class to manage the aiohttp session."""
 
-    def __init__(self, num_pools: int, verify_ssl: bool, retry_handler: Retry, proxy: StrOrURL | None) -> None:
+    def __init__(
+        self, num_pools: int, verify_ssl: bool, retry_handler: Retry, proxy: StrOrURL | None, close_grace_period_ms: int
+    ) -> None:
         """
         :param num_pools: Number of connection pools to cache before discarding the least recently used pool.
         :param verify_ssl: Verify SSL certificates.
@@ -64,6 +75,7 @@ class Context:
         )
         self.__retry_handler = retry_handler
         self.__proxy = proxy
+        self._close_grace_period_ms = close_grace_period_ms
 
     async def close(self) -> None:
         """Close the aiohttp session."""
@@ -72,10 +84,10 @@ class Context:
         self.__session = None
         await session.close()
 
-        # Wait 250 ms for the underlying SSL connections to close
+        # Wait for the underlying SSL connections to close
         # https://docs.aiohttp.org/en/stable/client_advanced.html#graceful-shutdown
         # Per comments on https://github.com/aio-libs/aiohttp/issues/1925, this should be fixed in aiohttp 4.0.
-        await asyncio.sleep(0.25)
+        await asyncio.sleep(self._close_grace_period_ms / 1000)
 
     async def __perform_request(self, **kwargs: Any) -> HTTPResponse:
         """Perform an HTTP request."""
