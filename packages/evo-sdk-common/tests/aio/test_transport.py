@@ -443,13 +443,14 @@ class TestTransportRequest(unittest.IsolatedAsyncioTestCase):
             await transport.request(RequestMethod.GET, self.url)
             mock_session.request.assert_called_once()
 
+    @mock.patch("asyncio.sleep")
     @mock.patch("aiohttp.ClientSession", new_callable=MockSession.klass)
-    async def test_close(self, mock_session_klass: mock.Mock) -> None:
+    async def test_close(self, mock_session_klass: mock.Mock, mock_sleep: mock.Mock) -> None:
         """Test closing the transport."""
         mock_session: MockSession = mock_session_klass.return_value
 
         # Create a new transport object that picks up the mocked session.
-        transport = AioTransport("test-client")
+        transport = AioTransport("test-client", close_grace_period_ms=20)
         # Open the transport.
         await transport.open()
         await transport.request(RequestMethod.GET, self.url)
@@ -466,6 +467,9 @@ class TestTransportRequest(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(ctx.exception.caused_by)
         expect_msg = "Cannot make a request before the transport has been opened, or after it has been closed."
         self.assertEqual(expect_msg, str(ctx.exception))
+
+        # Check that the correct duration of sleep was called during the close process.
+        mock_sleep.assert_called_once_with(20 / 1000)
 
     @mock.patch("aiohttp.ClientSession", new_callable=MockSession.klass)
     async def test_aexit(self, mock_session_klass: mock.Mock) -> None:
