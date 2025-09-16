@@ -59,6 +59,7 @@ class AdminApi:
         workspace_id: str,
         org_id: str,
         assign_role_request: AssignRoleRequest,  # noqa: F405
+        api_preview: str | None = None,
         preview_api: str | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
@@ -75,7 +76,9 @@ class AdminApi:
             Example: `'org_id_example'`
         :param assign_role_request:
             Example: `endpoints.AssignRoleRequest()`
-        :param preview_api: (optional) Set to \"opt-in\" to enable adding user by email
+        :param api_preview: (optional) Set to \"opt-in\" to be able to use this API.
+            Example: `'api_preview_example'`
+        :param preview_api: (optional) Set to \"opt-in\" to be able to use this API. This header is being deprecated. Please use the API-Preview header.
             Example: `'preview_api_example'`
         :param additional_headers: (optional) Additional headers to send with the request.
         :param request_timeout: (optional) Timeout setting for this request. If one number is provided, it will be the
@@ -105,8 +108,10 @@ class AdminApi:
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
+        if api_preview is not None:
+            _header_params["API-Preview"] = api_preview
         if preview_api is not None:
-            _header_params["preview-api"] = preview_api
+            _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -772,6 +777,7 @@ class AdminApi:
         self,
         org_id: str,
         ml_enablement_request: MlEnablementRequest,  # noqa: F405
+        api_preview: str | None = None,
         preview_api: str | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
@@ -785,7 +791,9 @@ class AdminApi:
             Example: `'org_id_example'`
         :param ml_enablement_request:
             Example: `endpoints.MlEnablementRequest()`
-        :param preview_api: (optional) Set to \"opt-in\" to enable adding user by email
+        :param api_preview: (optional) Set to \"opt-in\" to be able to use this API.
+            Example: `'api_preview_example'`
+        :param preview_api: (optional) Set to \"opt-in\" to be able to use this API. This header is being deprecated. Please use the API-Preview header.
             Example: `'preview_api_example'`
         :param additional_headers: (optional) Additional headers to send with the request.
         :param request_timeout: (optional) Timeout setting for this request. If one number is provided, it will be the
@@ -814,8 +822,10 @@ class AdminApi:
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
+        if api_preview is not None:
+            _header_params["API-Preview"] = api_preview
         if preview_api is not None:
-            _header_params["preview-api"] = preview_api
+            _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
 

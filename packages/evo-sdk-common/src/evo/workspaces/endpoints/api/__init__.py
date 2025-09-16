@@ -11,7 +11,9 @@
 
 from .admin_api import AdminApi  # noqa: F401
 from .discovery_api import DiscoveryApi  # noqa: F401
+from .folders_api import FoldersApi  # noqa: F401
 from .general_api import GeneralApi  # noqa: F401
+from .instance_users_api import InstanceUsersApi  # noqa: F401
 from .license_access_api import LicenseAccessApi  # noqa: F401
 from .thumbnails_api import ThumbnailsApi  # noqa: F401
 from .token_api import TokenApi  # noqa: F401

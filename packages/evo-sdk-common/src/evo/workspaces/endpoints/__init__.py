@@ -33,12 +33,24 @@ API version: 1.0
 """
 
 # Import endpoint apis.
-from .api import AdminApi, DiscoveryApi, GeneralApi, LicenseAccessApi, ThumbnailsApi, TokenApi, WorkspacesApi
+from .api import (
+    AdminApi,
+    DiscoveryApi,
+    FoldersApi,
+    GeneralApi,
+    InstanceUsersApi,
+    LicenseAccessApi,
+    ThumbnailsApi,
+    TokenApi,
+    WorkspacesApi,
+)
 
 __all__ = [
     "AdminApi",
     "DiscoveryApi",
+    "FoldersApi",
     "GeneralApi",
+    "InstanceUsersApi",
     "LicenseAccessApi",
     "ThumbnailsApi",
     "TokenApi",

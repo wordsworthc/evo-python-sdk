@@ -56,24 +56,28 @@ class LicenseAccessApi:
 
     async def v2_license_access_workspace_evo_identity_v2_license_access_get(
         self,
-        service: str | None = None,
-        hub: list[str] | None = None,
+        service: list[str] | None = None,
+        hub: str | None = None,
         org_id: str | None = None,
         required_scope: list[str] | None = None,
+        tx_uuid: str | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
-    ) -> dict:
+    ) -> LicenseAccessResponseModel:  # noqa: F405
         """V2 License Access
 
+        Verify the user and token has access to the requested resources.  Given a user token, verify that the user has access to the requested service, org and hub, as well as that the token as the required scope.  On success, returns details of the calling user, what they are entitled to, and the authorization the request was made with.  Args:     org_id (UUID): UUID of the Evo organisation     service (str): service name (i.e. \"blockmodel\")     hub (str): the hub code     required_scope(str): scope required for the service Returns:     A JSON response.
 
         :param service: (optional)
-            Example: `'service_example'`
+            Example: `['service_example']`
         :param hub: (optional)
-            Example: `['hub_example']`
+            Example: `'hub_example'`
         :param org_id: (optional)
             Example: `'org_id_example'`
         :param required_scope: (optional)
             Example: `['required_scope_example']`
+        :param tx_uuid: (optional)
+            Example: `'tx_uuid_example'`
         :param additional_headers: (optional) Additional headers to send with the request.
         :param request_timeout: (optional) Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
@@ -106,17 +110,19 @@ class LicenseAccessApi:
         _header_params = {
             "Accept": "application/json",
         }
+        if tx_uuid is not None:
+            _header_params["tx-uuid"] = tx_uuid
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
         # Define the collection formats.
         _collection_formats = {
-            "hub": "multi",
+            "service": "multi",
             "required_scope": "multi",
         }
 
         _response_types_map = {
-            "200": dict,
+            "200": LicenseAccessResponseModel,  # noqa: F405
         }
 
         return await self.connector.call_api(
