@@ -94,6 +94,13 @@ class FolderCreateRequest(CustomBaseModel):
     """
 
 
+class FolderMoveRequest(CustomBaseModel):
+    parent_folder_id: Annotated[UUID, Field(title="Parent Folder Id")]
+    """
+    The ID of the new parent folder
+    """
+
+
 class FolderUpdateRequest(CustomBaseModel):
     name: Annotated[StrictStr, Field(title="Name")]
     """
@@ -111,11 +118,31 @@ class Hub(CustomBaseModel):
     url: Annotated[StrictStr, Field(title="Url")]
 
 
+class HubTypeEnum(Enum):
+    enterprise = "enterprise"
+    multitenant = "multitenant"
+
+
 class InstanceRoleWithPermissions(CustomBaseModel):
     description: Annotated[StrictStr, Field(title="Description")]
     id: Annotated[UUID, Field(title="Id")]
     name: Annotated[StrictStr, Field(title="Name")]
     permissions: Annotated[list[StrictStr], Field(title="Permissions")]
+
+
+class InstanceStatusEnum(Enum):
+    active = "active"
+    inactive = "inactive"
+    new = "new"
+
+
+class InstanceTypeEnum(Enum):
+    commercial = "commercial"
+    partner = "partner"
+    sandbox = "sandbox"
+    internal = "internal"
+    trial = "trial"
+    early_access = "early-access"
 
 
 class LicenseAccessAuthDetails(CustomBaseModel):
@@ -213,6 +240,21 @@ class ServiceAccess(CustomBaseModel):
     services: Annotated[list[StrictStr], Field(title="Services")]
 
 
+class UpdateInstanceDetailsRequest(CustomBaseModel):
+    display_name: Annotated[StrictStr | None, Field(max_length=100, min_length=1, title="Display Name")] = None
+    status: InstanceStatusEnum | None = None
+    type: InstanceTypeEnum | None = None
+
+
+class UpdateInstanceUserRolesRequest(CustomBaseModel):
+    roles: Annotated[list[UUID], Field(title="Roles")]
+
+
+class UpdateInstanceUserRolesResponse(CustomBaseModel):
+    id: Annotated[UUID, Field(title="Id")]
+    roles: Annotated[list[BaseInstanceUserRoleResponse], Field(title="Roles")]
+
+
 class User(CustomBaseModel):
     email: Annotated[StrictStr | None, Field(title="Email")] = None
     full_name: Annotated[StrictStr | None, Field(title="Full Name")] = None
@@ -291,6 +333,28 @@ class CoordinateSystemCategory(CustomBaseModel):
     title: Annotated[StrictStr, Field(title="Title")]
 
 
+class CreateHubRequest(CustomBaseModel):
+    hub_code: Annotated[StrictStr, Field(title="Hub Code")]
+    """
+    The abbreviated code for the hub. This is used to identify the hub in the system.
+    """
+    hub_display_name: Annotated[StrictStr, Field(title="Hub Display Name")]
+    hub_type: HubTypeEnum = "multitenant"
+    hub_url: Annotated[StrictStr, Field(title="Hub Url")]
+
+
+class CreateInstanceRequest(CustomBaseModel):
+    display_name: Annotated[StrictStr, Field(title="Display Name")]
+    hub_code: Annotated[StrictStr, Field(title="Hub Code")]
+    instance_id: Annotated[UUID | None, Field(title="Instance Id")] = None
+    org_id: Annotated[UUID, Field(title="Org Id")]
+    owner_id: Annotated[UUID, Field(title="Owner Id")]
+    """
+    The id of the Bentley user to give initial ownership permission for the instance.
+    """
+    type: InstanceTypeEnum = "commercial"
+
+
 class CreateWorkspaceRequest(CustomBaseModel):
     bounding_box: BoundingBox | None = None
     default_coordinate_system: Annotated[StrictStr, Field(title="Default Coordinate System")] = ""
@@ -325,9 +389,34 @@ class FolderResponse(CustomBaseModel):
     workspace_id: Annotated[UUID, Field(title="Workspace Id")]
 
 
-class GetFolderResponse(CustomBaseModel):
-    child_folders: Annotated[list[FolderResponse] | None, Field(title="Child Folders")] = None
-    folder: FolderResponse
+class HubResponse(CustomBaseModel):
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_by: Annotated[UUID | StrictStr, Field(title="Created By")]
+    hub_code: Annotated[StrictStr, Field(title="Hub Code")]
+    hub_display_name: Annotated[StrictStr, Field(title="Hub Display Name")]
+    hub_type: HubTypeEnum
+    hub_url: Annotated[StrictStr, Field(title="Hub Url")]
+    updated_at: Annotated[AwareDatetime, Field(title="Updated At")]
+    updated_by: Annotated[UUID | StrictStr, Field(title="Updated By")]
+
+
+class InstanceResponse(CustomBaseModel):
+    context_id: Annotated[UUID, Field(title="Context Id")]
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_by: Annotated[UUID | StrictStr, Field(title="Created By")]
+    hub_code: Annotated[StrictStr, Field(title="Hub Code")]
+    hub_display_name: Annotated[StrictStr, Field(title="Hub Display Name")]
+    hub_type: HubTypeEnum
+    hub_url: Annotated[StrictStr, Field(title="Hub Url")]
+    instance_id: Annotated[UUID, Field(title="Instance Id")]
+    instance_name: Annotated[StrictStr, Field(title="Instance Name")]
+    instance_status: InstanceStatusEnum
+    instance_type: InstanceTypeEnum
+    instance_version: Annotated[StrictInt, Field(title="Instance Version")]
+    org_id: Annotated[UUID, Field(title="Org Id")]
+    org_name: Annotated[StrictStr, Field(title="Org Name")]
+    updated_at: Annotated[AwareDatetime, Field(title="Updated At")]
+    updated_by: Annotated[UUID | StrictStr, Field(title="Updated By")]
 
 
 class LicenseAccessResponseModel(CustomBaseModel):
@@ -343,6 +432,11 @@ class LicenseAccessResponseModel(CustomBaseModel):
 class ListCoordinateSystemsResponse(CustomBaseModel):
     links: Annotated[dict[str, Any], Field(title="Links")]
     results: Annotated[list[CoordinateSystemCategory], Field(title="Results")]
+
+
+class ListInstanceUserInvitationsResponse(CustomBaseModel):
+    links: PaginationLinksWithoutTotal
+    results: Annotated[list[BaseInstanceUserInvitationResponse], Field(title="Results")]
 
 
 class ListInstanceUsersResponse(CustomBaseModel):
@@ -440,8 +534,25 @@ class AddInstanceUsersResponse(CustomBaseModel):
     members: Annotated[list[BaseInstanceUserResponse], Field(title="Members")]
 
 
+class ChildFolderListResponse(CustomBaseModel):
+    count: Annotated[StrictInt, Field(title="Count")]
+    folders: Annotated[list[FolderResponse], Field(title="Folders")]
+    limit: Annotated[StrictInt, Field(title="Limit")]
+    offset: Annotated[StrictInt, Field(title="Offset")]
+    total: Annotated[StrictInt, Field(title="Total")]
+
+
+class CreatePathFoldersResponse(CustomBaseModel):
+    folders: Annotated[list[FolderResponse], Field(title="Folders")]
+
+
 class DiscoveryResponse(CustomBaseModel):
     discovery: DiscoveryResponseContent
+
+
+class GetFolderResponse(CustomBaseModel):
+    child_folders: ChildFolderListResponse
+    folder: FolderResponse
 
 
 class ListUserWorkspacesResponse(CustomBaseModel):
