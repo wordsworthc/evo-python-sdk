@@ -57,6 +57,8 @@ class DiscoveryApi:
     async def v1_discovery_workspace_evo_identity_v1_discovery_get(
         self,
         service: list[str] | None = None,
+        user_agent: str | None = None,
+        origin: str | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
     ) -> dict:
@@ -65,6 +67,10 @@ class DiscoveryApi:
 
         :param service: (optional)
             Example: `['service_example']`
+        :param user_agent: (optional)
+            Example: `'user_agent_example'`
+        :param origin: (optional)
+            Example: `'origin_example'`
         :param additional_headers: (optional) Additional headers to send with the request.
         :param request_timeout: (optional) Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
@@ -91,6 +97,10 @@ class DiscoveryApi:
         _header_params = {
             "Accept": "application/json",
         }
+        if user_agent is not None:
+            _header_params["user-agent"] = user_agent
+        if origin is not None:
+            _header_params["origin"] = origin
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -116,14 +126,23 @@ class DiscoveryApi:
     async def v2_discovery_workspace_evo_identity_v2_discovery_get(
         self,
         service: list[str] | None = None,
+        cache_control: str | None = None,
+        user_agent: str | None = None,
+        origin: str | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
-    ) -> dict:
+    ) -> DiscoveryResponse:  # noqa: F405
         """V2 Discovery
 
 
         :param service: (optional)
             Example: `['service_example']`
+        :param cache_control: (optional) Cache control header to set the cache policy for the response. Set to 'no-cache' to revalidate the cache.
+            Example: `'cache_control_example'`
+        :param user_agent: (optional)
+            Example: `'user_agent_example'`
+        :param origin: (optional)
+            Example: `'origin_example'`
         :param additional_headers: (optional) Additional headers to send with the request.
         :param request_timeout: (optional) Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
@@ -150,6 +169,12 @@ class DiscoveryApi:
         _header_params = {
             "Accept": "application/json",
         }
+        if cache_control is not None:
+            _header_params["Cache-Control"] = cache_control
+        if user_agent is not None:
+            _header_params["user-agent"] = user_agent
+        if origin is not None:
+            _header_params["origin"] = origin
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -159,7 +184,7 @@ class DiscoveryApi:
         }
 
         _response_types_map = {
-            "200": dict,
+            "200": DiscoveryResponse,  # noqa: F405
         }
 
         return await self.connector.call_api(

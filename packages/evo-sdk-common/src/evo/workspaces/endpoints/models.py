@@ -14,13 +14,14 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Annotated, Any
 from uuid import UUID
 
 from pydantic import (
     AnyUrl,
+    AwareDatetime,
     Field,
     RootModel,
     StrictBool,
@@ -78,8 +79,92 @@ class ErrorResponse(CustomBaseModel):
     type: Annotated[StrictStr, Field(title="Type")]
 
 
+class FolderCreateRequest(CustomBaseModel):
+    name: Annotated[StrictStr, Field(title="Name")]
+    """
+    The name of the folder
+    """
+    parent_folder_id: Annotated[UUID | None, Field(title="Parent Folder Id")] = None
+    """
+    The ID of the parent folder
+    """
+    parent_folder_path: Annotated[Path | None, Field(title="Parent Folder Path")] = None
+    """
+    The path of the parent folder
+    """
+
+
+class FolderUpdateRequest(CustomBaseModel):
+    name: Annotated[StrictStr, Field(title="Name")]
+    """
+    The new name of the folder
+    """
+
+
 class GeometryTypeEnum(Enum):
     Polygon = "Polygon"
+
+
+class Hub(CustomBaseModel):
+    code: Annotated[StrictStr, Field(title="Code")]
+    display_name: Annotated[StrictStr, Field(title="Display Name")]
+    url: Annotated[StrictStr, Field(title="Url")]
+
+
+class InstanceRoleWithPermissions(CustomBaseModel):
+    description: Annotated[StrictStr, Field(title="Description")]
+    id: Annotated[UUID, Field(title="Id")]
+    name: Annotated[StrictStr, Field(title="Name")]
+    permissions: Annotated[list[StrictStr], Field(title="Permissions")]
+
+
+class LicenseAccessAuthDetails(CustomBaseModel):
+    """
+    Auth details,retrieved from token, for v2 License Access Response
+    """
+
+    client_id: Annotated[StrictStr, Field(title="Client Id")]
+    exp: Annotated[StrictInt, Field(title="Exp")]
+    iat: Annotated[StrictInt, Field(title="Iat")]
+    iss: Annotated[StrictStr | None, Field(title="Iss")] = None
+    jti: Annotated[StrictStr | None, Field(title="Jti")] = None
+    scope: Annotated[list[StrictStr] | None, Field(title="Scope")] = None
+    sid: Annotated[StrictStr | None, Field(title="Sid")] = None
+    type: Annotated[StrictStr, Field(title="Type")]
+    ver: Annotated[StrictStr, Field(title="Ver")]
+
+
+class LicenseAccessEntitlements(CustomBaseModel):
+    """
+    Entitlement details for v2 License Access Response
+    """
+
+    hub_code: Annotated[StrictStr, Field(title="Hub Code")]
+    instance_id: Annotated[StrictStr | None, Field(title="Instance Id")] = None
+    instance_name: Annotated[StrictStr | None, Field(title="Instance Name")] = None
+    org_id: Annotated[StrictStr, Field(title="Org Id")]
+    org_name: Annotated[StrictStr, Field(title="Org Name")]
+    roles: Annotated[list[StrictStr], Field(title="Roles")]
+    services: Annotated[list[StrictStr], Field(title="Services")]
+
+
+class LicenseAccessUser(CustomBaseModel):
+    """
+    User details for v2 License Access Response
+    """
+
+    org_id: Annotated[StrictStr | None, Field(title="Org Id")] = None
+    org_name: Annotated[StrictStr | None, Field(title="Org Name")] = None
+    sub: Annotated[StrictStr, Field(title="Sub")]
+
+
+class ListInstanceRolesResponse(CustomBaseModel):
+    roles: Annotated[list[InstanceRoleWithPermissions], Field(title="Roles")]
+
+
+class Organization(CustomBaseModel):
+    display_name: Annotated[StrictStr, Field(title="Display Name")]
+    id: Annotated[StrictStr, Field(title="Id")]
 
 
 class OrganizationSettingsFieldResponse(CustomBaseModel):
@@ -87,11 +172,11 @@ class OrganizationSettingsFieldResponse(CustomBaseModel):
 
 
 class OrganizationSettingsResponse(CustomBaseModel):
-    created_at: Annotated[datetime | None, Field(title="Created At")] = None
+    created_at: Annotated[AwareDatetime | None, Field(title="Created At")] = None
     created_by: Annotated[UUID | None, Field(title="Created By")] = None
     id: Annotated[UUID, Field(title="Id")]
     settings: Annotated[OrganizationSettingsFieldResponse, Field()] = {"ml_enabled": False}
-    updated_at: Annotated[datetime | None, Field(title="Updated At")] = None
+    updated_at: Annotated[AwareDatetime | None, Field(title="Updated At")] = None
     updated_by: Annotated[UUID | None, Field(title="Updated By")] = None
 
 
@@ -115,6 +200,17 @@ class RoleEnum(Enum):
     owner = "owner"
     editor = "editor"
     viewer = "viewer"
+
+
+class Service(CustomBaseModel):
+    code: Annotated[StrictStr, Field(title="Code")]
+    display_name: Annotated[StrictStr, Field(title="Display Name")]
+
+
+class ServiceAccess(CustomBaseModel):
+    hub_code: Annotated[StrictStr, Field(title="Hub Code")]
+    org_id: Annotated[StrictStr, Field(title="Org Id")]
+    services: Annotated[list[StrictStr], Field(title="Services")]
 
 
 class User(CustomBaseModel):
@@ -141,6 +237,11 @@ class UserRoleAssignmentRequest(CustomBaseModel):
     workspace_id: Annotated[UUID, Field(title="Workspace Id")]
 
 
+class UserRoleMapping(CustomBaseModel):
+    email: Annotated[StrictStr, Field(title="Email")]
+    roles: Annotated[list[UUID], Field(title="Roles")]
+
+
 class UserRoleViaEmail(CustomBaseModel):
     email: Annotated[StrictStr, Field(title="Email")]
     role: RoleEnum
@@ -151,8 +252,22 @@ class WorkspaceMlEnablementRequest(CustomBaseModel):
     workspace_id: Annotated[UUID, Field(title="Workspace Id")]
 
 
+class AddInstanceUsersRequest(CustomBaseModel):
+    users: Annotated[list[UserRoleMapping], Field(title="Users")]
+
+
 class AssignRoleRequest(RootModel[UserRole | UserRoleViaEmail]):
     root: Annotated[UserRole | UserRoleViaEmail, Field(title="AssignRoleRequest")]
+
+
+class BaseInstanceUserInvitationResponse(CustomBaseModel):
+    created_date: Annotated[AwareDatetime, Field(title="Created Date")]
+    email: Annotated[StrictStr, Field(title="Email")]
+    expiration_date: Annotated[AwareDatetime, Field(title="Expiration Date")]
+    id: Annotated[UUID, Field(title="Id")]
+    invited_by_email: Annotated[StrictStr, Field(title="Invited By Email")]
+    roles: Annotated[list[BaseInstanceUserRoleResponse], Field(title="Roles")]
+    status: Annotated[StrictStr, Field(title="Status")]
 
 
 class BaseInstanceUserResponse(CustomBaseModel):
@@ -190,6 +305,41 @@ class CreateWorkspaceRequest(CustomBaseModel):
     """
 
 
+class DiscoveryResponseContent(CustomBaseModel):
+    hubs: Annotated[list[Hub], Field(title="Hubs")]
+    organizations: Annotated[list[Organization], Field(title="Organizations")]
+    service_access: Annotated[list[ServiceAccess], Field(title="Service Access")]
+    services: Annotated[list[Service], Field(title="Services")]
+
+
+class FolderResponse(CustomBaseModel):
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_by: UserModel
+    deleted: Annotated[StrictBool, Field(title="Deleted")]
+    folder_id: Annotated[UUID, Field(title="Folder Id")]
+    name: Annotated[StrictStr, Field(title="Name")]
+    parent_folder_id: Annotated[UUID | None, Field(title="Parent Folder Id")] = None
+    path: Annotated[Path, Field(title="Path")]
+    updated_at: Annotated[AwareDatetime, Field(title="Updated At")]
+    updated_by: UserModel
+    workspace_id: Annotated[UUID, Field(title="Workspace Id")]
+
+
+class GetFolderResponse(CustomBaseModel):
+    child_folders: Annotated[list[FolderResponse] | None, Field(title="Child Folders")] = None
+    folder: FolderResponse
+
+
+class LicenseAccessResponseModel(CustomBaseModel):
+    """
+    v2 License Access Response
+    """
+
+    auth_details: LicenseAccessAuthDetails
+    entitlements: LicenseAccessEntitlements
+    user: LicenseAccessUser
+
+
 class ListCoordinateSystemsResponse(CustomBaseModel):
     links: Annotated[dict[str, Any], Field(title="Links")]
     results: Annotated[list[CoordinateSystemCategory], Field(title="Results")]
@@ -213,7 +363,7 @@ class ListWorkspaceSummaryResponse(CustomBaseModel):
 class MlEnablementRequest(CustomBaseModel):
     ml_enablements: Annotated[
         list[WorkspaceMlEnablementRequest],
-        Field(max_length=100, title="Ml Enablements"),
+        Field(max_length=100, min_length=1, title="Ml Enablements"),
     ]
 
 
@@ -230,7 +380,7 @@ class UpdateWorkspaceRequest(CustomBaseModel):
 
 class UserWorkspaceResponse(CustomBaseModel):
     bounding_box: BoundingBox | None = None
-    created_at: Annotated[datetime, Field(title="Created At")]
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
     created_by: UserModel
     default_coordinate_system: Annotated[StrictStr, Field(title="Default Coordinate System")] = ""
     description: Annotated[StrictStr, Field(title="Description")] = ""
@@ -242,14 +392,14 @@ class UserWorkspaceResponse(CustomBaseModel):
     The name of the workspace, unique within an organization and hub
     """
     self_link: Annotated[AnyUrl, Field(title="Self Link")]
-    updated_at: Annotated[datetime, Field(title="Updated At")]
+    updated_at: Annotated[AwareDatetime, Field(title="Updated At")]
     updated_by: UserModel
     user_role: RoleEnum
 
 
 class WorkspaceRoleOptionalResponse(CustomBaseModel):
     bounding_box: BoundingBox | None = None
-    created_at: Annotated[datetime, Field(title="Created At")]
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
     created_by: UserModel
     current_user_role: RoleEnum | None = None
     default_coordinate_system: Annotated[StrictStr, Field(title="Default Coordinate System")] = ""
@@ -262,13 +412,13 @@ class WorkspaceRoleOptionalResponse(CustomBaseModel):
     The name of the workspace, unique within an organization and hub
     """
     self_link: Annotated[AnyUrl, Field(title="Self Link")]
-    updated_at: Annotated[datetime, Field(title="Updated At")]
+    updated_at: Annotated[AwareDatetime, Field(title="Updated At")]
     updated_by: UserModel
 
 
 class WorkspaceRoleRequiredResponse(CustomBaseModel):
     bounding_box: BoundingBox | None = None
-    created_at: Annotated[datetime, Field(title="Created At")]
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
     created_by: UserModel
     current_user_role: RoleEnum
     default_coordinate_system: Annotated[StrictStr, Field(title="Default Coordinate System")] = ""
@@ -281,8 +431,17 @@ class WorkspaceRoleRequiredResponse(CustomBaseModel):
     The name of the workspace, unique within an organization and hub
     """
     self_link: Annotated[AnyUrl, Field(title="Self Link")]
-    updated_at: Annotated[datetime, Field(title="Updated At")]
+    updated_at: Annotated[AwareDatetime, Field(title="Updated At")]
     updated_by: UserModel
+
+
+class AddInstanceUsersResponse(CustomBaseModel):
+    invitations: Annotated[list[BaseInstanceUserInvitationResponse], Field(title="Invitations")]
+    members: Annotated[list[BaseInstanceUserResponse], Field(title="Members")]
+
+
+class DiscoveryResponse(CustomBaseModel):
+    discovery: DiscoveryResponseContent
 
 
 class ListUserWorkspacesResponse(CustomBaseModel):
