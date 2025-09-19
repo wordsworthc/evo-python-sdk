@@ -56,11 +56,9 @@ class AdminApi:
 
     async def assign_user_role_admin(
         self,
-        workspace_id: str,
         org_id: str,
+        workspace_id: str,
         assign_role_request: AssignRoleRequest,  # noqa: F405
-        api_preview: str | None = None,
-        preview_api: str | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
     ) -> UserRole:  # noqa: F405
@@ -68,18 +66,14 @@ class AdminApi:
 
         Assigns a user a role in a workspace. Admin endpoints allow organization admin users to access any workspace, regardless of their role or lack thereof within the workspace.
 
-        :param workspace_id:
-            Format: `uuid`
-            Example: `'workspace_id_example'`
         :param org_id:
             Format: `uuid`
             Example: `'org_id_example'`
+        :param workspace_id:
+            Format: `uuid`
+            Example: `'workspace_id_example'`
         :param assign_role_request:
             Example: `endpoints.AssignRoleRequest()`
-        :param api_preview: (optional) Set to \"opt-in\" to be able to use this API.
-            Example: `'api_preview_example'`
-        :param preview_api: (optional) Set to \"opt-in\" to be able to use this API. This header is being deprecated. Please use the API-Preview header.
-            Example: `'preview_api_example'`
         :param additional_headers: (optional) Additional headers to send with the request.
         :param request_timeout: (optional) Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
@@ -99,8 +93,8 @@ class AdminApi:
         """
         # Prepare the path parameters.
         _path_params = {
-            "workspace_id": workspace_id,
             "org_id": org_id,
+            "workspace_id": workspace_id,
         }
 
         # Prepare the header parameters.
@@ -108,10 +102,6 @@ class AdminApi:
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
-        if api_preview is not None:
-            _header_params["API-Preview"] = api_preview
-        if preview_api is not None:
-            _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -561,7 +551,7 @@ class AdminApi:
         :param user_id:
             Format: `uuid`
             Example: `'user_id_example'`
-        :param limit: (optional) The maximum number of results to return. Limits over 100 are deprecated and will eventually not be supported.
+        :param limit: (optional) The maximum number of results to return. Limits over 100 are deprecated and may only work for some clients.
             Example: `20`
         :param offset: (optional) The (zero-based) offset of the first item returned in the collection.
             Example: `0`
@@ -677,7 +667,7 @@ class AdminApi:
         :param org_id:
             Format: `uuid`
             Example: `'org_id_example'`
-        :param limit: (optional) The maximum number of results to return. Limits over 100 are deprecated and will eventually not be supported.
+        :param limit: (optional) The maximum number of results to return. Limits over 100 are deprecated and may only work for some clients.
             Example: `20`
         :param offset: (optional) The (zero-based) offset of the first item returned in the collection.
             Example: `0`
@@ -777,8 +767,6 @@ class AdminApi:
         self,
         org_id: str,
         ml_enablement_request: MlEnablementRequest,  # noqa: F405
-        api_preview: str | None = None,
-        preview_api: str | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
     ) -> MlEnablementRequest:  # noqa: F405
@@ -791,10 +779,6 @@ class AdminApi:
             Example: `'org_id_example'`
         :param ml_enablement_request:
             Example: `endpoints.MlEnablementRequest()`
-        :param api_preview: (optional) Set to \"opt-in\" to be able to use this API.
-            Example: `'api_preview_example'`
-        :param preview_api: (optional) Set to \"opt-in\" to be able to use this API. This header is being deprecated. Please use the API-Preview header.
-            Example: `'preview_api_example'`
         :param additional_headers: (optional) Additional headers to send with the request.
         :param request_timeout: (optional) Timeout setting for this request. If one number is provided, it will be the
             total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
@@ -822,10 +806,6 @@ class AdminApi:
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
-        if api_preview is not None:
-            _header_params["API-Preview"] = api_preview
-        if preview_api is not None:
-            _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
