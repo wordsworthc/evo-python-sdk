@@ -198,6 +198,7 @@ class FoldersApi:
         _collection_formats = {}
 
         _response_types_map = {
+            "200": CreatePathFoldersResponse,  # noqa: F405
             "201": CreatePathFoldersResponse,  # noqa: F405
         }
 
