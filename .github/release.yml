@@ -14,6 +14,9 @@ changelog:
     - title: evo-colormaps
       labels:
         - evo-colormaps
+    - title: evo-blockmodel
+      labels:
+        - evo-blockmodel
     - title: evo-files
       labels:
         - evo-files
