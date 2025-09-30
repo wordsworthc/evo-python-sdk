@@ -22,3 +22,4 @@ test:
 	@make test-common
 	@make test-files
 	@make test-objects
+	@make test-colormaps
