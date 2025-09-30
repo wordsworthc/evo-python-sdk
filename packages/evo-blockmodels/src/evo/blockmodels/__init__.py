@@ -12,5 +12,5 @@
 from .client import BlockModelAPIClient
 
 __all__ = [
-    "BlockModelServiceClient",
+    "BlockModelAPIClient",
 ]

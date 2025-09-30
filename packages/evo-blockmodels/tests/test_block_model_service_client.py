@@ -14,8 +14,8 @@ from unittest import mock
 
 import pyarrow
 
-from evo.blockmodel import BlockModelServiceClient
-from evo.blockmodel.endpoints.models import (
+from evo.blockmodels import BlockModelAPIClient
+from evo.blockmodels.endpoints.models import (
     BBox,
     IntRange,
     JobErrorPayload,
@@ -25,7 +25,7 @@ from evo.blockmodel.endpoints.models import (
     QueryDownload,
     QueryResult,
 )
-from evo.blockmodel.exceptions import CacheNotConfiguredException, JobFailedException
+from evo.blockmodels.exceptions import CacheNotConfiguredException, JobFailedException
 from evo.common import HealthCheckType
 from evo.common.data import HTTPHeaderDict, RequestMethod
 from evo.common.test_tools import BASE_URL, AbstractTestRequestHandler, MockResponse, TestWithConnector, TestWithStorage
@@ -68,14 +68,12 @@ class QueryRequestHandler(AbstractTestRequestHandler):
                 return self.not_found()
 
 
-class TestBlockModelServiceClient(TestWithConnector, TestWithStorage):
+class TestBlockModelAPIClient(TestWithConnector, TestWithStorage):
     def setUp(self) -> None:
         TestWithConnector.setUp(self)
         TestWithStorage.setUp(self)
-        self.bms_client = BlockModelServiceClient(
-            connector=self.connector, environment=self.environment, cache=self.cache
-        )
-        self.bms_client_without_cache = BlockModelServiceClient(connector=self.connector, environment=self.environment)
+        self.bms_client = BlockModelAPIClient(connector=self.connector, environment=self.environment, cache=self.cache)
+        self.bms_client_without_cache = BlockModelAPIClient(connector=self.connector, environment=self.environment)
 
     @property
     def base_path(self) -> str:
@@ -83,7 +81,7 @@ class TestBlockModelServiceClient(TestWithConnector, TestWithStorage):
 
     async def test_check_service_health(self) -> None:
         """Test service health check implementation"""
-        with mock.patch("evo.blockmodel.client.get_service_health", spec_set=True) as mock_get_service_health:
+        with mock.patch("evo.blockmodels.client.get_service_health", spec_set=True) as mock_get_service_health:
             await self.bms_client.get_service_health()
         mock_get_service_health.assert_called_once_with(self.connector, "blockmodel", check_type=HealthCheckType.FULL)
 

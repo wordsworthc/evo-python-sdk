@@ -1,4 +1,4 @@
-name: Build and publish evo-blockmodel
+name: Build and publish evo-blockmodels
 
 permissions:
   # Required for publishing release artifacts
@@ -15,7 +15,7 @@ env:
 
 jobs:
   run-tests:
-    if: startsWith(github.event.release.tag_name, 'evo-blockmodel@')
+    if: startsWith(github.event.release.tag_name, 'evo-blockmodels@')
     uses: ./.github/workflows/run-all-tests.yaml
 
   build-and-publish:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Build package
         shell: bash
-        run: uv build --package evo-blockmodel
+        run: uv build --package evo-blockmodels
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

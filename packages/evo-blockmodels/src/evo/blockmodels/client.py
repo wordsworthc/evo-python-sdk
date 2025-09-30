@@ -51,7 +51,7 @@ from .io import BlockModelDownload, BlockModelUpload, get_cache_location_for_upl
 logger = logging.getLogger("blockmodel.client")
 
 __all__ = [
-    "BlockModelServiceClient",
+    "BlockModelAPIClient",
 ]
 
 
@@ -79,7 +79,7 @@ def _version_from_model(version: models.Version) -> Version:
 _GEOMETRY_COLUMNS = {"i", "j", "k", "x", "y", "z"}
 
 
-class BlockModelServiceClient(BaseAPIClient):
+class BlockModelAPIClient(BaseAPIClient):
     def __init__(self, environment: Environment, connector: APIConnector, cache: ICache | None = None) -> None:
         """
         Constructor for the Block Model Service client.
@@ -104,7 +104,7 @@ class BlockModelServiceClient(BaseAPIClient):
 
         :return: A ServiceHealth object.
 
-        :raises EvoApiException: If the API returns an unexpected status code.
+        :raises EvoAPIException: If the API returns an unexpected status code.
         :raises ClientValueError: If the response is not a valid service health check response.
         """
         return await get_service_health(self._connector, "blockmodel", check_type=check_type)

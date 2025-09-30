@@ -16,11 +16,11 @@ from unittest import mock
 
 import pyarrow
 
-from evo.blockmodel import BlockModelServiceClient
-from evo.blockmodel.data import RegularGridDefinition
-from evo.blockmodel.endpoints import models
-from evo.blockmodel.endpoints.models import JobResponse, JobStatus, RotationAxis
-from evo.blockmodel.exceptions import CacheNotConfiguredException, JobFailedException
+from evo.blockmodels import BlockModelAPIClient
+from evo.blockmodels.data import RegularGridDefinition
+from evo.blockmodels.endpoints import models
+from evo.blockmodels.endpoints.models import JobResponse, JobStatus, RotationAxis
+from evo.blockmodels.exceptions import CacheNotConfiguredException, JobFailedException
 from evo.common import ServiceUser
 from evo.common.data import HTTPHeaderDict, RequestMethod
 from evo.common.test_tools import BASE_URL, MockResponse, TestWithConnector, TestWithStorage
@@ -145,10 +145,8 @@ class TestCreateBlockModel(TestWithConnector, TestWithStorage):
     def setUp(self) -> None:
         TestWithConnector.setUp(self)
         TestWithStorage.setUp(self)
-        self.bms_client = BlockModelServiceClient(
-            connector=self.connector, environment=self.environment, cache=self.cache
-        )
-        self.bms_client_without_cache = BlockModelServiceClient(connector=self.connector, environment=self.environment)
+        self.bms_client = BlockModelAPIClient(connector=self.connector, environment=self.environment, cache=self.cache)
+        self.bms_client_without_cache = BlockModelAPIClient(connector=self.connector, environment=self.environment)
 
     @property
     def base_path(self) -> str:

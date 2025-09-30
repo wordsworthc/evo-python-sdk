@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-# `evo-blockmodel` uses protocols for annotating some pyarrow types, because:
+# `evo-blockmodels` uses protocols for annotating some pyarrow types, because:
 # - pyarrow is optional, but type annotations are not.
 # - pyarrow has poor type checker support.
 #

@@ -9,7 +9,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from evo.blockmodel.endpoints.models import JobResponse, JobStatus
+from evo.blockmodels.endpoints.models import JobResponse, JobStatus
 from evo.common.test_tools import AbstractTestRequestHandler, MockResponse
 
 

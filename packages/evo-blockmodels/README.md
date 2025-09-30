@@ -1,6 +1,6 @@
 <p align="center"><a href="https://seequent.com" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://developer.seequent.com/img/seequent-logo-dark.svg" alt="Seequent logo" width="400" /><img src="https://developer.seequent.com/img/seequent-logo.svg" alt="Seequent logo" width="400" /></picture></a></p>
 <p align="center">
-    <a href="https://pypi.org/project/evo-blockmodel/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-blockmodel" /></a>
+    <a href="https://pypi.org/project/evo-blockmodels/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-blockmodels" /></a>
     <a href="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/run-all-tests.yaml"><img src="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/run-all-tests.yaml/badge.svg" alt="" /></a>
 </p>
 <p align="center">
@@ -27,7 +27,7 @@ a block model.
 ## Installation
 
 ```shell
-pip install evo-blockmodel
+pip install evo-blockmodels
 ```
 
 ## Usage
