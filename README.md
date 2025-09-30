@@ -120,6 +120,22 @@ Once you've installed UV, install pre-commit hooks. These are used to standardis
 uv run pre-commit install
 ```
 
+### Setting up and running Jupyter notebooks
+
+Notebooks can be run in your tool of choice (e.g. VS Code). To use Jupyter (the default):
+
+```shell
+uv sync --all-packages --all-extras
+```
+
+Then, in the directory of the notebook(s) you want to run:
+
+```shell
+uv run jupyter notebook
+```
+
+A browser should launch where you can open the notebooks for the current directory.
+
 ## Code of conduct
 
 We rely on an open, friendly, inclusive environment. To help us ensure this remains possible, please familiarise yourself with our [code of conduct](./CODE_OF_CONDUCT.md).
