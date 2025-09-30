@@ -11,7 +11,7 @@
 
 # Evo Colormap API Client
 
-The Colormap API is a key feature of the Evo platform, providing a mechanism to create colour mappings and associate them to geoscience data via a `colormap`.
+The Colormap API is a key feature of the Evo platform, providing a mechanism to create colour mappings and associate them to geoscience data.
 
 ## Pre-requisites
 
