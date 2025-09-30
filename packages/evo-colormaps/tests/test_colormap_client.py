@@ -2,22 +2,20 @@ import json
 from unittest import mock
 from uuid import UUID
 
-from evo.common.exceptions import NotFoundException
-
 from data import load_test_data
-from evo.common import Environment, HealthCheckType, RequestMethod, ServiceUser
-from evo.common.test_tools import BASE_URL, ORG, WORKSPACE_ID, TestWithConnector, utc_datetime
-
 from evo.colormaps import ColormapAPIClient
 from evo.colormaps.data import (
-    ContinuousColormap,
-    ColormapMetadata,
-    DiscreteColormap,
-    CategoryColormap,
-    AssociationMetadata,
     Association,
+    AssociationMetadata,
+    CategoryColormap,
+    ColormapMetadata,
+    ContinuousColormap,
+    DiscreteColormap,
 )
 from evo.colormaps.exceptions import UnknownColormapType
+from evo.common import Environment, HealthCheckType, RequestMethod, ServiceUser
+from evo.common.exceptions import NotFoundException
+from evo.common.test_tools import BASE_URL, ORG, WORKSPACE_ID, TestWithConnector, utc_datetime
 
 
 class TestColormapApiClient(TestWithConnector):

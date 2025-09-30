@@ -1,40 +1,40 @@
 from __future__ import annotations
 
-from uuid import UUID
 from datetime import datetime, timezone
+from uuid import UUID
 
+from evo import logging
 from evo.common import (
+    APIConnector,
     BaseAPIClient,
+    Environment,
     HealthCheckType,
     ServiceHealth,
-    Environment,
-    APIConnector,
     ServiceUser,
 )
 from evo.common.utils import get_service_health
 
-from evo import logging
 from .data import (
+    Association,
+    AssociationMetadata,
+    CategoryColormap,
     ColormapMetadata,
     ContinuousColormap,
     DiscreteColormap,
-    CategoryColormap,
-    AssociationMetadata,
-    Association,
 )
-from .endpoints.api import ColormapsApi, AssociationsApi
+from .endpoints.api import AssociationsApi, ColormapsApi
 from .endpoints.models import (
-    ContinuousColormapResponse,
-    DiscreteColormapResponse,
-    CategoryColormapResponse,
     AttributeAssociationData,
-    AttributeColormapAssociation,
-    ContinuousColormapData,
-    DiscreteColormapData,
-    CategoryColormapData,
-    ColormapData,
     AttributeAssociationsData,
+    AttributeColormapAssociation,
+    CategoryColormapData,
+    CategoryColormapResponse,
+    ColormapData,
     ColormapTypeEnum,
+    ContinuousColormapData,
+    ContinuousColormapResponse,
+    DiscreteColormapData,
+    DiscreteColormapResponse,
 )
 from .exceptions import UnknownColormapResponse, UnknownColormapType
 

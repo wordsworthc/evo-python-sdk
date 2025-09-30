@@ -7,6 +7,7 @@ dependencies = [
     "evo-sdk-common[aiohttp,notebooks]",
     "evo-objects[aiohttp,notebooks,utils]",
     "evo-files[aiohttp,notebooks]",
+    "evo-colormaps[aiohttp,notebooks]",
     "jupyter"
 ]
 dynamic = ["readme"]
@@ -42,6 +43,7 @@ extend-select = ["I", "RUF022"]
 evo-sdk-common = { workspace = true }
 evo-files = { workspace = true }
 evo-objects = { workspace = true }
+evo-colormaps = { workspace = true }
 
 [tool.uv.workspace]
 members = ["packages/*"]

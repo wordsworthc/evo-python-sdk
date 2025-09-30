@@ -3,7 +3,7 @@ from unittest import mock
 
 from parameterized import parameterized
 
-from evo.colormaps.data import _validate_colors, ContinuousColormap, DiscreteColormap, CategoryColormap
+from evo.colormaps.data import CategoryColormap, ContinuousColormap, DiscreteColormap, _validate_colors
 
 
 class TestValidateColors(unittest.TestCase):
