@@ -1221,7 +1221,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             headers={"Accept": "application/json"},
         )
 
-        self.assertEqual(
+        self.assertListEqual(
             [
                 Stage(id=UUID(int=1), name="Approved"),
                 Stage(id=UUID(int=2), name="Experimental"),
