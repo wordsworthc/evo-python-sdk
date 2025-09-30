@@ -218,7 +218,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
                     email="test@example.com",
                 ),
                 schema_id=ObjectSchema("objects", "test", SchemaVersion(1, 2, 3)),
-                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000747"))
+                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000747")),
             ),
             OrgObjectMetadata(
                 environment=self.environment,
@@ -393,7 +393,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
                     name="x z",
                     email="test@example.com",
                 ),
-                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000123"))
+                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000123")),
             ),
             ObjectVersion(
                 version_id="2020-01-01T01:30:00.0000000Z",
@@ -403,7 +403,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
                     name="x y",
                     email="test@example.com",
                 ),
-                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000123"))
+                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000123")),
             ),
             ObjectVersion(
                 version_id="2010-01-01T01:30:00.0000000Z",
@@ -437,7 +437,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
                     name="x z",
                     email="test@example.com",
                 ),
-                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000123"))
+                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000123")),
             ),
             ObjectVersion(
                 version_id="2020-01-01T01:30:00.0000000Z",
@@ -447,7 +447,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
                     name="x y",
                     email="test@example.com",
                 ),
-                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000123"))
+                stage=Stage(name="Approved", id=UUID("00000000-0000-0000-0000-000000000123")),
             ),
             ObjectVersion(
                 version_id="2010-01-01T01:30:00.0000000Z",
@@ -1210,7 +1210,9 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
     async def test_list_stages(self) -> None:
         list_stages_response = load_test_data("list_stages.json")
 
-        with self.transport.set_http_response(200, json.dumps(list_stages_response), headers={"Content-Type": "application/json"}):
+        with self.transport.set_http_response(
+            200, json.dumps(list_stages_response), headers={"Content-Type": "application/json"}
+        ):
             stages = await self.object_client.list_stages()
 
         self.assert_request_made(
@@ -1230,7 +1232,6 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             ],
             stages,
         )
-
 
     async def test_set_stage(self) -> None:
         object_id = UUID(int=0)

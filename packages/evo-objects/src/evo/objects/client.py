@@ -23,15 +23,16 @@ from evo.common.utils import get_service_health, parse_order_by
 from evo.workspaces import ServiceUser
 
 from .data import ObjectMetadata, ObjectOrderByEnum, ObjectSchema, ObjectVersion, OrgObjectMetadata, Stage
-from .endpoints import ObjectsApi, MetadataApi, StagesApi
+from .endpoints import MetadataApi, ObjectsApi, StagesApi
 from .endpoints.models import (
     GeoscienceObject,
     GeoscienceObjectVersion,
     GetObjectResponse,
     ListedObject,
+    MetadataUpdateBody,
     OrgListedObject,
     PostObjectResponse,
-    UpdateGeoscienceObject, MetadataUpdateBody,
+    UpdateGeoscienceObject,
 )
 from .exceptions import ObjectUUIDError
 from .io import ObjectDataDownload, ObjectDataUpload
