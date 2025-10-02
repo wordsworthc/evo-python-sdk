@@ -790,7 +790,7 @@ test = [
 
 [[package]]
 name = "evo-sdk"
-version = "0.1.7"
+version = "0.1.8"
 source = { editable = "." }
 dependencies = [
     { name = "evo-colormaps", extra = ["aiohttp", "notebooks"] },
@@ -847,7 +847,7 @@ test = [
 
 [[package]]
 name = "evo-sdk-common"
-version = "0.5.3"
+version = "0.5.4"
 source = { editable = "packages/evo-sdk-common" }
 dependencies = [
     { name = "pure-interface" },
