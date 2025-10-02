@@ -31,6 +31,9 @@ notebooks = [
     "ipywidgets",
     "python-dotenv"
 ]
+jmespath = [
+    "jmespath>=1.0.1",
+]
 
 [dependency-groups]
 # Dev dependencies. The version is left unspecified so the latest is installed.
@@ -41,7 +44,7 @@ test = [
     "pytest",
 ]
 dev = [
-    "evo-sdk-common[aiohttp]",
+    "evo-sdk-common[aiohttp,jmespath]",
     "bumpver",
     "coverage[toml]",
     "ruff==0.9.1", # keep in sync with .pre-commit-config.yaml
