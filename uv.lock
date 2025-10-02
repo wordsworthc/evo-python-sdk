@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -716,7 +716,7 @@ test = [
 
 [[package]]
 name = "evo-objects"
-version = "0.2.2"
+version = "0.2.3"
 source = { editable = "packages/evo-objects" }
 dependencies = [
     { name = "evo-sdk-common" },
@@ -790,7 +790,7 @@ test = [
 
 [[package]]
 name = "evo-sdk"
-version = "0.1.6"
+version = "0.1.7"
 source = { editable = "." }
 dependencies = [
     { name = "evo-colormaps", extra = ["aiohttp", "notebooks"] },
