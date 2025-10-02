@@ -48,6 +48,10 @@ evo-colormaps = { workspace = true }
 [tool.uv.workspace]
 members = ["packages/*"]
 
+[[tool.uv.index]]
+name = "pypi.org"
+url = "https://pypi.org/simple"
+
 [build-system]
 requires = ["hatchling", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
