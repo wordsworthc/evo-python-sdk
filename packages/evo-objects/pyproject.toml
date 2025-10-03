@@ -23,7 +23,7 @@ Documentation = "https://developer.seequent.com/"
 [project.optional-dependencies]
 aiohttp = ["evo-sdk-common[aiohttp]"]
 notebooks = ["evo-sdk-common[notebooks]"]
-utils = ["pyarrow", "pandas"]
+utils = ["pyarrow", "pyarrow-stubs", "pandas", "numpy"]
 
 [dependency-groups]
 # Dev dependencies. The version is left unspecified so the latest is installed.
