@@ -9,6 +9,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import dataclasses
 import datetime
 import json
 from unittest import mock
@@ -243,6 +244,8 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             ),
         ]
         self.assertIsInstance(page_one, Page)
+        for item in page_one:
+            self.assertEqual(item.environment.workspace_id, item.workspace_id, "workspace_id should match environment")
         self.assertEqual(expected_items_page_one, page_one.items())
         self.assertEqual(0, page_one.offset)
         self.assertEqual(2, page_one.limit)
@@ -257,7 +260,9 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         page_two = await self.object_client.list_objects_for_instance(offset=page_one.next_offset, limit=page_one.limit)
         expected_items_page_two = [
             OrgObjectMetadata(
-                environment=self.environment,
+                environment=dataclasses.replace(
+                    self.environment, workspace_id=UUID("00000000-0000-0000-0000-0000000004d2")
+                ),
                 workspace_id=UUID("00000000-0000-0000-0000-0000000004d2"),
                 workspace_name="Test Workspace 2",
                 id=UUID("00000000-0000-0000-0000-000000000002"),
@@ -279,6 +284,8 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             ),
         ]
         self.assertIsInstance(page_two, Page)
+        for item in page_two:
+            self.assertEqual(item.environment.workspace_id, item.workspace_id, "workspace_id should match environment")
         self.assertEqual(expected_items_page_two, page_two.items())
         self.assertEqual(2, page_two.offset)
         self.assertEqual(2, page_two.limit)

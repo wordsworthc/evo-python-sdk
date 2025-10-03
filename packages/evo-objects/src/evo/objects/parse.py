@@ -1,3 +1,4 @@
+import dataclasses
 from pathlib import PurePosixPath
 from typing import overload
 
@@ -137,7 +138,7 @@ def org_object_metadata(model: models.OrgListedObject, environment: Environment)
     :return: An ObjectMetadata instance.
     """
     return OrgObjectMetadata(
-        environment=environment,
+        environment=dataclasses.replace(environment, workspace_id=model.workspace_id),
         workspace_id=model.workspace_id,
         workspace_name=model.workspace_name,
         id=model.object_id,
