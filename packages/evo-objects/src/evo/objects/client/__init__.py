@@ -9,6 +9,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .api_client import DownloadedObject, ObjectAPIClient
+from .api_client import ObjectAPIClient
+from .object_client import DownloadedObject
 
 __all__ = ["DownloadedObject", "ObjectAPIClient"]
