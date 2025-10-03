@@ -35,7 +35,7 @@ from evo.objects import (
 from evo.objects.data import ObjectOrderByEnum, OrgObjectMetadata, Stage
 from evo.objects.exceptions import ObjectAlreadyExistsError, ObjectUUIDError
 from evo.objects.utils import ObjectDataClient
-from helpers import NoImport
+from helpers import NoImport, UnloadModule
 
 EMPTY_CONTENT = '{"objects": [], "links": {"next": null, "prev": null}}'
 MOCK_VERSION_CONTENT = json.dumps(load_test_data("list_versions.json"))
@@ -669,8 +669,19 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
 
     def test_get_data_client_missing_dependencies(self) -> None:
         """Test getting a data client with missing dependencies."""
-        with NoImport("pyarrow"), self.assertRaises(RuntimeError):
-            self.object_client.get_data_client(self.cache)
+        with UnloadModule("evo.objects.client.api_client", "evo.objects.utils.data"), NoImport("pyarrow"):
+            from evo.objects.client import ObjectAPIClient
+
+            client = ObjectAPIClient(self.environment, self.connector)
+            self.assertFalse(
+                any(
+                    (
+                        hasattr(ObjectAPIClient, "get_data_client"),
+                        hasattr(client, "get_data_client"),
+                    )
+                ),
+                "get_data_client should not be available if pyarrow is missing",
+            )
 
     async def test_get_latest_object_versions(self) -> None:
         content = json.dumps(
