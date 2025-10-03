@@ -58,7 +58,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
 
     async def test_check_service_health(self) -> None:
         """Test service health check implementation"""
-        with mock.patch("evo.objects.client.get_service_health", spec_set=True) as mock_get_service_health:
+        with mock.patch("evo.objects.client.api_client.get_service_health", spec_set=True) as mock_get_service_health:
             await self.object_client.get_service_health()
         mock_get_service_health.assert_called_once_with(
             self.connector, "geoscience-object", check_type=HealthCheckType.FULL

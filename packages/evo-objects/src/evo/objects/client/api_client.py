@@ -20,18 +20,18 @@ from evo.common.data import EmptyResponse, Environment, OrderByOperatorEnum
 from evo.common.io.exceptions import DataNotFoundError
 from evo.common.utils import get_service_health, parse_order_by
 
-from . import parse
-from .data import ObjectMetadata, ObjectOrderByEnum, ObjectSchema, ObjectVersion, OrgObjectMetadata, Stage
-from .endpoints import MetadataApi, ObjectsApi, StagesApi
-from .endpoints.models import (
+from .. import parse
+from ..data import ObjectMetadata, ObjectOrderByEnum, ObjectSchema, ObjectVersion, OrgObjectMetadata, Stage
+from ..endpoints import MetadataApi, ObjectsApi, StagesApi
+from ..endpoints.models import (
     GeoscienceObject,
     GetObjectResponse,
     MetadataUpdateBody,
     UpdateGeoscienceObject,
 )
-from .exceptions import ObjectUUIDError
-from .io import ObjectDataDownload, ObjectDataUpload
-from .utils import ObjectDataClient
+from ..exceptions import ObjectUUIDError
+from ..io import ObjectDataDownload, ObjectDataUpload
+from ..utils import ObjectDataClient
 
 logger = logging.getLogger("object.client")
 
