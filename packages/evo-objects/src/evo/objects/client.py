@@ -12,7 +12,6 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator, Iterator, Sequence
-from pathlib import PurePosixPath
 from uuid import UUID
 
 from evo import logging
@@ -20,18 +19,14 @@ from evo.common import APIConnector, BaseAPIClient, HealthCheckType, ICache, Pag
 from evo.common.data import EmptyResponse, Environment, OrderByOperatorEnum
 from evo.common.io.exceptions import DataNotFoundError
 from evo.common.utils import get_service_health, parse_order_by
-from evo.workspaces import ServiceUser
 
+from . import parse
 from .data import ObjectMetadata, ObjectOrderByEnum, ObjectSchema, ObjectVersion, OrgObjectMetadata, Stage
 from .endpoints import MetadataApi, ObjectsApi, StagesApi
 from .endpoints.models import (
     GeoscienceObject,
-    GeoscienceObjectVersion,
     GetObjectResponse,
-    ListedObject,
     MetadataUpdateBody,
-    OrgListedObject,
-    PostObjectResponse,
     UpdateGeoscienceObject,
 )
 from .exceptions import ObjectUUIDError
@@ -44,23 +39,6 @@ __all__ = [
     "DownloadedObject",
     "ObjectAPIClient",
 ]
-
-
-def _version_from_listed_version(model: GeoscienceObjectVersion) -> ObjectVersion:
-    """Create an ObjectVersion instance from a generated ListedObject model.
-
-    :param model: The model to create the ObjectVersion instance from.
-
-    :return: An ObjectVersion instance.
-    """
-    created_by = None if model.created_by is None else ServiceUser.from_model(model.created_by)  # type: ignore
-    stage = None if model.stage is None else Stage.from_model(model.stage)
-    return ObjectVersion(
-        version_id=model.version_id,
-        created_at=model.created_at,
-        created_by=created_by,
-        stage=stage,
-    )
 
 
 class DownloadedObject:
@@ -128,79 +106,6 @@ class ObjectAPIClient(BaseAPIClient):
         """
         return await get_service_health(self._connector, "geoscience-object", check_type=check_type)
 
-    def _metadata_from_listed_object(self, model: ListedObject) -> ObjectMetadata:
-        """Create an ObjectMetadata instance from a generated ListedObject model.
-
-        :param model: The model to create the ObjectMetadata instance from.
-
-        :return: An ObjectMetadata instance.
-        """
-        created_by = None if model.created_by is None else ServiceUser.from_model(model.created_by)
-        modified_by = None if model.modified_by is None else ServiceUser.from_model(model.modified_by)
-        stage = None if model.stage is None else Stage.from_model(model.stage)
-        return ObjectMetadata(
-            environment=self._environment,
-            id=model.object_id,
-            name=model.name,
-            created_at=model.created_at,
-            created_by=created_by,
-            modified_at=model.modified_at,
-            modified_by=modified_by,
-            parent=model.path.rstrip("/"),
-            schema_id=ObjectSchema.from_id(model.schema_),
-            version_id=model.version_id,
-            stage=stage,
-        )
-
-    def _metadata_from_org_listed_object(self, model: OrgListedObject) -> OrgObjectMetadata:
-        """Create an OrgObjectMetadata instance from a generated OrgListedObject model.
-
-        :param model: The model to create the OrgObjectMetadata instance from.
-
-        :return: An OrgObjectMetadata instance.
-        """
-        created_by = None if model.created_by is None else ServiceUser.from_model(model.created_by)
-        modified_by = None if model.modified_by is None else ServiceUser.from_model(model.modified_by)
-        stage = None if model.stage is None else Stage.from_model(model.stage)
-        return OrgObjectMetadata(
-            environment=self._environment,
-            workspace_id=model.workspace_id,
-            workspace_name=model.workspace_name,
-            id=model.object_id,
-            name=model.name,
-            created_at=model.created_at,
-            created_by=created_by,
-            modified_at=model.modified_at,
-            modified_by=modified_by,
-            schema_id=ObjectSchema.from_id(model.schema_),
-            stage=stage,
-        )
-
-    def _metadata_from_endpoint_model(self, model: GetObjectResponse | PostObjectResponse) -> ObjectMetadata:
-        """Create an ObjectMetadata instance from a generated GetObjectResponse or PostObjectResponse model.
-
-        :param model: The model to create the ObjectMetadata instance from.
-
-        :return: An ObjectMetadata instance.
-        """
-        object_path = PurePosixPath(model.object_path)
-        created_by = None if model.created_by is None else ServiceUser.from_model(model.created_by)
-        modified_by = None if model.modified_by is None else ServiceUser.from_model(model.modified_by)
-        stage = None if model.stage is None else Stage.from_model(model.stage)
-        return ObjectMetadata(
-            environment=self._environment,
-            id=model.object_id,
-            name=object_path.name,
-            created_at=model.created_at,
-            created_by=created_by,
-            modified_at=model.modified_at,
-            modified_by=modified_by,
-            parent=str(object_path.parent),
-            schema_id=ObjectSchema.from_id(model.object.schema_),
-            version_id=model.version_id,
-            stage=stage,
-        )
-
     async def list_objects(
         self,
         offset: int = 0,
@@ -238,12 +143,7 @@ class ObjectAPIClient(BaseAPIClient):
             request_timeout=request_timeout,
             deleted=deleted,
         )
-        return Page(
-            offset=offset,
-            limit=limit,
-            total=response.total,
-            items=[self._metadata_from_listed_object(model) for model in response.objects],
-        )
+        return parse.page_of_metadata(response, self._environment)
 
     async def list_all_objects(
         self,
@@ -320,17 +220,7 @@ class ObjectAPIClient(BaseAPIClient):
             permitted_workspaces_only=True,
             deleted=deleted,
         )
-        return Page(
-            offset=offset,
-            limit=limit,
-            total=response.total,
-            items=[self._metadata_from_org_listed_object(model) for model in response.objects],
-        )
-
-    @staticmethod
-    def _get_object_versions(response: GetObjectResponse) -> list[ObjectVersion]:
-        object_versions = [_version_from_listed_version(model) for model in response.versions]
-        return sorted(object_versions, key=lambda v: v.created_at, reverse=True)
+        return parse.page_of_metadata(response, self._environment)
 
     async def list_versions_by_path(
         self, path: str, request_timeout: int | float | tuple[int | float, int | float] | None = None
@@ -350,7 +240,7 @@ class ObjectAPIClient(BaseAPIClient):
             include_versions=True,
             request_timeout=request_timeout,
         )
-        return self._get_object_versions(response)
+        return parse.versions(response)
 
     async def list_versions_by_id(
         self, object_id: UUID, request_timeout: int | float | tuple[int | float, int | float] | None = None
@@ -370,7 +260,7 @@ class ObjectAPIClient(BaseAPIClient):
             include_versions=True,
             request_timeout=request_timeout,
         )
-        return self._get_object_versions(response)
+        return parse.versions(response)
 
     async def prepare_data_upload(self, data_identifiers: Sequence[str | UUID]) -> AsyncIterator[ObjectDataUpload]:
         """Prepare to upload multiple data files to the geoscience object service.
@@ -461,7 +351,7 @@ class ObjectAPIClient(BaseAPIClient):
             request_timeout=request_timeout,
         )
         object_dict["uuid"] = result.object_id
-        return self._metadata_from_endpoint_model(result)
+        return parse.object_metadata(result, self._environment)
 
     async def move_geoscience_object(
         self, path: str, object_dict: dict, request_timeout: int | float | tuple[int | float, int | float] | None = None
@@ -488,7 +378,7 @@ class ObjectAPIClient(BaseAPIClient):
             geoscience_object=object_for_upload,
             request_timeout=request_timeout,
         )
-        return self._metadata_from_endpoint_model(result)
+        return parse.object_metadata(result, self._environment)
 
     async def update_geoscience_object(
         self, object_dict: dict, request_timeout: int | float | tuple[int | float, int | float] | None = None
@@ -514,7 +404,7 @@ class ObjectAPIClient(BaseAPIClient):
             update_geoscience_object=object_for_upload,
             request_timeout=request_timeout,
         )
-        return self._metadata_from_endpoint_model(result)
+        return parse.object_metadata(result, self._environment)
 
     def _downloaded_object_from_response(self, response: GetObjectResponse) -> DownloadedObject:
         """Parse object metadata and a geoscience object model instance from a get object response
@@ -523,7 +413,7 @@ class ObjectAPIClient(BaseAPIClient):
 
         :return: A tuple containing the object metadata and a data model of the requested geoscience object.
         """
-        metadata = self._metadata_from_endpoint_model(response)
+        metadata = parse.object_metadata(response, self._environment)
         urls_by_name = {getattr(link, "name", link.id): link.download_url for link in response.links.data}
         return DownloadedObject(response.object, metadata, urls_by_name, self._connector)
 
@@ -668,14 +558,14 @@ class ObjectAPIClient(BaseAPIClient):
         # If the restore happened with a rename, the response will be the metadata of the restored object
         if isinstance(result, EmptyResponse):
             return None
-        return self._metadata_from_endpoint_model(result)
+        return parse.object_metadata(result, self._environment)
 
     async def list_stages(self) -> list[Stage]:
         """List all available stages in the organisation.
 
         :return: A list of all available stages."""
         response = await self._stages_api.list_stages(org_id=str(self._environment.org_id))
-        return [Stage.from_model(model) for model in response.stages]
+        return [parse.stage(model) for model in response.stages]
 
     async def set_stage(self, object_id: UUID, version_id: int, stage_id: UUID) -> None:
         """Set the stage of a specific version of a geoscience object.
