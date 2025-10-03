@@ -30,8 +30,14 @@ from ..endpoints.models import (
 )
 from ..exceptions import ObjectUUIDError
 from ..io import ObjectDataDownload, ObjectDataUpload
-from ..utils import ObjectDataClient
 from .object_client import DownloadedObject
+
+try:
+    from ..utils import ObjectDataClient
+except ImportError:
+    _DATA_CLIENT_AVAILABLE = False
+else:
+    _DATA_CLIENT_AVAILABLE = True
 
 logger = logging.getLogger("object.client")
 
@@ -257,20 +263,23 @@ class ObjectAPIClient(BaseAPIClient):
         for ctx in downloaded_object.prepare_data_download(data_identifiers):
             yield ctx
 
-    def get_data_client(self, cache: ICache) -> ObjectDataClient:
-        """Get a data client for the geoscience object service.
+    if _DATA_CLIENT_AVAILABLE:
+        # Optional data client functionality, enabled if the data client dependencies are installed.
 
-        The data client provides a high-level interface for uploading and downloading data that is referenced in
-        geoscience objects, and caching the data locally. It depends on the optional dependency `pyarrow`, which is
-        not installed by default. This dependency can be installed with `pip install evo-objects[utils]`.
+        def get_data_client(self, cache: ICache) -> ObjectDataClient:
+            """Get a data client for the geoscience object service.
 
-        :param cache: The cache to use for data downloads.
+            The data client provides a high-level interface for uploading and downloading data that is referenced in
+            geoscience objects, and caching the data locally. It depends on the optional dependency `pyarrow`, which is
+            not installed by default. This dependency can be installed with `pip install evo-objects[utils]`.
 
-        :return: An ObjectDataClient instance.
+            :param cache: The cache to use for data downloads.
 
-        :raises RuntimeError: If the `pyarrow` package is not installed.
-        """
-        return ObjectDataClient(environment=self._environment, connector=self._connector, cache=cache)
+            :return: An ObjectDataClient instance.
+
+            :raises RuntimeError: If the `pyarrow` package is not installed.
+            """
+            return ObjectDataClient(environment=self._environment, connector=self._connector, cache=cache)
 
     async def create_geoscience_object(
         self, path: str, object_dict: dict, request_timeout: int | float | tuple[int | float, int | float] | None = None

@@ -21,11 +21,21 @@ from evo.common.io.exceptions import DataExistsError
 from evo.common.utils import NoFeedback, PartialFeedback
 
 from ..io import _CACHE_SCOPE, ObjectDataUpload
-from ._types import DataFrame, Table
+from .types import TableInfo
 
-__all__ = [
-    "ObjectDataClient",
-]
+try:
+    import pyarrow as pa
+except ImportError:
+    raise ImportError("ObjectDataClient requires the `pyarrow` package to be installed")
+
+try:
+    import pandas as pd
+except ImportError:
+    _PD_AVAILABLE = False
+else:
+    _PD_AVAILABLE = True
+
+__all__ = ["ObjectDataClient"]
 
 logger = logging.getLogger("object.data")
 
@@ -51,13 +61,6 @@ def _iter_refs(target: Any, _key: str | None = None) -> Iterator[str]:
             yield str(value)
 
 
-def _as_table(dataframe: DataFrame) -> Table:
-    """Wrapper around pyarrow.Table.from_pandas() with a local import."""
-    import pyarrow
-
-    return pyarrow.Table.from_pandas(dataframe)
-
-
 class ObjectDataClient:
     """An optional wrapper around data upload and download functionality for geoscience objects.
 
@@ -72,11 +75,6 @@ class ObjectDataClient:
         :param connector: The API connector to use for uploading and downloading data.
         :param cache: The cache to use for storing data locally.
         """
-        try:
-            import pyarrow  # noqa: F401
-        except ImportError:
-            raise RuntimeError("Unable to create ObjectDataClient because the `pyarrow` package is not installed")
-
         self._environment = environment
         self._connector = connector
         self._cache = cache
@@ -89,34 +87,6 @@ class ObjectDataClient:
     def clear_cache(self) -> None:
         """Clear the cache used by this client."""
         self._cache.clear_cache(environment=self._environment, scope=_CACHE_SCOPE)
-
-    def save_table(self, table: Table) -> dict:
-        """Save a pyarrow table to a file, returning the table info as a dictionary.
-
-        :param table: The pyarrow table to save.
-
-        :return: Information about the saved table.
-
-        :raises TableFormatError: If the provided table does not match this format.
-        :raises StorageFileNotFoundError: If the destination does not exist or is not a directory.
-        """
-        from .table_formats import get_known_format
-
-        known_format = get_known_format(table)
-        table_info = known_format.save_table(table=table, destination=self.cache_location)
-        return table_info
-
-    def save_dataframe(self, dataframe: DataFrame) -> dict:
-        """Save a pandas dataframe to a file, returning the table info as a dictionary.
-
-        :param dataframe: The pandas dataframe to save.
-
-        :return: Information about the saved table.
-
-        :raises TableFormatError: If the provided table does not match this format.
-        :raises StorageFileNotFoundError: If the destination does not exist or is not a directory.
-        """
-        return self.save_table(_as_table(dataframe))
 
     async def upload_referenced_data(self, object_model: dict, fb: IFeedback = NoFeedback) -> None:
         """Upload all data referenced by a geoscience object.
@@ -155,7 +125,23 @@ class ObjectDataClient:
         )
         fb.progress(1)
 
-    async def upload_table(self, table: Table, fb: IFeedback = NoFeedback) -> dict:
+    def save_table(self, table: pa.Table) -> TableInfo:
+        """Save a pyarrow table to a file, returning the table info as a dictionary.
+
+        :param table: The pyarrow table to save.
+
+        :return: Information about the saved table.
+
+        :raises TableFormatError: If the provided table does not match this format.
+        :raises StorageFileNotFoundError: If the destination does not exist or is not a directory.
+        """
+        from .table_formats import get_known_format
+
+        known_format = get_known_format(table)
+        table_info = known_format.save_table(table=table, destination=self.cache_location)
+        return table_info
+
+    async def upload_table(self, table: pa.Table, fb: IFeedback = NoFeedback) -> TableInfo:
         """Upload pyarrow table to the geoscience object service, returning a GO model of the uploaded data.
 
         :param table: The table to be uploaded.
@@ -174,22 +160,9 @@ class ObjectDataClient:
             fb.progress(1)
         return table_info
 
-    async def upload_dataframe(self, dataframe: DataFrame, fb: IFeedback = NoFeedback) -> dict:
-        """Upload pandas dataframe to the geoscience object service, returning a GO model of the uploaded data.
-
-        :param dataframe: The pandas dataframe to be uploaded.
-        :param fb: A feedback object for tracking upload progress.
-
-        :return: A description of the uploaded data.
-
-        :raises TableFormatError: If the table does not match a known format.
-        """
-        table_info = await self.upload_table(_as_table(dataframe), fb=fb)
-        return table_info
-
     async def download_table(
-        self, object_id: UUID, version_id: str, table_info: dict, fb: IFeedback = NoFeedback
-    ) -> Table:
+        self, object_id: UUID, version_id: str, table_info: TableInfo, fb: IFeedback = NoFeedback
+    ) -> pa.Table:
         """Download pyarrow table from the geoscience object service.
 
         The parquet metadata will be used to make sure the file contents matches the expected format before the table
@@ -208,43 +181,67 @@ class ObjectDataClient:
         :raises SchemaValidationError: If the data has a different number of rows than expected.
         """
         from ..client import ObjectAPIClient  # Import here to avoid circular import.
-        from .tables import KnownTableFormat  # Import here to avoid import error if pyarrow is not installed.
+        from .parquet_loader import ParquetLoader
 
-        parquet_file = self.cache_location / str(table_info["data"])
-        if not parquet_file.exists():  # Only download it if it isn't already there.
-            # Reusing the implementation for preparing a download from ObjectAPIClient to avoid code duplication.
-            client = ObjectAPIClient(self._environment, self._connector)
-            (download,) = [d async for d in client.prepare_data_download(object_id, version_id, [table_info["data"]])]
-            await download.download_to_cache(cache=self._cache, transport=self._connector.transport, fb=fb)
-        else:
-            fb.progress(1)
-            logger.debug(f"Data not downloaded because it already exists locally (label: {table_info['data']})")
+        client = ObjectAPIClient(self._environment, self._connector)
+        (download,) = [d async for d in client.prepare_data_download(object_id, version_id, [table_info["data"]])]
 
-        # Load the table from the cache.
-        return KnownTableFormat.load_table(table_info, self.cache_location)
+        # Defer downloading the table to the new ParquetLoader class.
+        loader = ParquetLoader(
+            download=download, table_info=table_info, transport=self._connector.transport, cache=self._cache
+        )
+        return await loader.load_as_table(fb=fb)
 
-    async def download_dataframe(
-        self, object_id: UUID, version_id: str, table_info: dict, fb: IFeedback = NoFeedback
-    ) -> DataFrame:
-        """Download pandas dataframe data from the geoscience object service.
+    if _PD_AVAILABLE:
+        # Optional support for pandas dataframes. Depends on both pyarrow and pandas.
 
-        The parquet metadata will be used to make sure the file contents matches the expected format before the table
-        is read into memory.
+        def save_dataframe(self, dataframe: pd.DataFrame) -> TableInfo:
+            """Save a pandas dataframe to a file, returning the table info as a dictionary.
 
-        :param object_id: The object ID to download the data from.
-        :param version_id: The version ID to download the data from.
-        :param table_info: The table info that defines the expected format. The model's `data` will be downloaded from
-            the service.
-        :param fb: A feedback object for tracking download progress.
+            :param dataframe: The pandas dataframe to save.
 
-        :return: A pandas dataframe loaded directly from the parquet file.
+            :return: Information about the saved table.
 
-        :raises DataNotFoundError: If the data does not exist or is not associated with this object version.
-        :raises TableFormatError: If the data does not match the expected format.
-        :raises SchemaValidationError: If the data has a different number of rows than expected.
-        """
-        table = await self.download_table(object_id, version_id, table_info, fb)
-        try:
-            return table.to_pandas()
-        except ModuleNotFoundError:
-            raise RuntimeError("Unable to download dataframe because the `pandas` package is not installed")
+            :raises TableFormatError: If the provided table does not match this format.
+            :raises StorageFileNotFoundError: If the destination does not exist or is not a directory.
+            """
+            return self.save_table(pa.Table.from_pandas(dataframe))
+
+        async def upload_dataframe(self, dataframe: pd.DataFrame, fb: IFeedback = NoFeedback) -> TableInfo:
+            """Upload pandas dataframe to the geoscience object service, returning a GO model of the uploaded data.
+
+            :param dataframe: The pandas dataframe to be uploaded.
+            :param fb: A feedback object for tracking upload progress.
+
+            :return: A description of the uploaded data.
+
+            :raises TableFormatError: If the table does not match a known format.
+            """
+            table_info = await self.upload_table(pa.Table.from_pandas(dataframe), fb=fb)
+            return table_info
+
+        async def download_dataframe(
+            self, object_id: UUID, version_id: str, table_info: TableInfo, fb: IFeedback = NoFeedback
+        ) -> pd.DataFrame:
+            """Download pandas dataframe data from the geoscience object service.
+
+            The parquet metadata will be used to make sure the file contents matches the expected format before the table
+            is read into memory.
+
+            :param object_id: The object ID to download the data from.
+            :param version_id: The version ID to download the data from.
+            :param table_info: The table info that defines the expected format. The model's `data` will be downloaded from
+                the service.
+            :param fb: A feedback object for tracking download progress.
+
+            :return: A pandas dataframe loaded directly from the parquet file.
+
+            :raises DataNotFoundError: If the data does not exist or is not associated with this object version.
+            :raises TableFormatError: If the data does not match the expected format.
+            :raises SchemaValidationError: If the data has a different number of rows than expected.
+            """
+            table = await self.download_table(object_id, version_id, table_info, fb)
+            try:
+                return table.to_pandas()
+            except ModuleNotFoundError:
+                raise RuntimeError("Unable to download dataframe because the `pandas` package is not installed")
