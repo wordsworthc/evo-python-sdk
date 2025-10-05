@@ -860,7 +860,7 @@ test = [
 
 [[package]]
 name = "evo-sdk"
-version = "0.1.8"
+version = "0.1.9"
 source = { editable = "." }
 dependencies = [
     { name = "evo-blockmodels", extra = ["aiohttp", "notebooks", "pyarrow"] },
