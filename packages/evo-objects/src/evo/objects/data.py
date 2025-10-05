@@ -94,7 +94,7 @@ class ObjectReference(str):
         if parsed.scheme != "https":
             raise ValueError("Reference must be a valid HTTPS URL")
 
-        inst.hub_url = f"{parsed.scheme}://{parsed.netloc}"
+        inst.hub_url = f"{parsed.scheme}://{parsed.netloc}/"
 
         if match := cls._RE_PATH.fullmatch(parsed.path):
             inst.org_id = UUID(match.group("org_id"))
@@ -105,7 +105,7 @@ class ObjectReference(str):
                 inst.object_path = None
             else:
                 inst.object_id = None
-                inst.object_path = "/" + match.group("object_path").lstrip("/")
+                inst.object_path = match.group("object_path").lstrip("/")
         else:
             raise ValueError("Reference path is not valid")
 
