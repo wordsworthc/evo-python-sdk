@@ -40,11 +40,17 @@ __all__ = ["ObjectAPIClient"]
 
 
 class ObjectAPIClient(BaseAPIClient):
-    def __init__(self, environment: Environment, connector: APIConnector) -> None:
+    def __init__(self, environment: Environment, connector: APIConnector, cache: ICache | None = None) -> None:
+        """
+        :param environment: The target Evo environment, providing org and workspace IDs.
+        :param connector: The API connector to use for making API calls.
+        :param cache: An optional cache to use for data downloads.
+        """
         super().__init__(environment, connector)
         self._stages_api = StagesApi(connector=connector)
         self._objects_api = ObjectsApi(connector=connector)
         self._metadata_api = MetadataApi(connector=connector)
+        self._cache = cache
 
     async def get_service_health(self, check_type: HealthCheckType = HealthCheckType.FULL) -> ServiceHealth:
         """Get the health of the geoscience object service.
@@ -381,7 +387,7 @@ class ObjectAPIClient(BaseAPIClient):
         return await DownloadedObject.from_reference(
             connector=self._connector,
             reference=reference,
-            cache=None,  # TODO: Add an optional cache to the ObjectAPIClient.
+            cache=self._cache,
             request_timeout=request_timeout,
         )
 
@@ -405,7 +411,7 @@ class ObjectAPIClient(BaseAPIClient):
         return await DownloadedObject.from_reference(
             connector=self._connector,
             reference=reference,
-            cache=None,  # TODO: Add an optional cache to the ObjectAPIClient.
+            cache=self._cache,
             request_timeout=request_timeout,
         )
 
