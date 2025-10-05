@@ -15,8 +15,8 @@ from typing import overload
 
 from evo.common import Environment, Page, ServiceUser
 
-from .data import ObjectMetadata, ObjectSchema, ObjectVersion, OrgObjectMetadata, Stage
-from .endpoints import models
+from ..data import ObjectMetadata, ObjectSchema, ObjectVersion, OrgObjectMetadata, Stage
+from ..endpoints import models
 
 __all__ = [
     "object_metadata",

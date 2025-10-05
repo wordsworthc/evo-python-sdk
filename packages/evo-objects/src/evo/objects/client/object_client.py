@@ -18,10 +18,10 @@ from evo import logging
 from evo.common import APIConnector, ICache
 from evo.common.io.exceptions import DataNotFoundError
 
-from .. import parse
 from ..data import ObjectMetadata, ObjectReference, ObjectSchema
 from ..endpoints import ObjectsApi, models
 from ..io import ObjectDataDownload
+from . import parse
 
 __all__ = ["DownloadedObject"]
 

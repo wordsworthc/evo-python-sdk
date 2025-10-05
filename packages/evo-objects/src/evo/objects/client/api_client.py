@@ -19,12 +19,12 @@ from evo.common import APIConnector, BaseAPIClient, HealthCheckType, ICache, Pag
 from evo.common.data import EmptyResponse, Environment, OrderByOperatorEnum
 from evo.common.utils import get_service_health, parse_order_by
 
-from .. import parse
 from ..data import ObjectMetadata, ObjectOrderByEnum, ObjectReference, ObjectVersion, OrgObjectMetadata, Stage
 from ..endpoints import MetadataApi, ObjectsApi, StagesApi
 from ..endpoints.models import GeoscienceObject, MetadataUpdateBody, UpdateGeoscienceObject
 from ..exceptions import ObjectUUIDError
 from ..io import ObjectDataDownload, ObjectDataUpload
+from . import parse
 from .object_client import DownloadedObject
 
 try:
