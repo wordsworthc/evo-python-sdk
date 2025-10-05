@@ -140,7 +140,7 @@ def object_metadata(
     )
 
 
-def org_object_metadata(model: models.OrgListedObject, environment: Environment) -> ObjectMetadata:
+def org_object_metadata(model: models.OrgListedObject, environment: Environment) -> OrgObjectMetadata:
     """Parse an OrgObjectMetadata from the generated model.
 
     :param model: The model returned by the generated code.
