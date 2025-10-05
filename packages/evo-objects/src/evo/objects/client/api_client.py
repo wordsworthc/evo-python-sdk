@@ -20,14 +20,9 @@ from evo.common.data import EmptyResponse, Environment, OrderByOperatorEnum
 from evo.common.utils import get_service_health, parse_order_by
 
 from .. import parse
-from ..data import ObjectMetadata, ObjectOrderByEnum, ObjectVersion, OrgObjectMetadata, Stage
+from ..data import ObjectMetadata, ObjectOrderByEnum, ObjectReference, ObjectVersion, OrgObjectMetadata, Stage
 from ..endpoints import MetadataApi, ObjectsApi, StagesApi
-from ..endpoints.models import (
-    GeoscienceObject,
-    GetObjectResponse,
-    MetadataUpdateBody,
-    UpdateGeoscienceObject,
-)
+from ..endpoints.models import GeoscienceObject, MetadataUpdateBody, UpdateGeoscienceObject
 from ..exceptions import ObjectUUIDError
 from ..io import ObjectDataDownload, ObjectDataUpload
 from .object_client import DownloadedObject
@@ -366,17 +361,6 @@ class ObjectAPIClient(BaseAPIClient):
         )
         return parse.object_metadata(result, self._environment)
 
-    def _downloaded_object_from_response(self, response: GetObjectResponse) -> DownloadedObject:
-        """Parse object metadata and a geoscience object model instance from a get object response
-
-        :param response: The response from one of the get object endpoints.
-
-        :return: A tuple containing the object metadata and a data model of the requested geoscience object.
-        """
-        metadata = parse.object_metadata(response, self._environment)
-        urls_by_name = {getattr(link, "name", link.id): link.download_url for link in response.links.data}
-        return DownloadedObject(response.object, metadata, urls_by_name, self._connector)
-
     async def download_object_by_path(
         self,
         path: str,
@@ -393,15 +377,13 @@ class ObjectAPIClient(BaseAPIClient):
 
         :return: A tuple containing the object metadata and a data model of the requested geoscience object.
         """
-        response = await self._objects_api.get_object(
-            org_id=str(self._environment.org_id),
-            workspace_id=str(self._environment.workspace_id),
-            objects_path=path,
-            version=version,
-            additional_headers={"Accept-Encoding": "gzip"},
+        reference = ObjectReference.new(environment=self._environment, object_path=path, version_id=version)
+        return await DownloadedObject.from_reference(
+            connector=self._connector,
+            reference=reference,
+            cache=None,  # TODO: Add an optional cache to the ObjectAPIClient.
             request_timeout=request_timeout,
         )
-        return self._downloaded_object_from_response(response)
 
     async def download_object_by_id(
         self,
@@ -419,15 +401,13 @@ class ObjectAPIClient(BaseAPIClient):
 
         :return: A tuple containing the object metadata and a data model of the requested geoscience object.
         """
-        response = await self._objects_api.get_object_by_id(
-            org_id=str(self._environment.org_id),
-            workspace_id=str(self._environment.workspace_id),
-            object_id=str(object_id),
-            version=version,
-            additional_headers={"Accept-Encoding": "gzip"},
+        reference = ObjectReference.new(environment=self._environment, object_id=object_id, version_id=version)
+        return await DownloadedObject.from_reference(
+            connector=self._connector,
+            reference=reference,
+            cache=None,  # TODO: Add an optional cache to the ObjectAPIClient.
             request_timeout=request_timeout,
         )
-        return self._downloaded_object_from_response(response)
 
     async def get_latest_object_versions(
         self,
