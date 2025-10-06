@@ -13,9 +13,11 @@ import random
 import sys
 from collections.abc import Iterator
 from datetime import datetime, timezone
+from io import BytesIO
 
 import numpy
 import pyarrow as pa
+import pyarrow.parquet as pq
 
 from evo.objects.utils.tables import BaseTableFormat, _ColumnFormat
 
@@ -154,3 +156,10 @@ def get_sample_table(
         for column_format in column_formats
     ]
     return pa.table(sample_data, names=sample_schema.names).cast(sample_schema)
+
+
+def get_sample_table_and_bytes(table_format: BaseTableFormat, n_rows: int) -> tuple[pa.Table, bytes]:
+    memory = BytesIO()
+    table = get_sample_table(table_format, n_rows)
+    pq.write_table(table, where=memory, version="2.4", compression="gzip")
+    return table, memory.getvalue()

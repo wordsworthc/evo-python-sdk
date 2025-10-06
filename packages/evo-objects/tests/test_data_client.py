@@ -10,12 +10,9 @@
 #  limitations under the License.
 
 import json
-from io import BytesIO
 from unittest import mock
 from uuid import UUID
 
-import pyarrow as pa
-import pyarrow.parquet as pq
 from pandas.testing import assert_frame_equal
 
 from data import load_test_data
@@ -23,15 +20,8 @@ from evo.common import IFeedback, RequestMethod
 from evo.common.io.exceptions import DataExistsError
 from evo.common.test_tools import TestWithConnector, TestWithStorage
 from evo.common.utils import NoFeedback, PartialFeedback
-from evo.objects.utils import BaseTableFormat, KnownTableFormat, ObjectDataClient
-from helpers import NoImport, UnloadModule, get_sample_table
-
-
-def _get_sample_table_and_bytes(table_format: BaseTableFormat, n_rows: int) -> tuple[pa.Table, bytes]:
-    memory = BytesIO()
-    table = get_sample_table(table_format, n_rows)
-    pq.write_table(table, where=memory, version="2.4", compression="gzip")
-    return table, memory.getvalue()
+from evo.objects.utils import KnownTableFormat, ObjectDataClient
+from helpers import NoImport, UnloadModule, get_sample_table_and_bytes
 
 
 class TestObjectDataClient(TestWithConnector, TestWithStorage):
@@ -329,7 +319,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
             }
             mock_data_id: str = mock_table_info["data"]
             expected_filename = self.data_client.cache_location / mock_data_id
-            sample_table, payload_bytes = _get_sample_table_and_bytes(
+            sample_table, payload_bytes = get_sample_table_and_bytes(
                 KnownTableFormat.from_table_info(mock_table_info), 1
             )
 
@@ -369,7 +359,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
             }
             mock_data_id: str = mock_table_info["data"]
             expected_filename = self.data_client.cache_location / mock_data_id
-            sample_table, payload_bytes = _get_sample_table_and_bytes(
+            sample_table, payload_bytes = get_sample_table_and_bytes(
                 KnownTableFormat.from_table_info(mock_table_info), 1
             )
 
@@ -425,7 +415,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
             }
             mock_data_id: str = mock_table_info["data"]
             expected_filename = self.data_client.cache_location / mock_data_id
-            sample_table, payload_bytes = _get_sample_table_and_bytes(
+            sample_table, payload_bytes = get_sample_table_and_bytes(
                 KnownTableFormat.from_table_info(mock_table_info), 1
             )
 
@@ -468,7 +458,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
             }
             mock_data_id: str = mock_table_info["data"]
             expected_filename = self.data_client.cache_location / mock_data_id
-            sample_table, payload_bytes = _get_sample_table_and_bytes(
+            sample_table, payload_bytes = get_sample_table_and_bytes(
                 KnownTableFormat.from_table_info(mock_table_info), 1
             )
 
