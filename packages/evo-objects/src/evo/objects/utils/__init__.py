@@ -25,7 +25,6 @@ except ImportError:
 from .data import ObjectDataClient
 from .table_formats import all_known_formats, get_known_format
 from .tables import ArrowTableFormat, BaseTableFormat, KnownTableFormat
-from .types import ArrayTableInfo, LookupTableInfo, TableInfo
 
 # We _used_ to export Table and DataFrame from this package as custom protocols, but we are using the actual
 # pyarrow.Table and pandas.DataFrame types now. We are importing these types here from pyarrow and pandas
@@ -33,13 +32,10 @@ from .types import ArrayTableInfo, LookupTableInfo, TableInfo
 # removed in a future release.
 
 __all__ = [
-    "ArrayTableInfo",
     "ArrowTableFormat",
     "BaseTableFormat",
     "KnownTableFormat",
-    "LookupTableInfo",
     "ObjectDataClient",
-    "TableInfo",
     "all_known_formats",
     "get_known_format",
 ]

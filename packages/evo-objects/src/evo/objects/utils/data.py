@@ -21,7 +21,6 @@ from evo.common.io.exceptions import DataExistsError
 from evo.common.utils import NoFeedback, PartialFeedback
 
 from ..io import _CACHE_SCOPE, ObjectDataUpload
-from .types import TableInfo
 
 try:
     import pyarrow as pa
@@ -125,7 +124,7 @@ class ObjectDataClient:
         )
         fb.progress(1)
 
-    def save_table(self, table: pa.Table) -> TableInfo:
+    def save_table(self, table: pa.Table) -> dict:
         """Save a pyarrow table to a file, returning the table info as a dictionary.
 
         :param table: The pyarrow table to save.
@@ -141,7 +140,7 @@ class ObjectDataClient:
         table_info = known_format.save_table(table=table, destination=self.cache_location)
         return table_info
 
-    async def upload_table(self, table: pa.Table, fb: IFeedback = NoFeedback) -> TableInfo:
+    async def upload_table(self, table: pa.Table, fb: IFeedback = NoFeedback) -> dict:
         """Upload pyarrow table to the geoscience object service, returning a GO model of the uploaded data.
 
         :param table: The table to be uploaded.
@@ -161,7 +160,7 @@ class ObjectDataClient:
         return table_info
 
     async def download_table(
-        self, object_id: UUID, version_id: str, table_info: TableInfo, fb: IFeedback = NoFeedback
+        self, object_id: UUID, version_id: str, table_info: dict, fb: IFeedback = NoFeedback
     ) -> pa.Table:
         """Download pyarrow table from the geoscience object service.
 
@@ -180,8 +179,9 @@ class ObjectDataClient:
         :raises TableFormatError: If the data does not match the expected format.
         :raises SchemaValidationError: If the data has a different number of rows than expected.
         """
-        from ..client import ObjectAPIClient  # Import here to avoid circular import.
-        from .parquet_loader import ParquetLoader
+        # Import here to avoid circular import.
+        from ..client import ObjectAPIClient
+        from ..loader import ParquetLoader
 
         client = ObjectAPIClient(self._environment, self._connector)
         (download,) = [d async for d in client.prepare_data_download(object_id, version_id, [table_info["data"]])]
@@ -195,7 +195,7 @@ class ObjectDataClient:
     if _PD_AVAILABLE:
         # Optional support for pandas dataframes. Depends on both pyarrow and pandas.
 
-        def save_dataframe(self, dataframe: pd.DataFrame) -> TableInfo:
+        def save_dataframe(self, dataframe: pd.DataFrame) -> dict:
             """Save a pandas dataframe to a file, returning the table info as a dictionary.
 
             :param dataframe: The pandas dataframe to save.
@@ -207,7 +207,7 @@ class ObjectDataClient:
             """
             return self.save_table(pa.Table.from_pandas(dataframe))
 
-        async def upload_dataframe(self, dataframe: pd.DataFrame, fb: IFeedback = NoFeedback) -> TableInfo:
+        async def upload_dataframe(self, dataframe: pd.DataFrame, fb: IFeedback = NoFeedback) -> dict:
             """Upload pandas dataframe to the geoscience object service, returning a GO model of the uploaded data.
 
             :param dataframe: The pandas dataframe to be uploaded.
@@ -221,7 +221,7 @@ class ObjectDataClient:
             return table_info
 
         async def download_dataframe(
-            self, object_id: UUID, version_id: str, table_info: TableInfo, fb: IFeedback = NoFeedback
+            self, object_id: UUID, version_id: str, table_info: dict, fb: IFeedback = NoFeedback
         ) -> pd.DataFrame:
             """Download pandas dataframe data from the geoscience object service.
 
