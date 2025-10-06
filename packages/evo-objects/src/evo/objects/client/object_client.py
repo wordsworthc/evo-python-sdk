@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator, Sequence
+from typing import Any
 from uuid import UUID
 
 from evo import logging
@@ -22,6 +23,13 @@ from ..data import ObjectMetadata, ObjectReference, ObjectSchema
 from ..endpoints import ObjectsApi, models
 from ..io import ObjectDataDownload
 from . import parse
+
+try:
+    from evo import jmespath
+except ImportError:
+    _JMESPATH_AVAILABLE = False
+else:
+    _JMESPATH_AVAILABLE = True
 
 __all__ = ["DownloadedObject"]
 
@@ -119,6 +127,18 @@ class DownloadedObject:
     def as_dict(self) -> dict:
         """Get this object as a dictionary."""
         return self._object.model_dump(mode="python", by_alias=True)
+
+    if _JMESPATH_AVAILABLE:
+        # Optional JMESPath support for searching within the object JSON content.
+
+        def search(self, expression: str) -> Any:
+            """Search the object metadata using a JMESPath expression.
+
+            :param expression: The JMESPath expression to use for the search.
+
+            :return: The result of the search.
+            """
+            return jmespath.search(expression, self.as_dict())
 
     def prepare_data_download(self, data_identifiers: Sequence[str | UUID]) -> Iterator[ObjectDataDownload]:
         """Prepare to download multiple data files from the geoscience object service, for this object.
