@@ -83,6 +83,7 @@ For next steps and more information about using Evo, see:
 * [`evo-files`](packages/evo-files/README.md): for interacting with the File API
 * [`evo-objects`](packages/evo-objects/README.md): for interacting with the Geoscience Object API
 * [`evo-colormaps`](packages/evo-colormaps/README.md): for interacting with the Colormap API
+* [`evo-blockmodels`](packages/evo-blockmodels/README.md): for interacting with the Block Model API
 * [Seequent Developer Portal](https://developer.seequent.com/docs/guides/getting-started/quick-start-guide): for guides,
   tutorials, and API references
 
