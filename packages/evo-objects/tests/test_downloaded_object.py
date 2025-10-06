@@ -37,7 +37,7 @@ from evo.jmespath import JMESPathObjectProxy
 from evo.objects import DownloadedObject, ObjectReference
 from evo.objects.endpoints import models
 from evo.objects.io import _CACHE_SCOPE
-from evo.objects.loader import ParquetLoader, TableInfo
+from evo.objects.loader import TableInfo
 from evo.objects.utils import KnownTableFormat
 from helpers import NoImport, UnloadModule, get_sample_table_and_bytes
 
@@ -160,12 +160,6 @@ class TestDownloadedObject(TestWithConnector, TestWithStorage):
         actual_result = self.object.search("bounding_box | {x: [min_x, max_x], y: [min_y, max_y], z: [min_z, max_z]}")
         self.assertEqual(expected_result, actual_result)
 
-    @parameterized.expand(_TABLE_INFO_VARIANTS)
-    def test_get_parquet_loader(self, _label: str, table_info: TableInfo | str) -> None:
-        """Test getting a ParquetLoader instance."""
-        loader = self.object.get_parquet_loader(table_info)
-        self.assertIsInstance(loader, ParquetLoader)
-
     def _assert_optional_method(self, method_name: str, *, unload: list[str], no_import: list[str]) -> None:
         # Verify the method exists before unloading any modules.
         from evo.objects.client import DownloadedObject
@@ -202,12 +196,6 @@ class TestDownloadedObject(TestWithConnector, TestWithStorage):
                 f"DownloadedObject.{method_name} should not be available if "
                 f"{', '.join(no_import)} {'is' if len(no_import) == 1 else 'are'} not available",
             )
-
-    def test_get_parquet_loader_is_optional(self) -> None:
-        """Test that the get_parquet_loader method is optional."""
-        self._assert_optional_method(
-            "get_parquet_loader", unload=["evo.objects.loader.parquet_loader"], no_import=["pyarrow"]
-        )
 
     @contextlib.contextmanager
     def _patch_downloading_table(self, table_info: TableInfo | str) -> Generator[pa.Table, None, None]:

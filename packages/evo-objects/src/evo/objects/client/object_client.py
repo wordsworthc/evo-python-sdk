@@ -181,7 +181,7 @@ class DownloadedObject:
     if _LOADER_AVAILABLE:
         # Optional support for loading Parquet data using PyArrow.
 
-        def get_parquet_loader(self, table_info: TableInfo | str) -> ParquetLoader:
+        def _get_parquet_loader(self, table_info: TableInfo | str) -> ParquetLoader:
             """Get a ParquetLoader for the data referenced by the given table info or data reference string.
 
             :param table_info: The table info dict, JMESPath to table info, or data reference string.
@@ -207,7 +207,7 @@ class DownloadedObject:
 
             :returns: A PyArrow Table containing the downloaded data.
             """
-            loader = self.get_parquet_loader(table_info)
+            loader = self._get_parquet_loader(table_info)
             return await loader.load_as_table(fb)
 
         if _PD_AVAILABLE:
@@ -221,7 +221,7 @@ class DownloadedObject:
 
                 :returns: A Pandas DataFrame containing the downloaded data.
                 """
-                loader = self.get_parquet_loader(table_info)
+                loader = self._get_parquet_loader(table_info)
                 return await loader.load_as_dataframe(fb)
 
         if _NP_AVAILABLE:
@@ -235,5 +235,5 @@ class DownloadedObject:
 
                 :returns: A NumPy array containing the downloaded data.
                 """
-                loader = self.get_parquet_loader(table_info)
+                loader = self._get_parquet_loader(table_info)
                 return await loader.load_as_array(fb)
