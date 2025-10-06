@@ -15,9 +15,12 @@ from collections.abc import Iterator, Sequence
 from typing import Any
 from uuid import UUID
 
+from pydantic import ConfigDict, TypeAdapter
+
 from evo import logging
-from evo.common import APIConnector, ICache
+from evo.common import APIConnector, ICache, IFeedback
 from evo.common.io.exceptions import DataNotFoundError
+from evo.common.utils import NoFeedback
 
 from ..data import ObjectMetadata, ObjectReference, ObjectSchema
 from ..endpoints import ObjectsApi, models
@@ -30,6 +33,31 @@ except ImportError:
     _JMESPATH_AVAILABLE = False
 else:
     _JMESPATH_AVAILABLE = True
+
+try:
+    import pyarrow as pa
+
+    from ..loader import ParquetLoader, TableInfo
+except ImportError:
+    _LOADER_AVAILABLE = False
+else:
+    _LOADER_AVAILABLE = True
+
+    _TABLE_INFO_VALIDATOR: TypeAdapter[TableInfo] = TypeAdapter(TableInfo, config=ConfigDict(extra="ignore"))
+
+try:
+    import pandas as pd
+except ImportError:
+    _PD_AVAILABLE = False
+else:
+    _PD_AVAILABLE = True
+
+try:
+    import numpy as np
+except ImportError:
+    _NP_AVAILABLE = False
+else:
+    _NP_AVAILABLE = True
 
 __all__ = ["DownloadedObject"]
 
@@ -159,3 +187,65 @@ class DownloadedObject:
             connector=self._connector, metadata=self._metadata, urls_by_name=filtered_urls_by_name
         ):
             yield ctx
+
+    if _LOADER_AVAILABLE:
+        # Optional support for loading Parquet data using PyArrow.
+
+        def get_parquet_loader(self, table_info: TableInfo | str) -> ParquetLoader:
+            """Get a ParquetLoader for the data referenced by the given table info or data reference string.
+
+            :param table_info: The table info dict, JMESPath to table info, or data reference string.
+
+            :returns: A ParquetLoader that can be used to download and read the referenced data.
+            """
+            if isinstance(table_info, str):
+                if not _JMESPATH_AVAILABLE:
+                    raise ValueError("The 'jmespath' package is required to use JMESPath expressions") from None
+                elif isinstance(resolved := self.search(table_info), jmespath.JMESPathObjectProxy):
+                    table_info = _TABLE_INFO_VALIDATOR.validate_python(resolved.raw)
+                else:
+                    raise ValueError(f"Expected table info, got {type(resolved)}")
+            else:
+                table_info = _TABLE_INFO_VALIDATOR.validate_python(table_info)
+
+            (download,) = self.prepare_data_download([table_info["data"]])
+            return ParquetLoader(download, table_info, self._connector.transport, self._cache)
+
+        async def download_table(self, table_info: TableInfo | str, fb: IFeedback = NoFeedback) -> pa.Table:
+            """Download the data referenced by the given table info or data reference string as a PyArrow Table.
+
+            :param table_info: The table info dict, JMESPath to table info, or data reference string.
+            :param fb: An optional feedback instance to report download progress to.
+
+            :returns: A PyArrow Table containing the downloaded data.
+            """
+            loader = self.get_parquet_loader(table_info)
+            return await loader.load_as_table(fb)
+
+        if _PD_AVAILABLE:
+            # Optional support for loading data as Pandas DataFrames. Requires parquet support via PyArrow as well.
+
+            async def download_dataframe(self, table_info: TableInfo | str, fb: IFeedback = NoFeedback) -> pd.DataFrame:
+                """Download the data referenced by the given table info or data reference string as a Pandas DataFrame.
+
+                :param table_info: The table info dict, JMESPath to table info, or data reference string.
+                :param fb: An optional feedback instance to report download progress to.
+
+                :returns: A Pandas DataFrame containing the downloaded data.
+                """
+                loader = self.get_parquet_loader(table_info)
+                return await loader.load_as_dataframe(fb)
+
+        if _NP_AVAILABLE:
+            # Optional support for loading data as NumPy arrays. Requires parquet support via PyArrow as well.
+
+            async def download_array(self, table_info: TableInfo | str, fb: IFeedback = NoFeedback) -> np.ndarray:
+                """Download the data referenced by the given table info or data reference string as a NumPy array.
+
+                :param table_info: The table info dict, JMESPath to table info, or data reference string.
+                :param fb: An optional feedback instance to report download progress to.
+
+                :returns: A NumPy array containing the downloaded data.
+                """
+                loader = self.get_parquet_loader(table_info)
+                return await loader.load_as_array(fb)
