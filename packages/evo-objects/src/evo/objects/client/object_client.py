@@ -17,7 +17,7 @@ from uuid import UUID
 
 from pydantic import ConfigDict, TypeAdapter
 
-from evo import logging
+from evo import jmespath, logging
 from evo.common import APIConnector, ICache, IFeedback
 from evo.common.io.exceptions import DataNotFoundError
 from evo.common.utils import NoFeedback
@@ -26,13 +26,6 @@ from ..data import ObjectMetadata, ObjectReference, ObjectSchema
 from ..endpoints import ObjectsApi, models
 from ..io import ObjectDataDownload
 from . import parse
-
-try:
-    from evo import jmespath
-except ImportError:
-    _JMESPATH_AVAILABLE = False
-else:
-    _JMESPATH_AVAILABLE = True
 
 try:
     import pyarrow as pa
@@ -156,17 +149,14 @@ class DownloadedObject:
         """Get this object as a dictionary."""
         return self._object.model_dump(mode="python", by_alias=True)
 
-    if _JMESPATH_AVAILABLE:
-        # Optional JMESPath support for searching within the object JSON content.
+    def search(self, expression: str) -> Any:
+        """Search the object metadata using a JMESPath expression.
 
-        def search(self, expression: str) -> Any:
-            """Search the object metadata using a JMESPath expression.
+        :param expression: The JMESPath expression to use for the search.
 
-            :param expression: The JMESPath expression to use for the search.
-
-            :return: The result of the search.
-            """
-            return jmespath.search(expression, self.as_dict())
+        :return: The result of the search.
+        """
+        return jmespath.search(expression, self.as_dict())
 
     def prepare_data_download(self, data_identifiers: Sequence[str | UUID]) -> Iterator[ObjectDataDownload]:
         """Prepare to download multiple data files from the geoscience object service, for this object.
@@ -199,9 +189,7 @@ class DownloadedObject:
             :returns: A ParquetLoader that can be used to download and read the referenced data.
             """
             if isinstance(table_info, str):
-                if not _JMESPATH_AVAILABLE:
-                    raise ValueError("The 'jmespath' package is required to use JMESPath expressions") from None
-                elif isinstance(resolved := self.search(table_info), jmespath.JMESPathObjectProxy):
+                if isinstance(resolved := self.search(table_info), jmespath.JMESPathObjectProxy):
                     table_info = _TABLE_INFO_VALIDATOR.validate_python(resolved.raw)
                 else:
                     raise ValueError(f"Expected table info, got {type(resolved)}")

@@ -160,6 +160,12 @@ class TestDownloadedObject(TestWithConnector, TestWithStorage):
         actual_result = self.object.search("bounding_box | {x: [min_x, max_x], y: [min_y, max_y], z: [min_z, max_z]}")
         self.assertEqual(expected_result, actual_result)
 
+    @parameterized.expand(_TABLE_INFO_VARIANTS)
+    def test_get_parquet_loader(self, _label: str, table_info: TableInfo | str) -> None:
+        """Test getting a ParquetLoader instance."""
+        loader = self.object.get_parquet_loader(table_info)
+        self.assertIsInstance(loader, ParquetLoader)
+
     def _assert_optional_method(self, method_name: str, *, unload: list[str], no_import: list[str]) -> None:
         # Verify the method exists before unloading any modules.
         from evo.objects.client import DownloadedObject
@@ -196,35 +202,6 @@ class TestDownloadedObject(TestWithConnector, TestWithStorage):
                 f"DownloadedObject.{method_name} should not be available if "
                 f"{', '.join(no_import)} {'is' if len(no_import) == 1 else 'are'} not available",
             )
-
-    def test_search_is_optional(self) -> None:
-        """Test that the JMESPath search implementation is optional."""
-        self._assert_optional_method("search", unload=["evo.jmespath"], no_import=["jmespath"])
-
-    @parameterized.expand(_TABLE_INFO_VARIANTS)
-    def test_get_parquet_loader(self, _label: str, table_info: TableInfo | str) -> None:
-        """Test getting a ParquetLoader instance."""
-        loader = self.object.get_parquet_loader(table_info)
-        self.assertIsInstance(loader, ParquetLoader)
-
-    def test_get_parquet_loader_jmespath_support_is_optional(self) -> None:
-        """Test that the JMESPath support for get_parquet_loader is optional."""
-        with (
-            UnloadModule("evo.objects.client.object_client", "evo.objects.loader.parquet_loader", "evo.jmespath"),
-            NoImport("jmespath"),
-        ):
-            from evo.objects.client import DownloadedObject
-
-            client = DownloadedObject(
-                object_=self.object._object,
-                metadata=self.object.metadata,
-                urls_by_name=self.object._urls_by_name,
-                connector=self.object._connector,
-                cache=self.object._cache,
-            )
-
-            with self.assertRaises(ValueError):
-                client.get_parquet_loader("locations.coordinates")
 
     def test_get_parquet_loader_is_optional(self) -> None:
         """Test that the get_parquet_loader method is optional."""
