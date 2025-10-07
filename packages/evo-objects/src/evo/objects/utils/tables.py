@@ -346,9 +346,7 @@ class KnownTableFormat(BaseTableFormat):
         return KnownTableFormat(name=type_name, columns=columns, field_names=table_info.get("field_names"))
 
     @classmethod
-    @deprecated(
-        "KnownTableFormat.load_table is deprecated, use evo.objects.client.parquet_loader.ParquetLoader instead"
-    )
+    @deprecated("KnownTableFormat.load_table is deprecated, use evo.objects.parquet.ParquetLoader instead")
     def load_table(cls, table_info: dict, source: Path) -> pa.Table:
         """Load parquet data as a pyarrow.Table and verify the format against the provided table info.
 

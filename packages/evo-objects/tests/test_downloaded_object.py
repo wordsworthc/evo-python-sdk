@@ -37,7 +37,7 @@ from evo.jmespath import JMESPathObjectProxy
 from evo.objects import DownloadedObject, ObjectReference
 from evo.objects.endpoints import models
 from evo.objects.io import _CACHE_SCOPE
-from evo.objects.loader import TableInfo
+from evo.objects.parquet import TableInfo
 from evo.objects.utils import KnownTableFormat
 from helpers import NoImport, UnloadModule, get_sample_table_and_bytes
 
@@ -265,9 +265,7 @@ class TestDownloadedObject(TestWithConnector, TestWithStorage):
 
     def test_download_table_is_optional(self) -> None:
         """Test that the download_table method is not available when pyarrow is not installed."""
-        self._assert_optional_method(
-            "download_table", unload=["evo.objects.loader.parquet_loader"], no_import=["pyarrow"]
-        )
+        self._assert_optional_method("download_table", unload=["evo.objects.parquet.loader"], no_import=["pyarrow"])
 
     @parameterized.expand(_TABLE_INFO_VARIANTS)
     async def test_download_dataframe(self, _label: str, table_info: TableInfo | str) -> None:
@@ -300,9 +298,7 @@ class TestDownloadedObject(TestWithConnector, TestWithStorage):
     )
     def test_download_dataframe_is_optional(self, missing: str) -> None:
         """Test that the download_dataframe method is not available when pandas or pyarrow is not installed."""
-        self._assert_optional_method(
-            "download_dataframe", unload=["evo.objects.loader.parquet_loader"], no_import=[missing]
-        )
+        self._assert_optional_method("download_dataframe", unload=["evo.objects.parquet.loader"], no_import=[missing])
 
     @parameterized.expand(_TABLE_INFO_VARIANTS)
     async def test_download_array(self, _label: str, table_info: TableInfo | str) -> None:
@@ -335,6 +331,4 @@ class TestDownloadedObject(TestWithConnector, TestWithStorage):
     )
     def test_download_array_is_optional(self, missing: str) -> None:
         """Test that the download_array method is not available when numpy or pyarrow is not installed."""
-        self._assert_optional_method(
-            "download_array", unload=["evo.objects.loader.parquet_loader"], no_import=[missing]
-        )
+        self._assert_optional_method("download_array", unload=["evo.objects.parquet.loader"], no_import=[missing])
