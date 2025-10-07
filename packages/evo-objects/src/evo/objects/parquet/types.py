@@ -12,7 +12,7 @@
 import sys
 from typing import TypeAlias
 
-if sys.version_info >= (3, 11):
+if sys.version_info >= (3, 12):
     from typing import NotRequired, TypedDict
 else:
     from typing_extensions import NotRequired, TypedDict
