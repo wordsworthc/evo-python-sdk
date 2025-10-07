@@ -11,8 +11,11 @@
 
 from __future__ import annotations
 
+import contextlib
+from collections.abc import AsyncGenerator
 from io import BytesIO
 from logging import getLogger
+from types import TracebackType
 from typing import cast
 
 import pyarrow as pa
@@ -23,7 +26,7 @@ from evo.common import ICache, IFeedback, ITransport
 from evo.common.io import BytesDestination, ChunkedIOManager, Download, HTTPSource
 from evo.common.utils import NoFeedback
 
-from ..exceptions import SchemaValidationError
+from ..exceptions import SchemaValidationError, TableFormatError
 from ..utils import ArrowTableFormat, KnownTableFormat
 from .types import TableInfo
 
@@ -41,7 +44,10 @@ except ImportError:
 else:
     _NP_AVAILABLE = True
 
-__all__ = ["ParquetLoader"]
+__all__ = [
+    "ParquetDownloader",
+    "ParquetLoader",
+]
 
 logger = getLogger(__name__)
 
@@ -49,35 +55,143 @@ _TABLE_INFO_ADAPTER: TypeAdapter[TableInfo] = TypeAdapter(TableInfo)
 
 
 class ParquetLoader:
-    """A loader for Parquet data from a geoscience object."""
+    """A loader for Parquet data from a pyarrow.parquet.ParquetFile.
 
-    def __init__(
-        self, download: Download, table_info: TableInfo, transport: ITransport, cache: ICache | None = None
+    This class adds standardised support for validating Geoscience Object table info
+    against the loaded Parquet schema, as well as convenience methods for loading
+    the data as a PyArrow Table, Pandas DataFrame, or NumPy array.
+    """
+
+    def __init__(self, pa_file: pa.NativeFile) -> None:
+        """
+        :param pa_file: A PyArrow NativeFile containing the Parquet data.
+        """
+        self._pa_file = pa_file
+        self._parquet_file: pq.ParquetFile | None = None
+
+    def __enter__(self) -> ParquetLoader:
+        if self._parquet_file is not None:
+            raise RuntimeError("ParquetLoader is already in use")
+        self._parquet_file = pq.ParquetFile(self._pa_file.__enter__())
+        return self
+
+    async def __aenter__(self) -> ParquetLoader:
+        # Delegate to the synchronous context manager.
+        # This implementation is just to support async with
+        # syntax for combination with ParquetDownloader below.
+        return self.__enter__()
+
+    def __exit__(
+        self,
+        exc_type: type[Exception] | None,
+        exc_val: Exception | None,
+        exc_tb: TracebackType | None,
     ) -> None:
+        self._parquet_file = None
+        return self._pa_file.__exit__(exc_type, exc_val, exc_tb)
+
+    async def __aexit__(
+        self,
+        exc_type: type[Exception] | None,
+        exc_val: Exception | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
+        # Delegate to the synchronous context manager.
+        # This implementation is just to support async with
+        # syntax for combination with ParquetDownloader below.
+        return self.__exit__(exc_type, exc_val, exc_tb)
+
+    def validate_with_table_info(self, table_info: TableInfo) -> None:
+        """Validate the provided TableInfo against the loaded Parquet schema.
+
+        :param table_info: The TableInfo to validate against the loaded Parquet schema.
+
+        :raises SchemaValidationError: If the loaded Parquet schema does not match the expected schema.
+        """
+        if (pa_file := self._parquet_file) is None:
+            raise RuntimeError("ParquetLoader context is not active")
+
+        logger.debug("Checking parquet data format")
+
+        validated_table_info = _TABLE_INFO_ADAPTER.validate_python(table_info)
+        expected_format = KnownTableFormat.from_table_info(validated_table_info)
+        actual_format = ArrowTableFormat.from_schema(pa_file.schema_arrow)
+        try:
+            expected_format._check_format(actual_format)
+        except TableFormatError as e:
+            raise SchemaValidationError(str(e)) from None
+
+        logger.debug("Checking parquet data length")
+        actual_length = pa_file.metadata.num_rows
+        if table_info["length"] != actual_length:
+            raise SchemaValidationError(
+                f"Row count ({actual_length}) does not match expectation ({table_info['length']})"
+            )
+
+        logger.debug("Parquet metadata checks succeeded")
+
+    def load_as_table(self) -> pa.Table:
+        """Load the Parquet data as a PyArrow Table."""
+        if self._parquet_file is None:
+            raise RuntimeError("ParquetLoader context is not active")
+        else:
+            return self._parquet_file.read()
+
+    if _PD_AVAILABLE:
+        # Optional support for pandas dataframes
+
+        def load_as_dataframe(self) -> pd.DataFrame:
+            """Load the Parquet data as a Pandas DataFrame."""
+            table = self.load_as_table()
+            return table.to_pandas()
+
+    if _NP_AVAILABLE:
+        # Optional support for numpy arrays
+
+        def load_as_array(self) -> np.ndarray:
+            """Load the Parquet data as a NumPy array.
+
+            The array will have a shape of (N,) for single-column data or (N, M) for multi-column data,
+            where N is the number of rows and M is the number of columns. The target data _must_ have a uniform dtype.
+
+            :return: A NumPy array containing the data.
+            """
+            table = self.load_as_table()
+            columns = cast(list[np.ndarray], [col.combine_chunks().to_numpy() for col in table.itercolumns()])
+            if len(columns) == 1:
+                return columns[0]
+            else:
+                return np.column_stack(columns)
+
+
+class ParquetDownloader:
+    """A downloader for Parquet data that provides a ParquetLoader for reading the data.
+
+    This class supports downloading the data to a cache or to memory, and provides
+    a ParquetLoader for reading the downloaded data.
+    """
+
+    def __init__(self, download: Download, transport: ITransport, cache: ICache | None = None) -> None:
         """
         :param download: The download information for the Parquet data.
-        :param table_info: The expected table information for validation.
         :param transport: The transport to use for data downloads.
         :param cache: An optional cache to use for data downloads.
         """
-        self._download = download
-        validated_table_info = _TABLE_INFO_ADAPTER.validate_python(table_info)
-        self._expected_format = KnownTableFormat.from_table_info(validated_table_info)
-        self._expected_length = table_info["length"]
+        self._evo_download = download
         self._transport = transport
         self._cache = cache
 
-    async def _reader_from_cache(self, fb: IFeedback) -> pa.NativeFile:
-        cached = await self._download.download_to_cache(self._cache, self._transport, fb=fb)
+    async def _download_to_cache(self, fb: IFeedback) -> pa.OSFile:
+        cached = await self._evo_download.download_to_cache(self._cache, self._transport, fb=fb)
         return pa.OSFile(str(cached), "r")
 
-    async def _reader_from_memory(self, fb: IFeedback) -> pa.NativeFile:
+    async def _download_to_memory(self, fb: IFeedback) -> pa.BufferReader:
         # Initialize a buffer to store the downloaded data in memory
         memory = BytesIO()
 
         # Use ChunkedIOManager to download the data into the memory buffer
         manager = ChunkedIOManager()
-        async with HTTPSource(self._download.get_download_url, self._transport) as source:
+        async with HTTPSource(self._evo_download.get_download_url, self._transport) as source:
             destination = BytesDestination(memory)
             await manager.run(source, destination, fb=fb)
 
@@ -85,74 +199,33 @@ class ParquetLoader:
         memory.seek(0)
         return pa.BufferReader(memory.getbuffer())
 
-    async def _reader(self, fb: IFeedback) -> pa.NativeFile:
-        if self._cache is not None:
-            return await self._reader_from_cache(fb)
-        else:
-            return await self._reader_from_memory(fb)
+    async def download(self, fb: IFeedback = NoFeedback) -> ParquetLoader:
+        """Download the Parquet data and return a ParquetLoader for reading it.
 
-    def _validate_data(self, data: pq.ParquetFile) -> None:
-        logger.debug("Checking parquet data format")
-        actual_format = ArrowTableFormat.from_schema(data.schema_arrow)
-        KnownTableFormat._check_format(self._expected_format, actual_format)
+        :param fb: An optional feedback instance to report download progress to.
 
-        logger.debug("Checking parquet data length")
-        actual_length = data.metadata.num_rows
-        if self._expected_length != actual_length:
-            raise SchemaValidationError(
-                f"Row count ({actual_length}) does not match expectation ({self._expected_length})"
-            )
-
-        logger.debug("Parquet metadata checks succeeded")
-
-    async def load_as_table(self, fb: IFeedback = NoFeedback) -> pa.Table:
-        """Load the Parquet data as a PyArrow Table.
-
-        :param fb: An optional feedback interface to report progress.
-
-        :raises SchemaValidationError: If the data does not match the expected schema.
+        :return: A ParquetLoader that can be used to read the downloaded data.
         """
-        with await self._reader(fb) as reader:
-            data = pq.ParquetFile(reader)
-            self._validate_data(data)
-            return data.read()
+        if self._cache is not None:
+            file = await self._download_to_cache(fb)
+        else:
+            file = await self._download_to_memory(fb)
 
-    if _PD_AVAILABLE:
-        # Optional support for pandas dataframes
+        return ParquetLoader(file)
 
-        async def load_as_dataframe(self, fb: IFeedback = NoFeedback) -> pd.DataFrame:
-            """Load the Parquet data as a Pandas DataFrame.
+    @contextlib.asynccontextmanager
+    async def __aenter__(self) -> AsyncGenerator[ParquetLoader, None]:
+        # Delegate to the download method to get a ParquetLoader.
+        async with await self.download() as loader:
+            yield loader
 
-            :param fb: An optional feedback interface to report progress.
+    @contextlib.asynccontextmanager
+    async def with_feedback(self, fb: IFeedback) -> AsyncGenerator[ParquetLoader, None]:
+        """Async context manager to download the Parquet data with feedback and provide a ParquetLoader for reading it.
 
-            :raises SchemaValidationError: If the data does not match the expected schema.
-            """
-            table = await self.load_as_table(fb)
-            return table.to_pandas()
+        :param fb: A feedback instance to report download progress to.
 
-    if _NP_AVAILABLE:
-        # Optional support for numpy arrays
-
-        async def load_as_array(self, fb: IFeedback = NoFeedback) -> np.ndarray:
-            """Load the Parquet data as a NumPy array.
-
-            The array will have a shape of (N,) for single-column data or (N, M) for multi-column data,
-            where N is the number of rows and M is the number of columns. The target data _must_ have a uniform dtype.
-
-            :param fb: An optional feedback interface to report progress.
-
-            :raises SchemaValidationError: If the data does not match the expected schema.
-            """
-            try:
-                dtype = np.dtype(self._expected_format.data_type)
-            except TypeError:
-                raise SchemaValidationError(
-                    f"Unsupported data type '{self._expected_format.data_type}' cannot be loaded as a numpy array"
-                )
-
-            table = await self.load_as_table(fb)
-            columns = cast(list[np.ndarray], [col.combine_chunks().to_numpy() for col in table.itercolumns()])
-            if len(columns) == 1:
-                return columns[0].astype(dtype)
-            else:
-                return np.column_stack(columns).astype(dtype)
+        :yields: A ParquetLoader that can be used to read the downloaded data.
+        """
+        async with await self.download(fb=fb) as loader:
+            yield loader

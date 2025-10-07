@@ -181,16 +181,17 @@ class ObjectDataClient:
         """
         # Import here to avoid circular import.
         from ..client import ObjectAPIClient
-        from ..loader import ParquetLoader
+        from ..parquet import ParquetDownloader
 
         client = ObjectAPIClient(self._environment, self._connector)
         (download,) = [d async for d in client.prepare_data_download(object_id, version_id, [table_info["data"]])]
 
         # Defer downloading the table to the new ParquetLoader class.
-        loader = ParquetLoader(
-            download=download, table_info=table_info, transport=self._connector.transport, cache=self._cache
-        )
-        return await loader.load_as_table(fb=fb)
+        async with ParquetDownloader(
+            download=download, transport=self._connector.transport, cache=self._cache
+        ).with_feedback(fb) as loader:
+            loader.validate_with_table_info(table_info)
+            return loader.load_as_table()
 
     if _PD_AVAILABLE:
         # Optional support for pandas dataframes. Depends on both pyarrow and pandas.

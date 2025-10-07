@@ -11,7 +11,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator, Sequence
+import contextlib
+from collections.abc import AsyncGenerator, Iterator, Sequence
 from typing import Any
 from uuid import UUID
 
@@ -30,7 +31,7 @@ from . import parse
 try:
     import pyarrow as pa
 
-    from ..loader import ParquetLoader, TableInfo
+    from ..parquet import ParquetDownloader, ParquetLoader, TableInfo
 except ImportError:
     _LOADER_AVAILABLE = False
 else:
@@ -181,12 +182,17 @@ class DownloadedObject:
     if _LOADER_AVAILABLE:
         # Optional support for loading Parquet data using PyArrow.
 
-        def _get_parquet_loader(self, table_info: TableInfo | str) -> ParquetLoader:
-            """Get a ParquetLoader for the data referenced by the given table info or data reference string.
+        @contextlib.asynccontextmanager
+        async def _with_parquet_loader(
+            self, table_info: TableInfo | str, fb: IFeedback
+        ) -> AsyncGenerator[ParquetLoader, None]:
+            """Download parquet data and get a ParquetLoader for the data referenced by the given
+            table info or data reference string.
 
             :param table_info: The table info dict, JMESPath to table info, or data reference string.
+            :param fb: An optional feedback instance to report download progress to.
 
-            :returns: A ParquetLoader that can be used to download and read the referenced data.
+            :returns: A ParquetLoader that can be used to read the referenced data.
             """
             if isinstance(table_info, str):
                 if isinstance(resolved := self.search(table_info), jmespath.JMESPathObjectProxy):
@@ -197,7 +203,9 @@ class DownloadedObject:
                 table_info = _TABLE_INFO_VALIDATOR.validate_python(table_info)
 
             (download,) = self.prepare_data_download([table_info["data"]])
-            return ParquetLoader(download, table_info, self._connector.transport, self._cache)
+            async with ParquetDownloader(download, self._connector.transport, self._cache).with_feedback(fb) as loader:
+                loader.validate_with_table_info(table_info)
+                yield loader
 
         async def download_table(self, table_info: TableInfo | str, fb: IFeedback = NoFeedback) -> pa.Table:
             """Download the data referenced by the given table info or data reference string as a PyArrow Table.
@@ -207,8 +215,8 @@ class DownloadedObject:
 
             :returns: A PyArrow Table containing the downloaded data.
             """
-            loader = self._get_parquet_loader(table_info)
-            return await loader.load_as_table(fb)
+            async with self._with_parquet_loader(table_info, fb) as loader:
+                return loader.load_as_table()
 
         if _PD_AVAILABLE:
             # Optional support for loading data as Pandas DataFrames. Requires parquet support via PyArrow as well.
@@ -221,8 +229,8 @@ class DownloadedObject:
 
                 :returns: A Pandas DataFrame containing the downloaded data.
                 """
-                loader = self._get_parquet_loader(table_info)
-                return await loader.load_as_dataframe(fb)
+                async with self._with_parquet_loader(table_info, fb) as loader:
+                    return loader.load_as_dataframe()
 
         if _NP_AVAILABLE:
             # Optional support for loading data as NumPy arrays. Requires parquet support via PyArrow as well.
@@ -235,5 +243,5 @@ class DownloadedObject:
 
                 :returns: A NumPy array containing the downloaded data.
                 """
-                loader = self._get_parquet_loader(table_info)
-                return await loader.load_as_array(fb)
+                async with self._with_parquet_loader(table_info, fb) as loader:
+                    return loader.load_as_array()
