@@ -30,16 +30,19 @@ class NoImport:
         :param names: The names of the modules to prevent from being imported.
         """
         self._names = names
+        self._unloaded_modules = {}
 
     def __enter__(self) -> None:
         for name in self._names:
-            # Set the module to None to prevent it from being imported.
+            # If the module is already imported, save it and set to None.
+            self._unloaded_modules[name] = sys.modules[name]
+            # Set the module to None to prevent it from being re-imported.
             sys.modules[name] = None
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
-        for name in self._names:
-            # Remove the module from sys.modules to clean up.
-            del sys.modules[name]
+        # Restore the unloaded modules.
+        for name, module in self._unloaded_modules.items():
+            sys.modules[name] = module
 
 
 class UnloadModule:
