@@ -8,22 +8,58 @@
         "description": "A sample pointset object",
         "bounding_box": {
             "min_x": 0.0,
-            "max_x": 0.0,
-            "min_y": 0.0,
-            "max_y": 0.0,
-            "min_z": 0.0,
-            "max_z": 0.0
+            "max_x": 1.0,
+            "min_y": 2.0,
+            "max_y": 3.0,
+            "min_z": 4.0,
+            "max_z": 5.0
         },
         "coordinate_reference_system": {
             "epsg_code": 2048
         },
         "locations": {
             "coordinates": {
-                "data": "0000000000000000000000000000000000000000000000000000000000000001",
-                "length": 1,
+                "data": "0000000000000000000000000000000000000000000000000000000000000000",
+                "length": 123,
                 "width": 3,
                 "data_type": "float64"
-            }
+            },
+            "attributes": [
+                {
+                    "table": {
+                        "data": "0000000000000000000000000000000000000000000000000000000000000001",
+                        "length": 12,
+                        "keys_data_type": "int32",
+                        "values_data_type": "string"
+                    },
+                    "values": {
+                        "data": "0000000000000000000000000000000000000000000000000000000000000002",
+                        "length": 123,
+                        "width": 1,
+                        "data_type": "int32"
+                    },
+                    "name": "Stn",
+                    "nan_description": {
+                        "values": [
+                            0
+                        ]
+                    },
+                    "attribute_type": "category"
+                },
+                {
+                    "name": "InvRes",
+                    "nan_description": {
+                        "values": []
+                    },
+                    "values": {
+                        "data": "0000000000000000000000000000000000000000000000000000000000000003",
+                        "length": 123,
+                        "width": 1,
+                        "data_type": "float64"
+                    },
+                    "attribute_type": "scalar"
+                }
+            ]
         }
     },
     "version_id": "2023-08-03T05:47:18.3402289Z",
@@ -57,6 +93,11 @@
                 "id": "00000000-0000-0000-0000-000000000002",
                 "name": "0000000000000000000000000000000000000000000000000000000000000002",
                 "download_url": "https://storage.unittest.localhost/wheres/my/data/0000000000000000000000000000000000000000000000000000000000000002"
+            },
+            {
+                "id": "00000000-0000-0000-0000-000000000003",
+                "name": "0000000000000000000000000000000000000000000000000000000000000003",
+                "download_url": "https://storage.unittest.localhost/wheres/my/data/0000000000000000000000000000000000000000000000000000000000000003"
             }
         ]
     },

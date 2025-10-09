@@ -9,19 +9,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import DownloadedObject, ObjectAPIClient
-from .data import ObjectMetadata, ObjectReference, ObjectSchema, ObjectVersion, SchemaVersion, Stage
-from .io import ObjectDataDownload, ObjectDataUpload
+try:
+    import pyarrow  # noqa: F401
+except ImportError:
+    raise ImportError("The 'pyarrow' package is required to use ParquetLoader") from None
+
+from .loader import ParquetDownloader, ParquetLoader
+from .types import ArrayTableInfo, LookupTableInfo, TableInfo
 
 __all__ = [
-    "DownloadedObject",
-    "ObjectAPIClient",
-    "ObjectDataDownload",
-    "ObjectDataUpload",
-    "ObjectMetadata",
-    "ObjectReference",
-    "ObjectSchema",
-    "ObjectVersion",
-    "SchemaVersion",
-    "Stage",
+    "ArrayTableInfo",
+    "LookupTableInfo",
+    "ParquetDownloader",
+    "ParquetLoader",
+    "TableInfo",
 ]

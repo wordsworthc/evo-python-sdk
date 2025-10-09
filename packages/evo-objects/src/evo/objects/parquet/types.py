@@ -9,19 +9,34 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import DownloadedObject, ObjectAPIClient
-from .data import ObjectMetadata, ObjectReference, ObjectSchema, ObjectVersion, SchemaVersion, Stage
-from .io import ObjectDataDownload, ObjectDataUpload
+import sys
+from typing import TypeAlias
+
+if sys.version_info >= (3, 12):
+    from typing import NotRequired, TypedDict
+else:
+    from typing_extensions import NotRequired, TypedDict
 
 __all__ = [
-    "DownloadedObject",
-    "ObjectAPIClient",
-    "ObjectDataDownload",
-    "ObjectDataUpload",
-    "ObjectMetadata",
-    "ObjectReference",
-    "ObjectSchema",
-    "ObjectVersion",
-    "SchemaVersion",
-    "Stage",
+    "ArrayTableInfo",
+    "LookupTableInfo",
+    "TableInfo",
 ]
+
+
+class _BaseTableInfo(TypedDict):
+    data: str
+    length: int
+
+
+class ArrayTableInfo(_BaseTableInfo):
+    data_type: str
+    width: NotRequired[int]
+
+
+class LookupTableInfo(_BaseTableInfo):
+    keys_data_type: str
+    values_data_type: str
+
+
+TableInfo: TypeAlias = ArrayTableInfo | LookupTableInfo

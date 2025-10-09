@@ -9,19 +9,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import DownloadedObject, ObjectAPIClient
-from .data import ObjectMetadata, ObjectReference, ObjectSchema, ObjectVersion, SchemaVersion, Stage
-from .io import ObjectDataDownload, ObjectDataUpload
+from .api_client import ObjectAPIClient
+from .object_client import DownloadedObject
 
-__all__ = [
-    "DownloadedObject",
-    "ObjectAPIClient",
-    "ObjectDataDownload",
-    "ObjectDataUpload",
-    "ObjectMetadata",
-    "ObjectReference",
-    "ObjectSchema",
-    "ObjectVersion",
-    "SchemaVersion",
-    "Stage",
-]
+__all__ = ["DownloadedObject", "ObjectAPIClient"]
