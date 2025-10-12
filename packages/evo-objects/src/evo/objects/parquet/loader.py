@@ -157,7 +157,9 @@ class ParquetLoader:
             :return: A NumPy array containing the data.
             """
             table = self.load_as_table()
-            columns = cast(list[np.ndarray], [col.combine_chunks().to_numpy() for col in table.itercolumns()])
+            columns = cast(
+                list[np.ndarray], [col.combine_chunks().to_numpy(zero_copy_only=False) for col in table.itercolumns()]
+            )
             if len(columns) == 1:
                 return columns[0]
             else:
