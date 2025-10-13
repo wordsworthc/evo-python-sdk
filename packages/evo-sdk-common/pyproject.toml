@@ -47,7 +47,7 @@ dev = [
     "evo-sdk-common[aiohttp,jmespath]",
     "bumpver",
     "coverage[toml]",
-    "ruff==0.9.1", # keep in sync with .pre-commit-config.yaml
+    "ruff==0.14.0", # keep in sync with .pre-commit-config.yaml
     "pre-commit",
     {include-group="test"},
 ]

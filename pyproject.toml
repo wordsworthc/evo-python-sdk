@@ -28,7 +28,7 @@ test = [
 ]
 dev = [
     "pre-commit >= 4",
-    "ruff==0.9.1",              # keep in sync with .pre-commit-config.yaml
+    "ruff==0.14.0",              # keep in sync with .pre-commit-config.yaml
     "bumpver",
     "coverage[toml]",
     { include-group = "test" },
@@ -39,6 +39,9 @@ line-length = 120
 
 [tool.ruff.lint]
 extend-select = ["I", "RUF022"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["evo"]
 
 [tool.uv.sources]
 evo-sdk-common = { workspace = true }
