@@ -9,11 +9,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .client import TaskAPIClient
+from .client import JobClient
 from .data import JobProgress, JobStatusEnum
 
 __all__ = [
+    "JobClient",
     "JobProgress",
     "JobStatusEnum",
-    "TaskAPIClient",
 ]

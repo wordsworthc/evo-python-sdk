@@ -23,8 +23,8 @@ from parameterized import parameterized
 from pydantic import BaseModel
 
 from data import load_test_data
-from evo.tasks import JobProgress, JobStatusEnum, TaskAPIClient
-from evo.tasks.exceptions import JobError, JobPendingError
+from evo.compute import JobClient, JobProgress, JobStatusEnum
+from evo.compute.exceptions import JobError, JobPendingError
 
 TEST_TOPIC = "test"
 TEST_TASK = "job-client"
@@ -42,10 +42,10 @@ class DataclassResult:
     baz: int
 
 
-class TestTaskAPIClient(TestWithConnector):
+class TestJobClient(TestWithConnector):
     def setUp(self) -> None:
         super().setUp()
-        self.job = TaskAPIClient(
+        self.job = JobClient(
             connector=self.connector,
             org_id=TEST_ORG.id,
             topic=TEST_TOPIC,
@@ -81,7 +81,7 @@ class TestTaskAPIClient(TestWithConnector):
         """Test that the job is represented as expected."""
         self.assertEqual(self.job_url, repr(self.job))
 
-    def assert_jobs_equal(self, job1: TaskAPIClient, job2: TaskAPIClient) -> None:
+    def assert_jobs_equal(self, job1: JobClient, job2: JobClient) -> None:
         """Assert that two jobs are equal, but not the same object."""
         self.assertIsNot(job1, job2)
         self.assertEqual(job1.id, job2.id)
@@ -91,13 +91,13 @@ class TestTaskAPIClient(TestWithConnector):
 
     def test_from_url(self) -> None:
         """Test that a job can be constructed from a URL."""
-        job = TaskAPIClient.from_url(self.connector, self.job_url)
+        job = JobClient.from_url(self.connector, self.job_url)
         self.assert_jobs_equal(self.job, job)
 
     async def test_submit(self) -> None:
         """Test that a job can be submitted."""
         with self.transport.set_http_response(status_code=303, headers={"Location": self.job_url}):
-            job = await TaskAPIClient.submit(
+            job = await JobClient.submit(
                 connector=self.connector,
                 org_id=TEST_ORG.id,
                 topic=TEST_TOPIC,
@@ -205,7 +205,7 @@ class TestTaskAPIClient(TestWithConnector):
         self.assertIsNot(first_results, second_results)  # Ensure a new object is returned.
 
     async def test_get_results_as_pydantic(self) -> None:
-        job = TaskAPIClient.from_url(self.connector, self.job_url, result_type=PydanticResult)
+        job = JobClient.from_url(self.connector, self.job_url, result_type=PydanticResult)
 
         with self.set_result_response(200, "job-response-succeeded.json") as expected_results:
             results = await job.get_results()
@@ -215,7 +215,7 @@ class TestTaskAPIClient(TestWithConnector):
         self.assertEqual(expected_results, results)
 
     async def test_get_results_as_dataclass(self) -> None:
-        job = TaskAPIClient.from_url(self.connector, self.job_url, result_type=DataclassResult)
+        job = JobClient.from_url(self.connector, self.job_url, result_type=DataclassResult)
 
         with self.set_result_response(200, "job-response-succeeded.json") as expected_results:
             results = await job.get_results()

@@ -27,7 +27,7 @@ sub-packages and optional dependencies (e.g. Jupyter notebook support), or choos
 | [evo-objects](packages/evo-objects/README.md) | <a href="https://pypi.org/project/evo-objects/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-objects" /></a> | A geoscience object service client library designed to help get up and running with the Geoscience Object API. |
 | [evo-colormaps](packages/evo-colormaps/README.md)  | <a href="https://pypi.org/project/evo-colormaps/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-colormaps" /></a> | A service client to create colour mappings and associate them to geoscience data with the Colormap API.|
 | [evo-blockmodels](packages/evo-blockmodels/README.md) | <a href="https://pypi.org/project/evo-blockmodels/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-blockmodels" /></a> | The Block Model API provides the ability to manage and report on block models in your Evo workspaces. |
-| [evo-tasks](packages/evo-tasks/README.md)  | <a href="https://pypi.org/project/evo-tasks/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-tasks" /></a> | A service client to send jobs to the Tasks API.|
+| [evo-compute](packages/evo-compute/README.md)  | <a href="https://pypi.org/project/evo-compute/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-compute" /></a> | A service client to send jobs to the Compute Tasks API.|
 
 ## Pre-requisites
 
@@ -85,7 +85,7 @@ For next steps and more information about using Evo, see:
 * [`evo-objects`](packages/evo-objects/README.md): for interacting with the Geoscience Object API
 * [`evo-colormaps`](packages/evo-colormaps/README.md): for interacting with the Colormap API
 * [`evo-blockmodels`](packages/evo-blockmodels/README.md): for interacting with the Block Model API
-* [`evo-tasks`](packages/evo-tasks/README.md): for interacting with the Tasks API
+* [`evo-compute`](packages/evo-compute/README.md): for interacting with the Compute Tasks API
 * [Seequent Developer Portal](https://developer.seequent.com/docs/guides/getting-started/quick-start-guide): for guides,
   tutorials, and API references
 

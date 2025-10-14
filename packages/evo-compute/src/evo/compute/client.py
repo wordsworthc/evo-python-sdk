@@ -36,7 +36,7 @@ from .exceptions import JobError, JobPendingError
 logger = logging.getLogger("compute.client")
 
 __all__ = [
-    "TaskAPIClient",
+    "JobClient",
 ]
 
 T_Result = TypeVar("T_Result")
@@ -73,7 +73,7 @@ def _validating_pydantic_model(ctx: HTTPResponse) -> Iterator[None]:
 RE_STATUS_URL = re.compile(r"compute/orgs/(?P<org_id>[^/]+)/(?P<topic>[^/]+)/(?P<task>[^/]+)/(?P<job_id>[^/]+)/status")
 
 
-class TaskAPIClient(Generic[T_Result]):
+class JobClient(Generic[T_Result]):
     """Client for managing a submitted compute task (a job)."""
 
     def __init__(
@@ -127,7 +127,7 @@ class TaskAPIClient(Generic[T_Result]):
         return self.url
 
     @staticmethod
-    def from_url(connector: APIConnector, url: str, result_type: type[T_Result] = dict) -> TaskAPIClient[T_Result]:
+    def from_url(connector: APIConnector, url: str, result_type: type[T_Result] = dict) -> JobClient[T_Result]:
         """Create a job client from a status URL.
 
         The URL hostname must match the connector base URL.
@@ -150,7 +150,7 @@ class TaskAPIClient(Generic[T_Result]):
                     except ValueError:
                         raise ValueError(f"Invalid {key.removesuffix('_id')} ID in URL: {url}") from None
 
-        return TaskAPIClient(connector=connector, **path_params, result_type=result_type)
+        return JobClient(connector=connector, **path_params, result_type=result_type)
 
     @staticmethod
     async def submit(
@@ -160,7 +160,7 @@ class TaskAPIClient(Generic[T_Result]):
         task: str,
         parameters: Mapping[str, Any],
         result_type: type[T_Result] = dict,
-    ) -> TaskAPIClient[T_Result]:
+    ) -> JobClient[T_Result]:
         """Trigger an asynchronous task within a specific topic with the given parameters.
 
         :param connector: The API connector to use.
@@ -186,7 +186,7 @@ class TaskAPIClient(Generic[T_Result]):
         try:
             job_url = response.headers["Location"]
             job_url = connector.base_url + job_url.removeprefix(connector.base_url).removeprefix("/")
-            return TaskAPIClient.from_url(connector, job_url, result_type)
+            return JobClient.from_url(connector, job_url, result_type)
         except (KeyError, ValueError):
             raise UnknownResponseError(
                 status=response.status, reason=response.reason, content=None, headers=response.headers

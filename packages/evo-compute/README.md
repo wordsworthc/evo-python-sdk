@@ -1,6 +1,6 @@
 <p align="center"><a href="https://seequent.com" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://developer.seequent.com/img/seequent-logo-dark.svg" alt="Seequent logo" width="400" /><img src="https://developer.seequent.com/img/seequent-logo.svg" alt="Seequent logo" width="400" /></picture></a></p>
 <p align="center">
-    <a href="https://pypi.org/project/evo-tasks/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-tasks" /></a>
+    <a href="https://pypi.org/project/evo-compute/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/evo-compute" /></a>
     <a href="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/run-all-tests.yaml"><img src="https://github.com/SeequentEvo/evo-python-sdk/actions/workflows/run-all-tests.yaml/badge.svg" alt="" /></a>
 </p>
 <p align="center">
@@ -9,9 +9,9 @@
     &bull; <a href="https://seequent.com" target="_blank">Seequent website</a>
 </p>
 
-# Evo Task API Client
+# Evo Compute Task Client
 
-The Task API provides the ability to execute computation tasks in Evo that require variable, on-demand processing power. Building the Task API into your application can enable fast processing of long running, or resource intensive operations, without depending on the end user's physical hardware.
+The Compute Task API provides the ability to execute computation tasks in Evo that require variable, on-demand processing power. Building the Compute Task API into your application can enable fast processing of long running, or resource intensive operations, without depending on the end user's physical hardware.
 
 Tasks are created, triggering a job to be executed asynchronously within a specific topic for your organization, and can be monitored throughout their execution lifecycle.
 
@@ -23,7 +23,7 @@ Tasks are created, triggering a job to be executed asynchronously within a speci
 ## Installation
 
 ```shell
-pip install evo-tasks
+pip install evo-compute
 ```
 
 ## Usage
@@ -31,15 +31,15 @@ pip install evo-tasks
 See [the evo-sdk-common documentation](https://github.com/SeequentEvo/evo-python-sdk/blob/main/packages/evo-sdk-common/README.md)
 for information on how to authenticate, then select the organisation, hub and workspace that you would like to use.
 
-### Interacting with the Task API
+### Interacting with the Compute Task API
 
-To get up and running quickly with the Evo Tasks SDK, start by configuring your
+To get up and running quickly with the Evo Compute Task SDK, start by configuring your
 [environment and API connector](https://github.com/SeequentEvo/evo-python-sdk/blob/main/packages/evo-sdk-common/docs/quickstart.md).
 
 ```python
-from evo.tasks import TaskAPIClient
+from evo.compute import JobClient
 
-service_client = TaskAPIClient(environment, connector)
+service_client = JobClient(environment, connector)
 service_health = await service_client.get_service_health()
 service_health.raise_for_status()
 ```
