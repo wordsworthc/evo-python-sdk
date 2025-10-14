@@ -36,14 +36,6 @@ for information on how to authenticate, then select the organisation, hub and wo
 To get up and running quickly with the Evo Compute Task SDK, start by configuring your
 [environment and API connector](https://github.com/SeequentEvo/evo-python-sdk/blob/main/packages/evo-sdk-common/docs/quickstart.md).
 
-```python
-from evo.compute import JobClient
-
-service_client = JobClient(environment, connector)
-service_health = await service_client.get_service_health()
-service_health.raise_for_status()
-```
-
 For some interactive Jupyter notebook examples, see the [examples folder](docs/examples).
 
 ## Contributing
