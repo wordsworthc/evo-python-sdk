@@ -51,6 +51,7 @@ evo-colormaps = { workspace = true }
 evo-files = { workspace = true }
 evo-objects = { workspace = true }
 evo-compute = { workspace = true }
+samples = { path = "samples" }
 
 [tool.uv.workspace]
 members = ["packages/*"]
