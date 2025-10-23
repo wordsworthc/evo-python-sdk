@@ -34,6 +34,7 @@ API version: 1.0
 
 from evo.common.connector import APIConnector
 from evo.common.data import EmptyResponse, RequestMethod
+from evo.common.utils import get_package_details
 
 from ..models import *  # noqa: F403
 
@@ -93,7 +94,9 @@ class InstanceUsersApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -159,7 +162,10 @@ class InstanceUsersApi:
         }
 
         # Prepare the header parameters.
-        _header_params = {}
+        package_details = get_package_details(__name__)
+        _header_params = {
+            package_details["name"]: package_details["version"],
+        }
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -229,7 +235,9 @@ class InstanceUsersApi:
             _query_params["offset"] = offset
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -289,7 +297,9 @@ class InstanceUsersApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -361,7 +371,9 @@ class InstanceUsersApi:
             _query_params["offset"] = offset
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -425,7 +437,10 @@ class InstanceUsersApi:
         }
 
         # Prepare the header parameters.
-        _header_params = {}
+        package_details = get_package_details(__name__)
+        _header_params = {
+            package_details["name"]: package_details["version"],
+        }
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -489,7 +504,9 @@ class InstanceUsersApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }

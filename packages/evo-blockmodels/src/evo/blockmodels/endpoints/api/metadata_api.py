@@ -8,7 +8,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 """
 Block Model API
 =============
@@ -22,15 +21,16 @@ Block Model API
     reporting on the material content of current or previous versions, and comparing the content between versions of
     a block model.
 
-    For more information on the Block Model API, see [Overview](/docs/blockmodel/overview), or the API references here.
+    For more information on the Block Model API, see [Overview](/docs/guides/blockmodel/), or the API references here.
 
 
 This code is generated from the OpenAPI specification for Block Model API.
-API version: 1.16.1
+API version: 1.41.3
 """
 
 from evo.common.connector import APIConnector
-from evo.common.data import EmptyResponse, RequestMethod  # noqa: F401
+from evo.common.data import RequestMethod
+from evo.common.utils import get_package_details
 
 from ..models import *  # noqa: F403
 
@@ -56,6 +56,7 @@ class MetadataApi:
         workspace_id: str,
         org_id: str,
         deleted: bool | None = None,
+        order_by: str | None = None,
         offset: int | None = None,
         limit: int | None = None,
         additional_headers: dict[str, str] | None = None,
@@ -73,6 +74,8 @@ class MetadataApi:
             Example: `'bf1a040c-8c58-4bc2-bec2-c5ae7de8bd84'`
         :param deleted: (optional)  An optional boolean parameter specifying whether to list only deleted block models.  - If set to `true`, the response will only list block models that were deleted via the 'Delete a block model' endpoint. This list will not include block models that are within deleted workspaces.  - By default, or if set to `false`, the response will only list non-deleted block models within non-deleted workspaces.
             Example: `False`
+        :param order_by: (optional)  An optional query parameter specifying how the results should be sorted. If not provided, results are sorted by `last_updated_at` in descending order.  This is a comma-separated list of fields; allowed field names are `name`, `created_at`, and `last_updated_at`. You cannot specify the same field twice.  By default, results are sorted in ascending order. To explicitly specify the sort order for a field, you can prefix its name with `asc:` (ascending) or `desc:` (descending). For example, `order_by=desc:created_at` will sort block models by time created in descending order.
+            Example: `'order_by_example'`
         :param offset: (optional) Index of the first item to return.
             Example: `0`
         :param limit: (optional) Maximum number of items to return from the list. Must be greater than 0 and less than or equal to 100.
@@ -104,13 +107,17 @@ class MetadataApi:
         _query_params = {}
         if deleted is not None:
             _query_params["deleted"] = deleted
+        if order_by is not None:
+            _query_params["order_by"] = order_by
         if offset is not None:
             _query_params["offset"] = offset
         if limit is not None:
             _query_params["limit"] = limit
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -138,6 +145,7 @@ class MetadataApi:
         self,
         org_id: str,
         deleted: bool | None = None,
+        order_by: str | None = None,
         offset: int | None = None,
         limit: int | None = None,
         additional_headers: dict[str, str] | None = None,
@@ -152,6 +160,8 @@ class MetadataApi:
             Example: `'bf1a040c-8c58-4bc2-bec2-c5ae7de8bd84'`
         :param deleted: (optional)  An optional boolean parameter specifying whether to list only deleted block models.  - If set to `true`, the response will only list block models that were deleted via the 'Delete a block model' endpoint. This list will not include block models that are within deleted workspaces.  - By default, or if set to `false`, the response will only list non-deleted block models within non-deleted workspaces.
             Example: `False`
+        :param order_by: (optional)  An optional query parameter specifying how the results should be sorted. If not provided, results are sorted by `last_updated_at` in descending order.  This is a comma-separated list of fields; allowed field names are `name`, `created_at`, and `last_updated_at`. You cannot specify the same field twice.  By default, results are sorted in ascending order. To explicitly specify the sort order for a field, you can prefix its name with `asc:` (ascending) or `desc:` (descending). For example, `order_by=desc:created_at` will sort block models by time created in descending order.
+            Example: `'order_by_example'`
         :param offset: (optional) Index of the first item to return.
             Example: `0`
         :param limit: (optional) Maximum number of items to return from the list. Must be greater than 0 and less than or equal to 100.
@@ -182,13 +192,17 @@ class MetadataApi:
         _query_params = {}
         if deleted is not None:
             _query_params["deleted"] = deleted
+        if order_by is not None:
+            _query_params["order_by"] = order_by
         if offset is not None:
             _query_params["offset"] = offset
         if limit is not None:
             _query_params["limit"] = limit
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -266,7 +280,9 @@ class MetadataApi:
             _query_params["deleted"] = deleted
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:

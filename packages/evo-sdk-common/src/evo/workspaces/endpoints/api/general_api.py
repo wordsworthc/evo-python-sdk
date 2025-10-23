@@ -33,7 +33,8 @@ API version: 1.0
 """
 
 from evo.common.connector import APIConnector
-from evo.common.data import EmptyResponse, RequestMethod  # noqa: F401
+from evo.common.data import RequestMethod
+from evo.common.utils import get_package_details
 
 from ..models import *  # noqa: F403
 
@@ -54,7 +55,7 @@ class GeneralApi:
     def __init__(self, connector: APIConnector):
         self.connector = connector
 
-    async def health_check_workspace_health_check_get(
+    async def health_check_health_check_get(
         self,
         full: bool | None = None,
         check_dependencies: bool | None = None,
@@ -94,7 +95,9 @@ class GeneralApi:
             _query_params["check_dependencies"] = check_dependencies
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -153,7 +156,9 @@ class GeneralApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -203,7 +208,9 @@ class GeneralApi:
             type in `response_types_map`.
         """
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:

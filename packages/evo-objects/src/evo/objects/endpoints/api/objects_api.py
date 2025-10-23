@@ -21,11 +21,12 @@ For more information on using the Geoscience Object API, see the [Geoscience Obj
 
 
 This code is generated from the OpenAPI specification for Geoscience Object API.
-API version: 1.14.0
+API version: 1.21.0
 """
 
 from evo.common.connector import APIConnector
 from evo.common.data import EmptyResponse, RequestMethod
+from evo.common.utils import get_package_details
 
 from ..models import *  # noqa: F403
 
@@ -91,7 +92,10 @@ class ObjectsApi:
         }
 
         # Prepare the header parameters.
-        _header_params = {}
+        package_details = get_package_details(__name__)
+        _header_params = {
+            package_details["name"]: package_details["version"],
+        }
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -158,7 +162,10 @@ class ObjectsApi:
         }
 
         # Prepare the header parameters.
-        _header_params = {}
+        package_details = get_package_details(__name__)
+        _header_params = {
+            package_details["name"]: package_details["version"],
+        }
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -203,7 +210,7 @@ class ObjectsApi:
         :param objects_path: Objects path. This parameter was automatically generated from a wildcard path.
             Example: `'objects_path_example'`
         :param version: (optional) The (timestamp) version of the object to retrieve. Defaults to the latest version if not specified.
-            Example: `'2022-08-24T05:43:04.8822793Z'`
+            Example: `'1746593470905878783'`
         :param include_versions: (optional) Whether to return all versions of the object
             Example: `False`
         :param if_none_match: (optional) Optional header used to check if there are any more recent versions of an object than the one specified. Returns 304 (Not Modified) if there are no newer versions.
@@ -240,7 +247,9 @@ class ObjectsApi:
             _query_params["include_versions"] = include_versions
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if if_none_match is not None:
@@ -293,7 +302,7 @@ class ObjectsApi:
             Format: `uuid`
             Example: `'032806a8-dcd7-11ed-8d5c-00155d8f28b5'`
         :param version: (optional) The (timestamp) version of the object to retrieve. Defaults to the latest version if not specified.
-            Example: `'2022-08-24T05:43:04.8822793Z'`
+            Example: `'1746593470905878783'`
         :param include_versions: (optional) Whether to return all versions of the object
             Example: `False`
         :param deleted: (optional) When true, only objects that have been deleted will be returned
@@ -334,7 +343,9 @@ class ObjectsApi:
             _query_params["deleted"] = deleted
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if if_none_match is not None:
@@ -405,7 +416,9 @@ class ObjectsApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -432,6 +445,82 @@ class ObjectsApi:
             request_timeout=request_timeout,
         )
 
+    async def list_object_versions(
+        self,
+        object_id: str,
+        org_id: str,
+        workspace_id: str,
+        list_versions_body: ListVersionsBody,  # noqa: F405
+        additional_headers: dict[str, str] | None = None,
+        request_timeout: int | float | tuple[int | float, int | float] | None = None,
+    ) -> ListVersionsResponse:  # noqa: F405
+        """Gets specified versions of a Geoscience Object.
+
+        List specific versions of a Geoscience Object. The response will include all the versions specified in `version_ids` field of the request body. If one or more of the version ids are not found for the geoscience object a 404 error will be returned.
+
+        :param object_id:
+            Format: `uuid`
+            Example: `'object_id_example'`
+        :param org_id: The customer's organisation ID
+            Format: `uuid`
+            Example: `'b208a6c9-6881-4b97-b02d-acb5d81299bb'`
+        :param workspace_id:
+            Format: `uuid`
+            Example: `'032806a8-dcd7-11ed-8d5c-00155d8f28b5'`
+        :param list_versions_body:
+            Example: `endpoints.ListVersionsBody()`
+        :param additional_headers: (optional) Additional headers to send with the request.
+        :param request_timeout: (optional) Timeout setting for this request. If one number is provided, it will be the
+            total request timeout. It can also be a pair (tuple) of (connection, read) timeouts.
+
+        :return: Returns the result object.
+
+        :raise evo.common.exceptions.BadRequestException: If the server responds with HTTP status 400.
+        :raise evo.common.exceptions.UnauthorizedException: If the server responds with HTTP status 401.
+        :raise evo.common.exceptions.ForbiddenException: If the server responds with HTTP status 403.
+        :raise evo.common.exceptions.NotFoundException: If the server responds with HTTP status 404.
+        :raise evo.common.exceptions.BaseTypedError: If the server responds with any other HTTP status between
+            400 and 599, and the body of the response contains a descriptive `type` parameter.
+        :raise evo.common.exceptions.EvoAPIException: If the server responds with any other HTTP status between 400
+            and 599, and the body of the response does not contain a `type` parameter.
+        :raise evo.common.exceptions.UnknownResponseError: For other HTTP status codes with no corresponding response
+            type in `response_types_map`.
+        """
+        # Prepare the path parameters.
+        _path_params = {
+            "object_id": object_id,
+            "org_id": org_id,
+            "workspace_id": workspace_id,
+        }
+
+        # Prepare the header parameters.
+        package_details = get_package_details(__name__)
+        _header_params = {
+            package_details["name"]: package_details["version"],
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+        if additional_headers is not None:
+            _header_params.update(additional_headers)
+
+        # Define the collection formats.
+        _collection_formats = {}
+
+        _response_types_map = {
+            "200": ListVersionsResponse,  # noqa: F405
+        }
+
+        return await self.connector.call_api(
+            method=RequestMethod.POST,
+            resource_path="/geoscience-object/orgs/{org_id}/workspaces/{workspace_id}/objects/{object_id}/versions",
+            path_params=_path_params,
+            header_params=_header_params,
+            body=list_versions_body,
+            collection_formats=_collection_formats,
+            response_types_map=_response_types_map,
+            request_timeout=request_timeout,
+        )
+
     async def list_objects(
         self,
         org_id: str,
@@ -440,14 +529,14 @@ class ObjectsApi:
         offset: int | None = None,
         deleted: bool | None = None,
         order_by: str | None = None,
-        author: list[str] | None = None,
-        created_by: list[str] | None = None,
+        author: list[CreatedByInner] | None = None,  # noqa: F405
+        created_by: list[CreatedByInner] | None = None,  # noqa: F405
         created_at: list[str] | None = None,
-        modified_by: list[str] | None = None,
+        modified_by: list[CreatedByInner] | None = None,  # noqa: F405
         modified_at: list[str] | None = None,
         object_name: list[str] | None = None,
         schema_id: list[str] | None = None,
-        deleted_by: list[str] | None = None,
+        deleted_by: list[CreatedByInner] | None = None,  # noqa: F405
         deleted_at: list[str] | None = None,
         geojson_bounding_box: list[str] | None = None,
         additional_headers: dict[str, str] | None = None,
@@ -470,15 +559,15 @@ class ObjectsApi:
         :param deleted: (optional) When true, only objects that have been deleted will be returned
             Example: `True`
         :param order_by: (optional) A comma separated list of fields to order by, where the default sort order is ascending. To specify the sort order, prefix the field name with either `asc:` or `desc:` for ascending or descending respectively. Field names can either be arbitrary, representing a field nested inside the data, or one of the following known sort fields: `author`, `created_at`, `created_by`, `deleted_at`, `modified_at`, `modified_by`, `object_name`
-            Example: `'order_by=name,desc:created_by,asc:object.a.b.c'`
+            Example: `'object_name,desc:created_by,asc:object.a.b.c'`
         :param author: (optional) (deprecated, use `created_by`) The profile ID that you want to filter by
-            Example: `['00000000-0000-0000-0000-000000000000']`
+            Example: `[endpoints.CreatedByInner()]`
         :param created_by: (optional) The UUID of the user that created an object
-            Example: `['00000000-0000-0000-0000-000000000000']`
+            Example: `[endpoints.CreatedByInner()]`
         :param created_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param modified_by: (optional) The UUID of the user that modified an object
-            Example: `['00000000-0000-0000-0000-000000000000']`
+            Example: `[endpoints.CreatedByInner()]`
         :param modified_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param object_name: (optional) The name of the object to filter on. For backwards compatibility, when no operators are supplied, this will perform a case sensitive prefix match of the object file name. The query `object_name=gold` will match an object with the name `goldcolumns.json`. Providing an operator will query over the entire path to and including the file name.
@@ -486,7 +575,7 @@ class ObjectsApi:
         :param schema_id: (optional) The type of schema you want to filter by.
             Example: `['/objects/variogram/0.1.0/variogram.schema.json']`
         :param deleted_by: (optional) The UUID of the user that deleted an object
-            Example: `['00000000-0000-0000-0000-000000000000']`
+            Example: `[endpoints.CreatedByInner()]`
         :param deleted_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param geojson_bounding_box: (optional) The coordinates of the data to spatially search on. The value may optionally include one of two spatial operators, `geowithin` or `geointersects`. If an operator is not defined, then `geointersects` will be used by default. The coordinates must be 5 pairs of longitude and latitude, representing a closed polygon. The first and last coordinates must be the same to close the polygon.
@@ -546,7 +635,9 @@ class ObjectsApi:
             _query_params["geojson_bounding_box"] = geojson_bounding_box
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -589,14 +680,14 @@ class ObjectsApi:
         deleted: bool | None = None,
         permitted_workspaces_only: bool | None = None,
         order_by: str | None = None,
-        created_by: list[str] | None = None,
+        created_by: list[CreatedByInner] | None = None,  # noqa: F405
         created_at: list[str] | None = None,
-        modified_by: list[str] | None = None,
+        modified_by: list[CreatedByInner] | None = None,  # noqa: F405
         modified_at: list[str] | None = None,
         object_name: list[str] | None = None,
         schema_id: list[str] | None = None,
         geojson_bounding_box: list[str] | None = None,
-        deleted_by: list[str] | None = None,
+        deleted_by: list[CreatedByInner] | None = None,  # noqa: F405
         deleted_at: list[str] | None = None,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
@@ -617,13 +708,13 @@ class ObjectsApi:
         :param permitted_workspaces_only: (optional) Only return objects in workspaces the user is permitted to access.
             Example: `True`
         :param order_by: (optional) A comma separated list of fields to order by, where the default sort order is ascending. To specify the sort order, prefix the field name with either `asc:` or `desc:` for ascending or descending respectively. Field names can either be arbitrary, representing a field nested inside the data, or one of the following known sort fields: `created_at`, `created_by`, `modified_at`, `modified_by`, `object_name`, `deleted_at`
-            Example: `'order_by=name,desc:created_by,asc:object.a.b.c'`
+            Example: `'object_name,desc:created_by,asc:object.a.b.c'`
         :param created_by: (optional) The UUID of the user that created an object
-            Example: `['00000000-0000-0000-0000-000000000000']`
+            Example: `[endpoints.CreatedByInner()]`
         :param created_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param modified_by: (optional) The UUID of the user that modified an object
-            Example: `['00000000-0000-0000-0000-000000000000']`
+            Example: `[endpoints.CreatedByInner()]`
         :param modified_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param object_name: (optional) The name of the object to filter on. For backwards compatibility, when no operators are supplied, this will perform a case sensitive prefix match of the object file name. The query `object_name=gold` will match an object with the name `goldcolumns.json`. Providing an operator will query over the entire path to and including the file name.
@@ -633,7 +724,7 @@ class ObjectsApi:
         :param geojson_bounding_box: (optional) The coordinates of the data to spatially search on. The value may optionally include one of two spatial operators, `geowithin` or `geointersects`. If an operator is not defined, then `geointersects` will be used by default. The coordinates must be 5 pairs of longitude and latitude, representing a closed polygon. The first and last coordinates must be the same to close the polygon.
             Example: `['geointersects:(171.6,-44.5),(173.7,-44.5),(173.7,-42.9),(171.6,-42.9),(171.6,-44.5)']`
         :param deleted_by: (optional) The UUID of the user that deleted an object
-            Example: `['00000000-0000-0000-0000-000000000000']`
+            Example: `[endpoints.CreatedByInner()]`
         :param deleted_at: (optional)  A date or dates (max 2) to filter objects by. Dates may contain operator prefixes, in the form `<operator>:<datetime>`. The following operators are available (`lt`=less than, `lte`=less than or equal to, `gt`=greater than, `gte`=greater than or equal to). If you omit the operator, then it is assumed the operator is 'equal to'. In this case you may only supply one date. The dates must also be in a valid ISO 8601 format. Dates may include a UTC offset. If the offset is omitted, the timezone is assumed to be UTC.
             Example: `['gte:2023-03-10T22:56:53Z']`
         :param additional_headers: (optional) Additional headers to send with the request.
@@ -690,7 +781,9 @@ class ObjectsApi:
             _query_params["deleted_at"] = deleted_at
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -775,7 +868,9 @@ class ObjectsApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -862,7 +957,9 @@ class ObjectsApi:
             _query_params["deleted"] = deleted
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }

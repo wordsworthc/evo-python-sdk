@@ -33,7 +33,8 @@ API version: 1.0
 """
 
 from evo.common.connector import APIConnector
-from evo.common.data import EmptyResponse, RequestMethod  # noqa: F401
+from evo.common.data import RequestMethod
+from evo.common.utils import get_package_details
 
 from ..models import *  # noqa: F403
 
@@ -54,7 +55,7 @@ class DiscoveryApi:
     def __init__(self, connector: APIConnector):
         self.connector = connector
 
-    async def v1_discovery_workspace_evo_identity_v1_discovery_get(
+    async def v1_discovery_evo_identity_v1_discovery_get(
         self,
         service: list[str] | None = None,
         user_agent: str | None = None,
@@ -94,7 +95,9 @@ class DiscoveryApi:
             _query_params["service"] = service
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if user_agent is not None:
@@ -123,7 +126,7 @@ class DiscoveryApi:
             request_timeout=request_timeout,
         )
 
-    async def v2_discovery_workspace_evo_identity_v2_discovery_get(
+    async def v2_discovery_evo_identity_v2_discovery_get(
         self,
         service: list[str] | None = None,
         cache_control: str | None = None,
@@ -166,7 +169,9 @@ class DiscoveryApi:
             _query_params["service"] = service
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if cache_control is not None:

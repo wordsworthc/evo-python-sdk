@@ -8,7 +8,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 """
 Block Model API
 =============
@@ -22,15 +21,16 @@ Block Model API
     reporting on the material content of current or previous versions, and comparing the content between versions of
     a block model.
 
-    For more information on the Block Model API, see [Overview](/docs/blockmodel/overview), or the API references here.
+    For more information on the Block Model API, see [Overview](/docs/guides/blockmodel/), or the API references here.
 
 
 This code is generated from the OpenAPI specification for Block Model API.
-API version: 1.16.1
+API version: 1.41.3
 """
 
 from evo.common.connector import APIConnector
-from evo.common.data import EmptyResponse, RequestMethod  # noqa: F401
+from evo.common.data import RequestMethod
+from evo.common.utils import get_package_details
 
 from ..models import *  # noqa: F403
 
@@ -108,7 +108,9 @@ class ReportsApi:
             _query_params["run_now"] = run_now
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -190,7 +192,9 @@ class ReportsApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -283,7 +287,9 @@ class ReportsApi:
             _query_params["decimal_places"] = decimal_places
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -371,7 +377,9 @@ class ReportsApi:
             _query_params["limit"] = limit
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -446,7 +454,9 @@ class ReportsApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -528,7 +538,9 @@ class ReportsApi:
             _query_params["limit"] = limit
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -606,7 +618,9 @@ class ReportsApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -686,7 +700,9 @@ class ReportsApi:
         }
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -774,7 +790,9 @@ class ReportsApi:
             _query_params["run_now"] = run_now
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }

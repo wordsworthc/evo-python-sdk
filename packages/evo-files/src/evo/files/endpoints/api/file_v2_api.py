@@ -24,11 +24,12 @@ For more information on using the File API, see [Overview](https://developer.see
 
 
 This code is generated from the OpenAPI specification for File API.
-API version: 2.8.0
+API version: 2.10.0
 """
 
 from evo.common.connector import APIConnector
 from evo.common.data import EmptyResponse, RequestMethod
+from evo.common.utils import get_package_details
 
 from ..models import *  # noqa: F403
 
@@ -95,7 +96,10 @@ class FileV2Api:
         }
 
         # Prepare the header parameters.
-        _header_params = {}
+        package_details = get_package_details(__name__)
+        _header_params = {
+            package_details["name"]: package_details["version"],
+        }
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -161,7 +165,10 @@ class FileV2Api:
         }
 
         # Prepare the header parameters.
-        _header_params = {}
+        package_details = get_package_details(__name__)
+        _header_params = {
+            package_details["name"]: package_details["version"],
+        }
         if additional_headers is not None:
             _header_params.update(additional_headers)
 
@@ -247,7 +254,9 @@ class FileV2Api:
             _query_params["deleted"] = deleted
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -330,7 +339,9 @@ class FileV2Api:
             _query_params["include_versions"] = include_versions
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -456,7 +467,9 @@ class FileV2Api:
             _query_params["order_by"] = order_by
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -544,7 +557,9 @@ class FileV2Api:
             _query_params["deleted"] = deleted
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
@@ -624,7 +639,9 @@ class FileV2Api:
             _query_params["version_id"] = version_id
 
         # Prepare the header parameters.
+        package_details = get_package_details(__name__)
         _header_params = {
+            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:

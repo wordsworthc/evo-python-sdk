@@ -14,12 +14,19 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from enum import Enum
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import Field, RootModel, StrictBool, StrictFloat, StrictInt, StrictStr
+from pydantic import (
+    AwareDatetime,
+    Field,
+    RootModel,
+    StrictBool,
+    StrictFloat,
+    StrictInt,
+    StrictStr,
+)
 
 from .._model_config import CustomBaseModel
 
@@ -79,10 +86,6 @@ class GeoscienceObject(CustomBaseModel):
     There are some default, required values listed here explicitly.
     """
 
-    name: Annotated[StrictStr, Field(title="Name")]
-    """
-    The name of the geoscience object.
-    """
     schema_: Annotated[StrictStr, Field(alias="schema", title="Schema")]
     """
     The geoscience object schema.
@@ -101,6 +104,10 @@ class LatestObjectVersionIdResponse(CustomBaseModel):
 class ListObjectsResponseLinks(CustomBaseModel):
     next: Annotated[StrictStr | None, Field(title="Next")] = None
     prev: Annotated[StrictStr | None, Field(title="Prev")] = None
+
+
+class ListVersionsBody(CustomBaseModel):
+    version_ids: Annotated[list[StrictStr], Field(max_length=100, min_length=1, title="Version Ids")]
 
 
 class ListedObjectLinks(CustomBaseModel):
@@ -145,10 +152,6 @@ class UpdateGeoscienceObject(CustomBaseModel):
     There are some default, required values listed here explicitly.
     """
 
-    name: Annotated[StrictStr, Field(title="Name")]
-    """
-    The name of the geoscience object.
-    """
     schema_: Annotated[StrictStr, Field(alias="schema", title="Schema")]
     """
     The geoscience object schema.
@@ -189,7 +192,7 @@ class GeoscienceObjectVersion(CustomBaseModel):
     Geoscience object version.
     """
 
-    created_at: Annotated[datetime, Field(title="Created At")]
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
     created_by: User | None = None
     etag: Annotated[StrictStr, Field(title="Etag")]
     links: ObjectVersionResponseLinks
@@ -198,14 +201,17 @@ class GeoscienceObjectVersion(CustomBaseModel):
 
 
 class GetObjectResponse(CustomBaseModel):
-    created_at: Annotated[datetime, Field(title="Created At")]
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
     created_by: User | None = None
-    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_at: Annotated[AwareDatetime | None, Field(title="Deleted At")] = None
     deleted_by: User | None = None
     etag: Annotated[StrictStr, Field(title="Etag")]
     geojson_bounding_box: BoundingBox | None = None
+    geojson_bounding_box_from_workspace_crs: Annotated[
+        StrictBool, Field(title="Geojson Bounding Box From Workspace Crs")
+    ]
     links: ObjectResponseLinks
-    modified_at: Annotated[datetime, Field(title="Modified At")]
+    modified_at: Annotated[AwareDatetime, Field(title="Modified At")]
     modified_by: User | None = None
     object: GeoscienceObject
     object_id: Annotated[UUID, Field(title="Object Id")]
@@ -219,15 +225,22 @@ class ListStagesResponse(CustomBaseModel):
     stages: Annotated[list[StageListItem], Field(title="Stages")]
 
 
+class ListVersionsResponse(CustomBaseModel):
+    versions: Annotated[list[GeoscienceObjectVersion], Field(title="Versions")]
+
+
 class ListedObject(CustomBaseModel):
-    created_at: Annotated[datetime, Field(title="Created At")]
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
     created_by: User | None = None
-    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_at: Annotated[AwareDatetime | None, Field(title="Deleted At")] = None
     deleted_by: User | None = None
     etag: Annotated[StrictStr, Field(title="Etag")]
     geojson_bounding_box: BoundingBox | None = None
+    geojson_bounding_box_from_workspace_crs: Annotated[
+        StrictBool, Field(title="Geojson Bounding Box From Workspace Crs")
+    ]
     links: ListedObjectLinks
-    modified_at: Annotated[datetime, Field(title="Modified At")]
+    modified_at: Annotated[AwareDatetime, Field(title="Modified At")]
     modified_by: User | None = None
     name: Annotated[StrictStr, Field(title="Name")]
     object_id: Annotated[UUID, Field(title="Object Id")]
@@ -241,12 +254,12 @@ class ListedObject(CustomBaseModel):
 
 
 class OrgListedObject(CustomBaseModel):
-    created_at: Annotated[datetime, Field(title="Created At")]
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
     created_by: User | None = None
-    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_at: Annotated[AwareDatetime | None, Field(title="Deleted At")] = None
     deleted_by: User | None = None
     geojson_bounding_box: BoundingBox | None = None
-    modified_at: Annotated[datetime, Field(title="Modified At")]
+    modified_at: Annotated[AwareDatetime, Field(title="Modified At")]
     modified_by: User | None = None
     name: Annotated[StrictStr, Field(title="Name")]
     object_id: Annotated[UUID, Field(title="Object Id")]
@@ -258,14 +271,17 @@ class OrgListedObject(CustomBaseModel):
 
 
 class PostObjectResponse(CustomBaseModel):
-    created_at: Annotated[datetime, Field(title="Created At")]
+    created_at: Annotated[AwareDatetime, Field(title="Created At")]
     created_by: User | None = None
-    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
+    deleted_at: Annotated[AwareDatetime | None, Field(title="Deleted At")] = None
     deleted_by: User | None = None
     etag: Annotated[StrictStr, Field(title="Etag")]
     geojson_bounding_box: BoundingBox | None = None
+    geojson_bounding_box_from_workspace_crs: Annotated[
+        StrictBool, Field(title="Geojson Bounding Box From Workspace Crs")
+    ]
     links: ObjectResponseLinks
-    modified_at: Annotated[datetime, Field(title="Modified At")]
+    modified_at: Annotated[AwareDatetime, Field(title="Modified At")]
     modified_by: User | None = None
     object: GeoscienceObject
     object_id: Annotated[UUID | None, Field(title="Object Id")] = None
