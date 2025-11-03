@@ -95,9 +95,7 @@ class DiscoveryApi:
             _query_params["service"] = service
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if user_agent is not None:
@@ -106,6 +104,9 @@ class DiscoveryApi:
             _header_params["origin"] = origin
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {
@@ -169,9 +170,7 @@ class DiscoveryApi:
             _query_params["service"] = service
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if cache_control is not None:
@@ -182,6 +181,9 @@ class DiscoveryApi:
             _header_params["origin"] = origin
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {

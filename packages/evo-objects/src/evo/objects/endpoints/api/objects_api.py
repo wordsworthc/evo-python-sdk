@@ -92,12 +92,12 @@ class ObjectsApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
-        _header_params = {
-            package_details["name"]: package_details["version"],
-        }
+        _header_params = {}
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -162,12 +162,12 @@ class ObjectsApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
-        _header_params = {
-            package_details["name"]: package_details["version"],
-        }
+        _header_params = {}
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -247,15 +247,16 @@ class ObjectsApi:
             _query_params["include_versions"] = include_versions
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if if_none_match is not None:
             _header_params["If-None-Match"] = if_none_match
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -343,15 +344,16 @@ class ObjectsApi:
             _query_params["deleted"] = deleted
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if if_none_match is not None:
             _header_params["If-None-Match"] = if_none_match
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -416,14 +418,15 @@ class ObjectsApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {
@@ -494,14 +497,15 @@ class ObjectsApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -635,13 +639,14 @@ class ObjectsApi:
             _query_params["geojson_bounding_box"] = geojson_bounding_box
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {
@@ -781,13 +786,14 @@ class ObjectsApi:
             _query_params["deleted_at"] = deleted_at
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {
@@ -868,9 +874,7 @@ class ObjectsApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -878,6 +882,9 @@ class ObjectsApi:
             _header_params["If-Match"] = if_match
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -957,9 +964,7 @@ class ObjectsApi:
             _query_params["deleted"] = deleted
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -967,6 +972,9 @@ class ObjectsApi:
             _header_params["If-Match"] = if_match
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}

@@ -85,14 +85,15 @@ class HubsApi:
             type in `response_types_map`.
         """
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -147,12 +148,12 @@ class HubsApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
-        _header_params = {
-            package_details["name"]: package_details["version"],
-        }
+        _header_params = {}
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -206,13 +207,14 @@ class HubsApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -258,13 +260,14 @@ class HubsApi:
             type in `response_types_map`.
         """
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}

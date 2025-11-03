@@ -105,9 +105,7 @@ class FoldersApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -117,6 +115,9 @@ class FoldersApi:
             _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -187,9 +188,7 @@ class FoldersApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if api_preview is not None:
@@ -198,6 +197,9 @@ class FoldersApi:
             _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -269,16 +271,16 @@ class FoldersApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
-        _header_params = {
-            package_details["name"]: package_details["version"],
-        }
+        _header_params = {}
         if api_preview is not None:
             _header_params["API-Preview"] = api_preview
         if preview_api is not None:
             _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -404,9 +406,7 @@ class FoldersApi:
             _query_params["order_by"] = order_by
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if api_preview is not None:
@@ -415,6 +415,9 @@ class FoldersApi:
             _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -540,9 +543,7 @@ class FoldersApi:
             _query_params["order_by"] = order_by
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Accept": "application/json",
         }
         if api_preview is not None:
@@ -551,6 +552,9 @@ class FoldersApi:
             _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -625,9 +629,7 @@ class FoldersApi:
         }
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -637,6 +639,9 @@ class FoldersApi:
             _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -719,9 +724,7 @@ class FoldersApi:
             _query_params["deleted"] = deleted
 
         # Prepare the header parameters.
-        package_details = get_package_details(__name__)
         _header_params = {
-            package_details["name"]: package_details["version"],
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
@@ -731,6 +734,9 @@ class FoldersApi:
             _header_params["Preview-API"] = preview_api
         if additional_headers is not None:
             _header_params.update(additional_headers)
+        package_details = get_package_details(__name__)
+        if "name" in package_details and "version" in package_details:
+            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}

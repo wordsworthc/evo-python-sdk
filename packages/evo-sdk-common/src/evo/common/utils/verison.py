@@ -16,7 +16,7 @@ __all__ = ["get_package_details"]
 
 
 @functools.cache
-def get_package_details(candidate: str) -> dict:
+def get_package_details(candidate: str) -> dict[str, str]:
     """Get package name and version given the module __name__.
 
     :param candidate: The module __name__ to start searching from.
@@ -36,4 +36,4 @@ def get_package_details(candidate: str) -> dict:
                 "version": package_metadata["version"],
             }
 
-    raise metadata.PackageNotFoundError(__package__)
+    return {}
