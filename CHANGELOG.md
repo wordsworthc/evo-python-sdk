@@ -1,5 +1,19 @@
 # Changelog
 
+## evo-sdk@v0.1.12
+### What's changed
+#### evo-sdk
+* Add error field to the JobProgress dataclass by @BenLewis-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/138
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk@v0.1.11...evo-sdk@v0.1.12
+
+## evo-compute@v0.0.1rc1
+## What's Changed
+### evo-compute
+* Add error field to the JobProgress dataclass by @BenLewis-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/138
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-compute@v0.0.1rc0...evo-compute@v0.0.1rc1
+
 ## evo-sdk@v0.1.11
 ### What's changed
 #### evo-sdk

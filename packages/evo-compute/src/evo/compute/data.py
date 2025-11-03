@@ -14,6 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .endpoints.models import JobStatusEnum
+from .exceptions import JobError
 
 __all__ = [
     "JobProgress",
@@ -32,10 +33,15 @@ class JobProgress:
     message: str | None = None
     """A message describing the current progress of the job."""
 
+    error: JobError | None = None
+    """An error associated with the job, if any."""
+
     def __str__(self) -> str:
         msg = f"[{self.status.value}]"
         if self.progress is not None:
             msg += f" {self.progress}%"
         if self.message is not None:
             msg += f" > {self.message}"
+        if self.error is not None:
+            msg += f"\n{self.error}"
         return msg
