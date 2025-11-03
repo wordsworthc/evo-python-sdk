@@ -231,7 +231,9 @@ class DownloadedObject:
                     raise ValueError(f"Expected object, got {type(resolved)}")
             return validator.validate_python(value)
 
-        def _validate_nan_values(self, nan_values: list[int] | list[float] | str) -> list[int] | list[float]:
+        def _validate_nan_values(self, nan_values: list[int] | list[float] | str | None) -> list[int] | list[float]:
+            if nan_values is None:
+                return []
             if isinstance(nan_values, str):
                 resolved = self.search(nan_values)
                 if isinstance(resolved, jmespath.JMESPathArrayProxy) and len(resolved) == 1:
@@ -290,22 +292,20 @@ class DownloadedObject:
 
             if column_names is None:
                 column_names = table.column_names
-            if nan_values is not None:
-                nan_values = self._validate_nan_values(nan_values)
 
-                if len(nan_values) == 0:
-                    return table.rename_columns(column_names)
-
-                arrays = []
-                for array in table.columns:
-                    if isinstance(array, pa.ChunkedArray):
-                        array = array.combine_chunks()
-                    null_scalar = pa.scalar(None, type=array.type)
-                    nan_value_array = pa.array(nan_values, type=array.type)
-                    arrays.append(pc.replace_with_mask(array, pc.is_in(array, nan_value_array), null_scalar))
-                return pa.Table.from_arrays(arrays, names=column_names)
-            else:
+            nan_values = self._validate_nan_values(nan_values)
+            if len(nan_values) == 0:
                 return table.rename_columns(column_names)
+
+            # Replace specified nan_values with nulls
+            arrays = []
+            for array in table.columns:
+                if isinstance(array, pa.ChunkedArray):
+                    array = array.combine_chunks()
+                null_scalar = pa.scalar(None, type=array.type)
+                nan_value_array = pa.array(nan_values, type=array.type)
+                arrays.append(pc.replace_with_mask(array, pc.is_in(array, nan_value_array), null_scalar))
+            return pa.Table.from_arrays(arrays, names=column_names)
 
         async def download_category_table(
             self,
