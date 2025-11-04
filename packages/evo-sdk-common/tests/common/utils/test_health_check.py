@@ -59,7 +59,7 @@ class TestHealthCheck(TestWithConnector):
         with self.transport.set_http_response(status_code, content):
             status = await get_service_status(self.connector, "test", check_type=HealthCheckType.FULL)
 
-        self.assert_request_made(RequestMethod.GET, "/test/health_check?check_dependencies=True")
+        self.assert_request_made(RequestMethod.GET, "/test/health_check?check_dependencies=true")
         self.assertEqual(ServiceStatus(content), status)
 
     @using_test_data(full=False, with_dependencies=True, strict=True)
@@ -69,7 +69,7 @@ class TestHealthCheck(TestWithConnector):
         with self.transport.set_http_response(status_code, content):
             status = await get_service_status(self.connector, "test", check_type=HealthCheckType.STRICT)
 
-        self.assert_request_made(RequestMethod.GET, "/test/health_check?check_dependencies=True&strict=True")
+        self.assert_request_made(RequestMethod.GET, "/test/health_check?check_dependencies=true&strict=true")
         self.assertEqual(ServiceStatus(content), status)
 
     def _check_health_check_response(self, content: dict, status_code: int, response: ServiceHealth) -> None:
@@ -95,7 +95,7 @@ class TestHealthCheck(TestWithConnector):
         with self.transport.set_http_response(status_code, json.dumps(content)):
             response = await get_service_health(self.connector, "test", check_type=HealthCheckType.BASIC)
 
-        self.assert_request_made(RequestMethod.GET, "/test/health_check?full=True")
+        self.assert_request_made(RequestMethod.GET, "/test/health_check?full=true")
         self._check_health_check_response(content, status_code, response)
 
     @using_test_data(full=True, with_dependencies=True, strict=False)
@@ -103,7 +103,7 @@ class TestHealthCheck(TestWithConnector):
         with self.transport.set_http_response(status_code, json.dumps(content)):
             response = await get_service_health(self.connector, "test", check_type=HealthCheckType.FULL)
 
-        self.assert_request_made(RequestMethod.GET, "/test/health_check?full=True&check_dependencies=True")
+        self.assert_request_made(RequestMethod.GET, "/test/health_check?full=true&check_dependencies=true")
         self._check_health_check_response(content, status_code, response)
 
     @using_test_data(full=True, with_dependencies=True, strict=True)
@@ -113,5 +113,5 @@ class TestHealthCheck(TestWithConnector):
         with self.transport.set_http_response(status_code, json.dumps(content)):
             response = await get_service_health(self.connector, "test", check_type=HealthCheckType.STRICT)
 
-        self.assert_request_made(RequestMethod.GET, "/test/health_check?full=True&check_dependencies=True&strict=True")
+        self.assert_request_made(RequestMethod.GET, "/test/health_check?full=true&check_dependencies=true&strict=true")
         self._check_health_check_response(content, status_code, response)
