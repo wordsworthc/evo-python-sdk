@@ -28,7 +28,7 @@ API version: 0.0.2
 """
 
 from evo.common.connector import APIConnector
-from evo.common.data import EmptyResponse, RequestMethod
+from evo.common.data import EmptyResponse, HTTPResponse, RequestMethod
 from evo.common.utils import get_package_details
 
 from ..models import *  # noqa: F403
@@ -185,8 +185,8 @@ class JobsApi:
         _collection_formats = {}
 
         _response_types_map = {
-            "200": CompletedJobResponse,  # noqa: F405
-            "202": OngoingJobResponse,  # noqa: F405
+            "200": HTTPResponse,
+            "202": HTTPResponse,
         }
 
         return await self.connector.call_api(

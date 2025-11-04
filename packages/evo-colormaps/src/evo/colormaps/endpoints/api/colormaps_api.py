@@ -50,7 +50,7 @@ class ColormapsApi:
         colormap_id: str,
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
-    ) -> ResponseGetcolormapbyid:  # noqa: F405
+    ) -> ResponseGetColormapByID:  # noqa: F405
         """Get colormap by ID
 
         Get a colormap by its ID, for a specified workspace and organization.
@@ -102,7 +102,7 @@ class ColormapsApi:
         _collection_formats = {}
 
         _response_types_map = {
-            "200": ResponseGetcolormapbyid,  # noqa: F405
+            "200": ResponseGetColormapByID,  # noqa: F405
         }
 
         return await self.connector.call_api(
@@ -189,7 +189,7 @@ class ColormapsApi:
         colormap_data: ColormapData,  # noqa: F405
         additional_headers: dict[str, str] | None = None,
         request_timeout: int | float | tuple[int | float, int | float] | None = None,
-    ) -> ResponsePostcolormap:  # noqa: F405
+    ) -> ResponsePostColormap:  # noqa: F405
         """Create colormap
 
         Create a new colormap for a specified workspace and organization. You may choose from either a continuous, discrete, or category colormap.
@@ -240,7 +240,7 @@ class ColormapsApi:
         _collection_formats = {}
 
         _response_types_map = {
-            "201": ResponsePostcolormap,  # noqa: F405
+            "201": ResponsePostColormap,  # noqa: F405
         }
 
         return await self.connector.call_api(
