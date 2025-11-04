@@ -23,6 +23,7 @@ from evo.common import HealthCheckType, Page, RequestMethod, ServiceUser
 from evo.common.data import OrderByOperatorEnum
 from evo.common.io.exceptions import DataNotFoundError
 from evo.common.test_tools import MockResponse, TestWithConnector, TestWithStorage
+from evo.common.utils import get_package_details
 from evo.objects import (
     ObjectAPIClient,
     ObjectDataDownload,
@@ -40,6 +41,9 @@ from helpers import NoImport, UnloadModule
 EMPTY_CONTENT = '{"objects": [], "links": {"next": null, "prev": null}}'
 MOCK_VERSION_CONTENT = json.dumps(load_test_data("list_versions.json"))
 _MAX_UPLOAD_URLS = 32
+
+package_details = get_package_details("evo-objects")
+header_metadata = {package_details["name"]: package_details["version"]}
 
 
 class TestObjectAPIClient(TestWithConnector, TestWithStorage):
@@ -65,33 +69,45 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         )
 
     async def test_list_objects_default_args(self) -> None:
-        with self.transport.set_http_response(200, EMPTY_CONTENT, headers={"Content-Type": "application/json"}):
+        with self.transport.set_http_response(
+            200, EMPTY_CONTENT, headers={"Content-Type": "application/json"} | header_metadata
+        ):
             page = await self.object_client.list_objects()
         self.assertIsInstance(page, Page)
         self.assertEqual([], page.items())
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects?limit=5000&offset=0",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_objects_all_args(self) -> None:
-        with self.transport.set_http_response(200, EMPTY_CONTENT, headers={"Content-Type": "application/json"}):
+        with self.transport.set_http_response(
+            200, EMPTY_CONTENT, headers={"Content-Type": "application/json"} | header_metadata
+        ):
             page = await self.object_client.list_objects(limit=20)
         self.assertIsInstance(page, Page)
         self.assertEqual([], page.items())
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects?limit=20&offset=0",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_objects(self) -> None:
         content_0 = load_test_data("list_objects_0.json")
         content_1 = load_test_data("list_objects_1.json")
         responses = [
-            MockResponse(status_code=200, content=json.dumps(content_0), headers={"Content-Type": "application/json"}),
-            MockResponse(status_code=200, content=json.dumps(content_1), headers={"Content-Type": "application/json"}),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_0),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_1),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
         ]
         self.transport.request.side_effect = responses
         page_one = await self.object_client.list_objects(
@@ -149,7 +165,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects?limit=2&offset=0&deleted=False&order_by=asc%3Acreated_at&schema_id=test",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
         self.transport.request.reset_mock()
 
@@ -185,15 +201,23 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects?limit=2&offset=2",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_objects_for_instance(self) -> None:
         content_0 = load_test_data("list_objects_for_instance_0.json")
         content_1 = load_test_data("list_objects_for_instance_1.json")
         responses = [
-            MockResponse(status_code=200, content=json.dumps(content_0), headers={"Content-Type": "application/json"}),
-            MockResponse(status_code=200, content=json.dumps(content_1), headers={"Content-Type": "application/json"}),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_0),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_1),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
         ]
         self.transport.request.side_effect = responses
         page_one = await self.object_client.list_objects_for_instance(
@@ -253,7 +277,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.instance_base_path}/objects?offset=0&limit=2&deleted=False&permitted_workspaces_only=True&order_by=asc%3Acreated_at&schema_id=test",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
         self.transport.request.reset_mock()
 
@@ -293,15 +317,23 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.instance_base_path}/objects?offset=2&limit=2&permitted_workspaces_only=True",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_all_objects(self) -> None:
         content_0 = load_test_data("list_objects_0.json")
         content_1 = load_test_data("list_objects_1.json")
         responses = [
-            MockResponse(status_code=200, content=json.dumps(content_0), headers={"Content-Type": "application/json"}),
-            MockResponse(status_code=200, content=json.dumps(content_1), headers={"Content-Type": "application/json"}),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_0),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_1),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
         ]
         self.transport.request.side_effect = responses
         all_objects = await self.object_client.list_all_objects(
@@ -379,17 +411,19 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects?limit=2&offset=0&deleted=False&order_by=asc%3Acreated_at&schema_id=test",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects?limit=2&offset=2&deleted=False&order_by=asc%3Acreated_at&schema_id=test",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_versions_by_path(self) -> None:
         object_path = "A/m.json"
-        with self.transport.set_http_response(200, MOCK_VERSION_CONTENT, headers={"Content-Type": "application/json"}):
+        with self.transport.set_http_response(
+            200, MOCK_VERSION_CONTENT, headers={"Content-Type": "application/json"} | header_metadata
+        ):
             versions = await self.object_client.list_versions_by_path(object_path)
         expected_versions = [
             ObjectVersion(
@@ -428,12 +462,14 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/path/A/m.json?include_versions=True",
-            headers={"Authorization": "Bearer <not-a-real-token>", "Accept": "application/json"},
+            headers={"Authorization": "Bearer <not-a-real-token>", "Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_versions_by_id(self) -> None:
         object_id = UUID(int=2)
-        with self.transport.set_http_response(200, MOCK_VERSION_CONTENT, headers={"Content-Type": "application/json"}):
+        with self.transport.set_http_response(
+            200, MOCK_VERSION_CONTENT, headers={"Content-Type": "application/json"} | header_metadata
+        ):
             versions = await self.object_client.list_versions_by_id(object_id)
         expected_versions = [
             ObjectVersion(
@@ -472,7 +508,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/00000000-0000-0000-0000-000000000002?include_versions=True",
-            headers={"Authorization": "Bearer <not-a-real-token>", "Accept": "application/json"},
+            headers={"Authorization": "Bearer <not-a-real-token>", "Accept": "application/json"} | header_metadata,
         )
 
     async def test_prepare_data_upload(self) -> None:
@@ -480,7 +516,9 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         put_data_response = load_test_data("put_data.json")
         expected_name = put_data_response[0]["name"]
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(put_data_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(put_data_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             (upload,) = [upload async for upload in self.object_client.prepare_data_upload([expected_name])]
 
@@ -490,7 +528,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.PUT,
             path=f"{self.base_path}/data",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=[{"name": expected_name}],
         )
 
@@ -514,7 +552,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
 
         aiter_uploads = self.object_client.prepare_data_upload([data["name"] for data in put_data_response])
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(batch_1), headers={"Content-Type": "application/json"}
+            status_code=200, content=json.dumps(batch_1), headers={"Content-Type": "application/json"} | header_metadata
         ):
             self.transport.assert_no_requests()
 
@@ -524,7 +562,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             self.assert_request_made(
                 method=RequestMethod.PUT,
                 path=f"{self.base_path}/data",
-                headers={"Content-Type": "application/json", "Accept": "application/json"},
+                headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
                 body=[{"name": data["name"]} for data in batch_1],
             )
             self.assertIsInstance(upload, ObjectDataUpload)
@@ -544,13 +582,13 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.transport.assert_no_requests()
 
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(batch_2), headers={"Content-Type": "application/json"}
+            status_code=200, content=json.dumps(batch_2), headers={"Content-Type": "application/json"} | header_metadata
         ):
             upload = await anext(aiter_uploads)
             self.assert_request_made(
                 method=RequestMethod.PUT,
                 path=f"{self.base_path}/data",
-                headers={"Content-Type": "application/json", "Accept": "application/json"},
+                headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
                 body=[{"name": data["name"]} for data in batch_2],
             )
             self.assertIsInstance(upload, ObjectDataUpload)
@@ -581,7 +619,9 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         expected_name = get_object_response["links"]["data"][0]["name"]
 
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(get_object_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(get_object_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             (download,) = [
                 download
@@ -598,7 +638,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/{expected_id}?version={quote(expected_version)}",
-            headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
+            headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
         )
 
     async def test_prepare_data_download_multiple(self) -> None:
@@ -611,7 +651,9 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
 
         aiter_downloads = self.object_client.prepare_data_download(expected_id, expected_version, expected_names)
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(get_object_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(get_object_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             self.transport.assert_no_requests()
 
@@ -621,7 +663,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             self.assert_request_made(
                 method=RequestMethod.GET,
                 path=f"{self.base_path}/objects/{expected_id}?version={quote(expected_version)}",
-                headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
+                headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
             )
             self.assertIsInstance(download, ObjectDataDownload)
             expected = expected_data_by_name.pop(download.name)
@@ -655,7 +697,9 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         expected_version = get_object_response["version_id"]
 
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(get_object_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(get_object_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             aiter_downloads = self.object_client.prepare_data_download(expected_id, expected_version, ["missing"])
 
@@ -691,7 +735,9 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             ]
         )
         object_ids = [UUID(int=1), UUID(int=2)]
-        with self.transport.set_http_response(200, content, headers={"Content-Type": "application/json"}):
+        with self.transport.set_http_response(
+            200, content, headers={"Content-Type": "application/json"} | header_metadata
+        ):
             versions = await self.object_client.get_latest_object_versions(object_ids)
         self.assertEqual(versions, {UUID(int=1): "2023-01-01T00:00:00.00000000Z", UUID(int=2): None})
         self.assert_request_made(
@@ -700,7 +746,8 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             headers={
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-            },
+            }
+            | header_metadata,
             body=["00000000-0000-0000-0000-000000000001", "00000000-0000-0000-0000-000000000002"],
         )
 
@@ -711,7 +758,11 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         responses = []
         for batch in batch_ids:
             data = json.dumps([{"object_id": str(batch_id), "version_id": version_id} for batch_id in batch])
-            responses.append(MockResponse(status_code=200, headers={"Content-Type": "application/json"}, content=data))
+            responses.append(
+                MockResponse(
+                    status_code=200, headers={"Content-Type": "application/json"} | header_metadata, content=data
+                )
+            )
         self.transport.request.side_effect = responses
         versions = await self.object_client.get_latest_object_versions(object_ids, batch_size=3)
         expected_versions = {object_id: version_id for object_id in object_ids}
@@ -723,7 +774,8 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
                 headers={
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                },
+                }
+                | header_metadata,
                 body=[str(b_id) for b_id in batch],
             )
 
@@ -753,7 +805,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/path/{expected_object_path}",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=new_pointset_without_uuid,
         )
         expected_uuid = UUID(int=2)
@@ -797,7 +849,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/path/{expected_object_path}",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=new_pointset,
         )
 
@@ -875,7 +927,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/path/{expected_object_path}",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=existing_pointset,
         )
         self.assertEqual("A", new_object_metadata.parent)
@@ -926,7 +978,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/path/{expected_object_path}",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=existing_pointset,
         )
 
@@ -1003,7 +1055,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/{existing_uuid}",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=updated_pointset,
         )
         self.assertEqual("A", new_object_metadata.parent)
@@ -1061,7 +1113,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/path/{expected_path}?version={quote(expected_version)}",
-            headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
+            headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
         )
         # Check metadata.
         actual_metadata = actual_object.metadata
@@ -1101,7 +1153,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/{expected_uuid}?version={quote(expected_version)}",
-            headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
+            headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
         )
         # Check metadata.
         actual_metadata = actual_object.metadata
@@ -1149,7 +1201,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/path/{expected_path}?version={quote(expected_version)}",
-            headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
+            headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
         )
         # Check metadata.
         actual_metadata = actual_object.metadata
@@ -1171,7 +1223,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.DELETE,
             path=f"{self.base_path}/objects/path/{expected_path}",
-            headers={"Accept-Encoding": "gzip"},
+            headers={"Accept-Encoding": "gzip"} | header_metadata,
         )
         self.assertIsNone(actual_object)
 
@@ -1183,7 +1235,7 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.DELETE,
             path=f"{self.base_path}/objects/{expected_uuid}",
-            headers={"Accept-Encoding": "gzip"},
+            headers={"Accept-Encoding": "gzip"} | header_metadata,
         )
         self.assertIsNone(actual_object)
 
@@ -1200,7 +1252,8 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             headers={
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-            },
+            }
+            | header_metadata,
         )
 
     async def test_restore_geoscience_object_with_rename(self) -> None:
@@ -1218,7 +1271,8 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
             headers={
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-            },
+            }
+            | header_metadata,
         )
         self.assertEqual("A", restored_object_metadata.parent)
         self.assertEqual("m.json", restored_object_metadata.name)
@@ -1229,14 +1283,14 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         list_stages_response = load_test_data("list_stages.json")
 
         with self.transport.set_http_response(
-            200, json.dumps(list_stages_response), headers={"Content-Type": "application/json"}
+            200, json.dumps(list_stages_response), headers={"Content-Type": "application/json"} | header_metadata
         ):
             stages = await self.object_client.list_stages()
 
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.instance_base_path}/stages",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
         self.assertListEqual(
@@ -1262,6 +1316,6 @@ class TestObjectAPIClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.PATCH,
             path=f"{self.base_path}/objects/{object_id}/metadata?version_id={version_id}",
-            headers={"Content-Type": "application/json"},
+            headers={"Content-Type": "application/json"} | header_metadata,
             body={"stage_id": str(stage_id)},
         )

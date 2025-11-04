@@ -16,7 +16,11 @@ from uuid import UUID
 from data import load_test_data
 from evo.common import Environment, HealthCheckType, Page, RequestMethod, ServiceUser
 from evo.common.test_tools import BASE_URL, ORG, WORKSPACE_ID, MockResponse, TestWithConnector, utc_datetime
+from evo.common.utils import get_package_details
 from evo.files import FileAPIClient, FileAPIDownload, FileAPIUpload, FileMetadata, FileVersion
+
+package_details = get_package_details("evo-files")
+header_metadata = {package_details["name"]: package_details["version"]}
 
 
 class TestFileApiClient(TestWithConnector):
@@ -38,7 +42,9 @@ class TestFileApiClient(TestWithConnector):
     async def test_list_files_default_args(self) -> None:
         empty_content = load_test_data("list_files_empty.json")
         with self.transport.set_http_response(
-            200, json.dumps(empty_content), headers={"Content-Type": "application/json"}
+            200,
+            json.dumps(empty_content),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             page = await self.file_api_client.list_files()
         self.assertIsInstance(page, Page)
@@ -46,13 +52,15 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files?limit=5000&offset=0",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_files_all_args(self) -> None:
         empty_content = load_test_data("list_files_empty.json")
         with self.transport.set_http_response(
-            200, json.dumps(empty_content), headers={"Content-Type": "application/json"}
+            200,
+            json.dumps(empty_content),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             page = await self.file_api_client.list_files(limit=20, offset=10, name="x.csv")
         self.assertIsInstance(page, Page)
@@ -60,15 +68,23 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files?limit=20&offset=10&file_name=x.csv",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_files(self) -> None:
         content_0 = load_test_data("list_files_0.json")
         content_1 = load_test_data("list_files_1.json")
         responses = [
-            MockResponse(status_code=200, content=json.dumps(content_0), headers={"Content-Type": "application/json"}),
-            MockResponse(status_code=200, content=json.dumps(content_1), headers={"Content-Type": "application/json"}),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_0),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_1),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
         ]
         self.transport.request.side_effect = responses
         page_one = await self.file_api_client.list_files(limit=2)
@@ -122,7 +138,7 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files?limit=2&offset=0",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
         self.transport.request.reset_mock()
 
@@ -157,15 +173,23 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files?limit=2&offset=2",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_all_files(self) -> None:
         content_0 = load_test_data("list_files_0.json")
         content_1 = load_test_data("list_files_1.json")
         responses = [
-            MockResponse(status_code=200, content=json.dumps(content_0), headers={"Content-Type": "application/json"}),
-            MockResponse(status_code=200, content=json.dumps(content_1), headers={"Content-Type": "application/json"}),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_0),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
+            MockResponse(
+                status_code=200,
+                content=json.dumps(content_1),
+                headers={"Content-Type": "application/json"} | header_metadata,
+            ),
         ]
         self.transport.request.side_effect = responses
         file_list = await self.file_api_client.list_all_files(limit_per_request=2)
@@ -236,12 +260,12 @@ class TestFileApiClient(TestWithConnector):
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files?limit=2&offset=0",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files?limit=2&offset=2",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_get_file_by_path(self) -> None:
@@ -269,14 +293,16 @@ class TestFileApiClient(TestWithConnector):
         )
 
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(get_file_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(get_file_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             actual_metadata = await self.file_api_client.get_file_by_path(path)
 
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files/path/{path}",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
         self.assertEqual(expected_metadata, actual_metadata)
 
@@ -305,7 +331,9 @@ class TestFileApiClient(TestWithConnector):
         )
 
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(get_file_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(get_file_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             download = await self.file_api_client.prepare_download_by_path(path)
 
@@ -314,7 +342,7 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files/path/{path}",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_get_file_by_id(self) -> None:
@@ -342,14 +370,16 @@ class TestFileApiClient(TestWithConnector):
         )
 
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(get_file_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(get_file_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             actual_metadata = await self.file_api_client.get_file_by_id(file_id)
 
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files/{file_id}",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
         self.assertEqual(expected_metadata, actual_metadata)
 
@@ -378,7 +408,9 @@ class TestFileApiClient(TestWithConnector):
         )
 
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(get_file_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(get_file_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             download = await self.file_api_client.prepare_download_by_id(file_id)
 
@@ -387,14 +419,16 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files/{file_id}",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_versions_by_path(self) -> None:
         file_path = "points.csv"
         list_versions_response = load_test_data("list_versions.json")
         with self.transport.set_http_response(
-            200, json.dumps(list_versions_response), headers={"Content-Type": "application/json"}
+            200,
+            json.dumps(list_versions_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             versions = await self.file_api_client.list_versions_by_path(file_path)
         expected_versions = [
@@ -431,14 +465,16 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files/path/points.csv?include_versions=True",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_list_versions_by_id(self) -> None:
         file_id = UUID(int=6)
         list_versions_response = load_test_data("list_versions.json")
         with self.transport.set_http_response(
-            200, json.dumps(list_versions_response), headers={"Content-Type": "application/json"}
+            200,
+            json.dumps(list_versions_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             versions = await self.file_api_client.list_versions_by_id(file_id)
         expected_versions = [
@@ -475,13 +511,15 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/files/{file_id}?include_versions=True",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_prepare_upload_by_path(self) -> None:
         upsert_file_response = load_test_data("upsert_file.json")
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(upsert_file_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(upsert_file_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             upload = await self.file_api_client.prepare_upload_by_path("points.csv")
 
@@ -491,14 +529,16 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.PUT,
             path=f"{self.base_path}/files/path/points.csv",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_update_file_by_id(self) -> None:
         update_file_response = load_test_data("update_file.json")
         file_id = UUID(int=5)
         with self.transport.set_http_response(
-            status_code=200, content=json.dumps(update_file_response), headers={"Content-Type": "application/json"}
+            status_code=200,
+            content=json.dumps(update_file_response),
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             upload = await self.file_api_client.prepare_upload_by_id(file_id)
 
@@ -508,27 +548,33 @@ class TestFileApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.PUT,
             path=f"{self.base_path}/files/{file_id}",
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json"} | header_metadata,
         )
 
     async def test_delete_file_by_path(self) -> None:
         path = "points.csv"
         with self.transport.set_http_response(
-            status_code=204, content="", headers={"Content-Type": "application/json"}
+            status_code=204,
+            content="",
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             await self.file_api_client.delete_file_by_path(path)
         self.assert_request_made(
             method=RequestMethod.DELETE,
             path=f"{self.base_path}/files/path/{path}",
+            headers=header_metadata,
         )
 
     async def test_delete_file_by_id(self) -> None:
         file_id = UUID(int=6)
         with self.transport.set_http_response(
-            status_code=204, content="", headers={"Content-Type": "application/json"}
+            status_code=204,
+            content="",
+            headers={"Content-Type": "application/json"} | header_metadata,
         ):
             await self.file_api_client.delete_file_by_id(file_id)
         self.assert_request_made(
             method=RequestMethod.DELETE,
             path=f"{self.base_path}/files/{file_id}",
+            headers=header_metadata,
         )

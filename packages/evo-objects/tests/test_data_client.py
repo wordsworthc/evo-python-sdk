@@ -19,9 +19,12 @@ from data import load_test_data
 from evo.common import IFeedback, RequestMethod
 from evo.common.io.exceptions import DataExistsError
 from evo.common.test_tools import TestWithConnector, TestWithStorage
-from evo.common.utils import NoFeedback, PartialFeedback
+from evo.common.utils import NoFeedback, PartialFeedback, get_package_details
 from evo.objects.utils import KnownTableFormat, ObjectDataClient
 from helpers import NoImport, UnloadModule, get_sample_table_and_bytes
+
+package_details = get_package_details("evo-objects")
+header_metadata = {package_details["name"]: package_details["version"]}
 
 
 class TestObjectDataClient(TestWithConnector, TestWithStorage):
@@ -138,7 +141,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.PUT,
             path=f"{self.base_path}/data",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=[{"name": data["name"]} for data in put_data_response[1:]] + [{"name": put_data_response[0]["name"]}],
         )
 
@@ -175,7 +178,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.PUT,
             path=f"{self.base_path}/data",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=[{"name": mock_data_id}],
         )
         self.assertIs(mock_table_info, actual_table_info)
@@ -216,7 +219,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.PUT,
             path=f"{self.base_path}/data",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=[{"name": mock_data_id}],
         )
         self.assertIs(mock_table_info, actual_table_info)
@@ -255,7 +258,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.PUT,
             path=f"{self.base_path}/data",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=[{"name": mock_data_id}],
         )
         self.assertIs(mock_table_info, actual_table_info)
@@ -298,7 +301,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.PUT,
             path=f"{self.base_path}/data",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
             body=[{"name": mock_data_id}],
         )
         self.assertIs(mock_table_info, actual_table_info)
@@ -339,7 +342,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/{object_id}",
-            headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
+            headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
         )
         self.assertEqual(sample_table, actual_table)
 
@@ -379,7 +382,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/{object_id}",
-            headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
+            headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
         )
         assert_frame_equal(sample_table.to_pandas(), actual_dataframe)
 
@@ -437,7 +440,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/{object_id}",
-            headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
+            headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
         )
         self.transport.request.assert_called_once()  # Ensure no other requests were made.
         self.assertEqual(sample_table, actual_table)
@@ -480,7 +483,7 @@ class TestObjectDataClient(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/{object_id}",
-            headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
+            headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
         )
         self.transport.request.assert_called_once()  # Ensure no other requests were made.
         assert_frame_equal(sample_table.to_pandas(), actual_dataframe)
