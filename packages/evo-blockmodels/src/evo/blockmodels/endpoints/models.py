@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from enum import Enum
 from typing import Annotated, Any, Literal
 from uuid import UUID
@@ -102,10 +103,6 @@ class GeometryColumns(Enum):
     coordinates = "coordinates"
 
 
-class FileFormat(Enum):
-    csv = "csv"
-
-
 class InputOptionsCSV(CustomBaseModel):
     column_name_mapping: Annotated[
         list[ColumnNameMapping] | list[ColumnNameMappingGeneric] | None,
@@ -113,28 +110,20 @@ class InputOptionsCSV(CustomBaseModel):
     ] = []
     decimal_char: Annotated[StrictStr | None, Field(max_length=1, min_length=1, title="Decimal Char")] = "."
     delimiter: Annotated[StrictStr | None, Field(max_length=1, min_length=1, title="Delimiter")] = ","
-    file_format: Annotated[FileFormat, Field(title="File Format")] = "csv"
+    file_format: Literal["csv"] = Field(title="File Format")
     quote_char: Annotated[StrictStr | None, Field(max_length=1, min_length=1, title="Quote Char")] = '"'
     skip_rows: Annotated[StrictInt | None, Field(ge=0, title="Skip Rows")] = 0
     skip_rows_after_headers: Annotated[StrictInt | None, Field(ge=0, title="Skip Rows After Headers")] = 0
 
 
-class FileFormat1(Enum):
-    datamine = "datamine"
-
-
 class InputOptionsDatamine(CustomBaseModel):
     column_name_mapping: Annotated[list[ColumnNameMappingGeneric] | None, Field(title="Column Name Mapping")] = []
-    file_format: Annotated[FileFormat1, Field(title="File Format")] = "datamine"
-
-
-class FileFormat2(Enum):
-    parquet = "parquet"
+    file_format: Literal["datamine"] = Field(title="File Format")
 
 
 class InputOptionsParquet(CustomBaseModel):
     column_name_mapping: Annotated[list[ColumnNameMappingGeneric] | None, Field(title="Column Name Mapping")] = []
-    file_format: Annotated[FileFormat2, Field(title="File Format")] = "parquet"
+    file_format: Literal["parquet"] = Field(title="File Format")
 
 
 class IntRange(CustomBaseModel):
@@ -239,14 +228,6 @@ class OctreeSubblocks(CustomBaseModel):
     nz: Annotated[StrictInt, Field(title="Nz")]
 
 
-class FileFormat3(Enum):
-    """
-    CSV file
-    """
-
-    csv = "csv"
-
-
 class OutputOptionsCSV(CustomBaseModel):
     column_headers: ColumnHeaderType | None = "name"
     """
@@ -264,14 +245,6 @@ class OutputOptionsCSV(CustomBaseModel):
     """
     CSV file
     """
-
-
-class FileFormat4(Enum):
-    """
-    Apache Parquet file
-    """
-
-    parquet = "parquet"
 
 
 class OutputOptionsParquet(CustomBaseModel):
@@ -1615,7 +1588,7 @@ class Version(CustomBaseModel):
     """
     User-supplied comment
     """
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: datetime = Field(..., title="Created At")
     """
     When the version was created
     """
@@ -1701,7 +1674,7 @@ class BlockModel(CustomBaseModel):
     If an EPSG code is provided, it must be for a coordinate reference system with a length unit type (e.g. `metre`, or `foot`).
 
     """
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: datetime = Field(..., title="Created At")
     """
     Block model creation time
     """
@@ -1727,7 +1700,7 @@ class BlockModel(CustomBaseModel):
     """
     UUID of the Geoscience Object Service object associated with the block model
     """
-    last_updated_at: Annotated[AwareDatetime, Field(title="Last Updated At")]
+    last_updated_at: datetime = Field(..., title="Last Updated At")
     """
     Date and time of the last block model update, including metadata updates
     """
@@ -1816,7 +1789,7 @@ class BlockModelAndJobURL(CustomBaseModel):
     If an EPSG code is provided, it must be for a coordinate reference system with a length unit type (e.g. `metre`, or `foot`).
 
     """
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: datetime = Field(..., title="Created At")
     """
     Block model creation time
     """
@@ -1843,7 +1816,7 @@ class BlockModelAndJobURL(CustomBaseModel):
     UUID of the Geoscience Object Service object associated with the block model
     """
     job_url: Annotated[AnyUrl, Field(title="Job Url")]
-    last_updated_at: Annotated[AwareDatetime, Field(title="Last Updated At")]
+    last_updated_at: datetime = Field(..., title="Last Updated At")
     """
     Date and time of the last block model update, including metadata updates
     """
@@ -2420,7 +2393,7 @@ class VersionWithChanges(CustomBaseModel):
     """
     User-supplied comment
     """
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: datetime = Field(..., title="Created At")
     """
     When the version was created
     """

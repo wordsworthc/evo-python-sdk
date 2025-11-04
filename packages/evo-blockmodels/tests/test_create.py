@@ -24,6 +24,7 @@ from evo.blockmodels.exceptions import CacheNotConfiguredException, JobFailedExc
 from evo.common import ServiceUser
 from evo.common.data import HTTPHeaderDict, RequestMethod
 from evo.common.test_tools import BASE_URL, MockResponse, TestWithConnector, TestWithStorage
+from evo.common.utils import get_package_details
 from utils import JobPollingRequestHandler
 
 BM_UUID = uuid.uuid4()
@@ -40,6 +41,9 @@ BM_BBOX = models.BBoxXYZ(
 GRID_DEFINITION = RegularGridDefinition(
     model_origin=[0, 0, 0], rotations=[(RotationAxis.x, 20)], n_blocks=[10, 10, 10], block_size=[1, 1, 1]
 )
+
+package_details = get_package_details("evo-blockmodels")
+header_metadata = {package_details["name"]: package_details["version"]}
 
 
 def _mock_create_result(environment) -> models.BlockModelAndJobURL:
@@ -275,7 +279,8 @@ class TestCreateBlockModel(TestWithConnector, TestWithStorage):
                     "Authorization": "Bearer <not-a-real-token>",
                     "Content-Type": "application/json",
                     "Accept": "application/json",
-                },
+                }
+                | header_metadata,
             )
         self.assertEqual(bm.id, BM_UUID)
 

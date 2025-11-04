@@ -24,6 +24,7 @@ from evo.blockmodels.exceptions import CacheNotConfiguredException, JobFailedExc
 from evo.common import ServiceUser
 from evo.common.data import HTTPHeaderDict, RequestMethod
 from evo.common.test_tools import BASE_URL, MockResponse, TestWithConnector, TestWithStorage
+from evo.common.utils import get_package_details
 from utils import JobPollingRequestHandler
 
 BM_UUID = uuid.uuid4()
@@ -32,6 +33,9 @@ GOOSE_VERSION_ID = "2"
 DATE = datetime(2021, 1, 1)
 MODEL_USER = models.UserInfo(email="test@test.com", name="Test User", id=uuid.uuid4())
 USER = ServiceUser.from_model(MODEL_USER)
+
+package_details = get_package_details("evo-blockmodels")
+header_metadata = {package_details["name"]: package_details["version"]}
 
 
 def _mock_version(
@@ -175,7 +179,8 @@ class TestUpdateBlockModel(TestWithConnector, TestWithStorage):
                     "Authorization": "Bearer <not-a-real-token>",
                     "Content-Type": "application/json",
                     "Accept": "application/json",
-                },
+                }
+                | header_metadata,
             )
         self.assertEqual(version.bm_uuid, BM_UUID)
         self.assertEqual(version.version_id, 2)
@@ -270,7 +275,8 @@ class TestUpdateBlockModel(TestWithConnector, TestWithStorage):
                     "Authorization": "Bearer <not-a-real-token>",
                     "Content-Type": "application/json",
                     "Accept": "application/json",
-                },
+                }
+                | header_metadata,
             )
         self.assertEqual(version.bm_uuid, BM_UUID)
         self.assertEqual(version.version_id, 2)
