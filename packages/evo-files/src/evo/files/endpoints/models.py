@@ -14,10 +14,11 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import AwareDatetime, Field, StrictInt, StrictStr
+from pydantic import Field, StrictInt, StrictStr
 
 from .._model_config import CustomBaseModel
 
@@ -62,7 +63,7 @@ class FileVersionResponse(CustomBaseModel):
     Metadata for specific file version
     """
 
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: UserInfo | None = None
     file_id: Annotated[UUID, Field(title="File Id")]
     link: Annotated[StrictStr, Field(title="Link")]
@@ -73,14 +74,14 @@ class FileVersionResponse(CustomBaseModel):
 
 
 class ListFile(CustomBaseModel):
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: UserInfo | None = None
-    deleted_at: Annotated[AwareDatetime | None, Field(title="Deleted At")] = None
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
     deleted_by: UserInfo | None = None
     etag: Annotated[StrictStr, Field(title="Etag")]
     file_id: Annotated[UUID, Field(title="File Id")]
     links: ListFileLinks
-    modified_at: Annotated[AwareDatetime, Field(title="Modified At")]
+    modified_at: Annotated[datetime, Field(title="Modified At")]
     modified_by: UserInfo | None = None
     name: Annotated[StrictStr, Field(title="Name")]
     path: Annotated[StrictStr, Field(title="Path")]
@@ -106,14 +107,14 @@ class DownloadFileResponse(CustomBaseModel):
     Download file response.
     """
 
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: UserInfo | None = None
-    deleted_at: Annotated[AwareDatetime | None, Field(title="Deleted At")] = None
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
     deleted_by: UserInfo | None = None
     download: Annotated[StrictStr, Field(title="Download")]
     etag: Annotated[StrictStr, Field(title="Etag")]
     file_id: Annotated[UUID, Field(title="File Id")]
-    modified_at: Annotated[AwareDatetime, Field(title="Modified At")]
+    modified_at: Annotated[datetime, Field(title="Modified At")]
     modified_by: UserInfo | None = None
     name: Annotated[StrictStr, Field(title="Name")]
     path: Annotated[StrictStr, Field(title="Path")]

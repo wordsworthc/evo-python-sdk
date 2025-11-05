@@ -20,7 +20,6 @@ from typing import Annotated
 from uuid import UUID
 
 from pydantic import (
-    AwareDatetime,
     Field,
     RootModel,
     StrictBool,
@@ -193,7 +192,7 @@ class GeoscienceObjectVersion(CustomBaseModel):
     Geoscience object version.
     """
 
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: User | None = None
     etag: Annotated[StrictStr, Field(title="Etag")]
     links: ObjectVersionResponseLinks
@@ -231,9 +230,9 @@ class ListVersionsResponse(CustomBaseModel):
 
 
 class ListedObject(CustomBaseModel):
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: User | None = None
-    deleted_at: Annotated[AwareDatetime | None, Field(title="Deleted At")] = None
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
     deleted_by: User | None = None
     etag: Annotated[StrictStr, Field(title="Etag")]
     geojson_bounding_box: BoundingBox | None = None
@@ -241,7 +240,7 @@ class ListedObject(CustomBaseModel):
         StrictBool | None, Field(title="Geojson Bounding Box From Workspace Crs")
     ] = None
     links: ListedObjectLinks
-    modified_at: Annotated[AwareDatetime, Field(title="Modified At")]
+    modified_at: Annotated[datetime, Field(title="Modified At")]
     modified_by: User | None = None
     name: Annotated[StrictStr, Field(title="Name")]
     object_id: Annotated[UUID, Field(title="Object Id")]
@@ -255,12 +254,12 @@ class ListedObject(CustomBaseModel):
 
 
 class OrgListedObject(CustomBaseModel):
-    created_at: Annotated[AwareDatetime, Field(title="Created At")]
+    created_at: Annotated[datetime, Field(title="Created At")]
     created_by: User | None = None
-    deleted_at: Annotated[AwareDatetime | None, Field(title="Deleted At")] = None
+    deleted_at: Annotated[datetime | None, Field(title="Deleted At")] = None
     deleted_by: User | None = None
     geojson_bounding_box: BoundingBox | None = None
-    modified_at: Annotated[AwareDatetime, Field(title="Modified At")]
+    modified_at: Annotated[datetime, Field(title="Modified At")]
     modified_by: User | None = None
     name: Annotated[StrictStr, Field(title="Name")]
     object_id: Annotated[UUID, Field(title="Object Id")]

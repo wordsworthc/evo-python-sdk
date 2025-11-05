@@ -21,7 +21,6 @@ from uuid import UUID
 
 from pydantic import (
     AnyUrl,
-    AwareDatetime,
     Field,
     RootModel,
     StrictBool,
@@ -601,7 +600,7 @@ class ModelType(Enum):
 
 
 class SizeOptionsFlexible(CustomBaseModel):
-    model_type: Annotated[Literal["flexible"], Field(title="Model Type")] = "flexible"
+    model_type: Annotated[Literal["flexible"], Field(title="Model Type")]
     """
     Type of sub-blocking
     """
@@ -628,7 +627,7 @@ class ModelType1(Enum):
 
 
 class SizeOptionsFullySubBlocked(CustomBaseModel):
-    model_type: Annotated[Literal["fully-sub-blocked"], Field(title="Model Type")] = "fully-sub-blocked"
+    model_type: Annotated[Literal["fully-sub-blocked"], Field(title="Model Type")]
     """
     Type of sub-blocking
     """
@@ -655,7 +654,7 @@ class ModelType2(Enum):
 
 
 class SizeOptionsOctree(CustomBaseModel):
-    model_type: Annotated[Literal["variable-octree"], Field(title="Model Type")] = "variable-octree"
+    model_type: Annotated[Literal["variable-octree"], Field(title="Model Type")]
     """
     Type of sub-blocking
     """
@@ -686,7 +685,7 @@ class SizeOptionsRegular(CustomBaseModel):
     """
     Block size
     """
-    model_type: Annotated[Literal["regular"], Field(title="Model Type")] = "regular"
+    model_type: Annotated[Literal["regular"], Field(title="Model Type")]
     """
     Type of sub-blocking
     """
@@ -1080,7 +1079,7 @@ class QueryResult(CustomBaseModel):
 class ReportComparisonResultInfo(CustomBaseModel):
     referenced_columns: Annotated[list[ReportResultReferencedColumn], Field(title="Referenced Columns")]
     report_result_created_at: Annotated[
-        AwareDatetime,
+        datetime,
         Field(examples=["2021-01-01T00:00:00Z"], title="Report Result Created At"),
     ]
     """
@@ -1101,7 +1100,7 @@ class ReportComparisonResultInfo(CustomBaseModel):
     Comment of the version of the block model that the report was run on
     """
     version_created_at: Annotated[
-        AwareDatetime,
+        datetime,
         Field(examples=["2021-01-01T00:00:00Z"], title="Version Created At"),
     ]
     """
@@ -1151,7 +1150,7 @@ class ReportResultSet(CustomBaseModel):
 
 class ReportResultSummary(CustomBaseModel):
     report_result_created_at: Annotated[
-        AwareDatetime,
+        datetime,
         Field(examples=["2021-01-01T00:00:00Z"], title="Report Result Created At"),
     ]
     """
@@ -1178,7 +1177,7 @@ class ReportResultSummary(CustomBaseModel):
     ID of the report specification that was run
     """
     version_created_at: Annotated[
-        AwareDatetime,
+        datetime,
         Field(examples=["2021-01-01T00:00:00Z"], title="Version Created At"),
     ]
     """
@@ -1446,7 +1445,7 @@ class ReportSpecificationWithLastRunInfo(CustomBaseModel):
     User-supplied description of the report
     """
     last_result_created_at: Annotated[
-        AwareDatetime | None,
+        datetime | None,
         Field(examples=["2021-01-01T00:00:00Z"], title="Last Result Created At"),
     ] = None
     """
@@ -2051,7 +2050,7 @@ class ReportResult(CustomBaseModel):
     """
     referenced_columns: Annotated[list[ReportResultReferencedColumn], Field(title="Referenced Columns")]
     report_result_created_at: Annotated[
-        AwareDatetime,
+        datetime,
         Field(examples=["2021-01-01T00:00:00Z"], title="Report Result Created At"),
     ]
     """
@@ -2119,7 +2118,7 @@ class ReportResult(CustomBaseModel):
     Comment of the version of the block model that the report was run on
     """
     version_created_at: Annotated[
-        AwareDatetime,
+        datetime,
         Field(examples=["2021-01-01T00:00:00Z"], title="Version Created At"),
     ]
     """

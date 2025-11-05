@@ -55,7 +55,7 @@ class DiscoveryApi:
     def __init__(self, connector: APIConnector):
         self.connector = connector
 
-    async def v1_discovery_evo_identity_v1_discovery_get(
+    async def v1_discovery_workspace_evo_identity_v1_discovery_get(
         self,
         service: list[str] | None = None,
         user_agent: str | None = None,
@@ -127,7 +127,7 @@ class DiscoveryApi:
             request_timeout=request_timeout,
         )
 
-    async def v2_discovery_evo_identity_v2_discovery_get(
+    async def v2_discovery_workspace_evo_identity_v2_discovery_get(
         self,
         service: list[str] | None = None,
         cache_control: str | None = None,

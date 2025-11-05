@@ -55,7 +55,7 @@ class GeneralApi:
     def __init__(self, connector: APIConnector):
         self.connector = connector
 
-    async def health_check_health_check_get(
+    async def health_check_workspace_health_check_get(
         self,
         full: bool | None = None,
         check_dependencies: bool | None = None,
