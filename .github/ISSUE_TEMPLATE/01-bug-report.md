@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Create a report to help us improve
+about: Create a report to help us improve evo-python-sdk
 title: "Bug: "
 ---
 
@@ -18,9 +18,10 @@ title: "Bug: "
 
 ## Environment
 <!-- Please complete the following information -->
-- **OS:** [e.g. macOS, Windows 10, Ubuntu 20.04]
-- **Package:** [e.g. evo-blockmodels]
-- **Version:** [e.g. v1.2.3]
+- **OS:** [e.g. macOS 26, Windows 11, Ubuntu 20.04]
+- **Package:** [e.g. evo-objects]
+- **Package Version:** [e.g. 0.3.1]
+- **Python Version:** [e.g. 3.12.3]
 
 ## Screenshots/Logs
 <!-- If applicable, add screenshots or paste relevant log output -->
