@@ -32,7 +32,7 @@ from evo.common.test_tools import (
     TestWithConnector,
     TestWithStorage,
 )
-from evo.common.utils import NoFeedback, get_package_details
+from evo.common.utils import NoFeedback, get_header_metadata
 from evo.jmespath import JMESPathObjectProxy
 from evo.objects import DownloadedObject, ObjectReference
 from evo.objects.endpoints import models
@@ -56,8 +56,7 @@ _TABLE_INFO_VARIANTS: list[tuple[str, TableInfo | str]] = [
     ("with JMESPath reference", "locations.coordinates"),
 ]
 
-package_details = get_package_details("evo-objects")
-header_metadata = {package_details["name"]: package_details["version"]}
+header_metadata = get_header_metadata("evo-objects")
 
 
 class TestDownloadedObject(TestWithConnector, TestWithStorage):

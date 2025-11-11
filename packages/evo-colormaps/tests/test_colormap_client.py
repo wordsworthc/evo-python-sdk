@@ -27,10 +27,9 @@ from evo.colormaps.exceptions import UnknownColormapType
 from evo.common import Environment, HealthCheckType, RequestMethod, ServiceUser
 from evo.common.exceptions import NotFoundException
 from evo.common.test_tools import BASE_URL, ORG, WORKSPACE_ID, TestWithConnector, utc_datetime
-from evo.common.utils import get_package_details
+from evo.common.utils import get_header_metadata
 
-package_details = get_package_details("evo-colormaps")
-header_metadata = {package_details["name"]: package_details["version"]}
+header_metadata = get_header_metadata("evo-colormaps")
 
 
 class TestColormapApiClient(TestWithConnector):

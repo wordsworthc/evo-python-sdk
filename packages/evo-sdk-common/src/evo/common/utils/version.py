@@ -12,7 +12,22 @@
 import functools
 from importlib import metadata
 
-__all__ = ["get_package_details"]
+__all__ = ["get_header_metadata"]
+
+
+@functools.cache
+def get_header_metadata(candidate: str) -> dict[str, str]:
+    """Get package name and version given the module __name__ for use in headers.
+
+    :param candidate: The module __name__ to start searching from.
+
+    :return: A dictionary containing the package name and version in a single entry.
+    """
+    try:
+        package_details = get_package_details(candidate)
+        return {package_details["name"]: package_details["version"]}
+    except metadata.PackageNotFoundError:
+        return {"evo-sdk-common": metadata.version("evo-sdk-common")}
 
 
 @functools.cache
@@ -36,4 +51,4 @@ def get_package_details(candidate: str) -> dict[str, str]:
                 "version": package_metadata["version"],
             }
 
-    return {}
+    raise metadata.PackageNotFoundError(__package__)

@@ -29,7 +29,7 @@ API version: 0.0.2
 
 from evo.common.connector import APIConnector
 from evo.common.data import EmptyResponse, HTTPResponse, RequestMethod
-from evo.common.utils import get_package_details
+from evo.common.utils import get_header_metadata
 
 from ..models import *  # noqa: F403
 
@@ -99,12 +99,9 @@ class JobsApi:
         }
 
         # Prepare the header parameters.
-        _header_params = {}
+        _header_params = {} | get_header_metadata(__name__)
         if additional_headers is not None:
             _header_params.update(additional_headers)
-        package_details = get_package_details(__name__)
-        if "name" in package_details and "version" in package_details:
-            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -174,12 +171,9 @@ class JobsApi:
         # Prepare the header parameters.
         _header_params = {
             "Accept": "application/json",
-        }
+        } | get_header_metadata(__name__)
         if additional_headers is not None:
             _header_params.update(additional_headers)
-        package_details = get_package_details(__name__)
-        if "name" in package_details and "version" in package_details:
-            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}
@@ -250,12 +244,9 @@ class JobsApi:
         # Prepare the header parameters.
         _header_params = {
             "Accept": "application/json",
-        }
+        } | get_header_metadata(__name__)
         if additional_headers is not None:
             _header_params.update(additional_headers)
-        package_details = get_package_details(__name__)
-        if "name" in package_details and "version" in package_details:
-            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}

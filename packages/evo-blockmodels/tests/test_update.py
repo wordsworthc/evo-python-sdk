@@ -24,7 +24,7 @@ from evo.blockmodels.exceptions import CacheNotConfiguredException, JobFailedExc
 from evo.common import ServiceUser
 from evo.common.data import HTTPHeaderDict, RequestMethod
 from evo.common.test_tools import BASE_URL, MockResponse, TestWithConnector, TestWithStorage
-from evo.common.utils import get_package_details
+from evo.common.utils import get_header_metadata
 from utils import JobPollingRequestHandler
 
 BM_UUID = uuid.uuid4()
@@ -34,8 +34,7 @@ DATE = datetime(2021, 1, 1)
 MODEL_USER = models.UserInfo(email="test@test.com", name="Test User", id=uuid.uuid4())
 USER = ServiceUser.from_model(MODEL_USER)
 
-package_details = get_package_details("evo-blockmodels")
-header_metadata = {package_details["name"]: package_details["version"]}
+header_metadata = get_header_metadata("evo-blockmodels")
 
 
 def _mock_version(

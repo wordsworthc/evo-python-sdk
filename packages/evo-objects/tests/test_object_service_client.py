@@ -23,7 +23,7 @@ from evo.common import HealthCheckType, Page, RequestMethod, ServiceUser
 from evo.common.data import OrderByOperatorEnum
 from evo.common.io.exceptions import DataNotFoundError
 from evo.common.test_tools import MockResponse, TestWithConnector, TestWithStorage
-from evo.common.utils import get_package_details
+from evo.common.utils import get_header_metadata
 from evo.objects import (
     ObjectAPIClient,
     ObjectDataDownload,
@@ -42,8 +42,7 @@ EMPTY_CONTENT = '{"objects": [], "links": {"next": null, "prev": null}}'
 MOCK_VERSION_CONTENT = json.dumps(load_test_data("list_versions.json"))
 _MAX_UPLOAD_URLS = 32
 
-package_details = get_package_details("evo-objects")
-header_metadata = {package_details["name"]: package_details["version"]}
+header_metadata = get_header_metadata("evo-objects")
 
 
 class TestObjectAPIClient(TestWithConnector, TestWithStorage):

@@ -16,11 +16,10 @@ from uuid import UUID
 from data import load_test_data
 from evo.common import Environment, HealthCheckType, Page, RequestMethod, ServiceUser
 from evo.common.test_tools import BASE_URL, ORG, WORKSPACE_ID, MockResponse, TestWithConnector, utc_datetime
-from evo.common.utils import get_package_details
+from evo.common.utils import get_header_metadata
 from evo.files import FileAPIClient, FileAPIDownload, FileAPIUpload, FileMetadata, FileVersion
 
-package_details = get_package_details("evo-files")
-header_metadata = {package_details["name"]: package_details["version"]}
+header_metadata = get_header_metadata("evo-files")
 
 
 class TestFileApiClient(TestWithConnector):

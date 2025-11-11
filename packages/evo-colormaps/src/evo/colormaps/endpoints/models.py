@@ -61,22 +61,6 @@ class AttributeColormapAssociationList(CustomBaseModel):
     associations: Annotated[list[AttributeColormapAssociation], Field(title="Associations")]
 
 
-class ColorItem(RootModel[StrictInt]):
-    root: StrictInt
-
-
-class Color(RootModel[list[ColorItem]]):
-    root: Annotated[list[ColorItem], Field(max_length=3, min_length=3)]
-
-
-class Color1Item(RootModel[StrictInt]):
-    root: StrictInt
-
-
-class Color1(RootModel[list[Color1Item]]):
-    root: Annotated[list[Color1Item], Field(max_length=3, min_length=3)]
-
-
 class ColormapTypeEnum(Enum):
     continuous = "continuous"
     category = "category"
@@ -84,7 +68,10 @@ class ColormapTypeEnum(Enum):
 
 
 class CategoryColormapData(CustomBaseModel):
-    colors: Annotated[list[Color], Field(max_length=16384, min_length=1, title="Colors")]
+    colors: Annotated[
+        list[Annotated[list[StrictInt], Field(max_length=3, min_length=3)]],
+        Field(max_length=16384, min_length=1, title="Colors"),
+    ]
     """
     An ordered list of RGB colors, containing between 1 and 16384 colors. Each color is represented by three integer values (for Red, Green, and Blue) ranging from 0 to 255.
     """
@@ -93,17 +80,12 @@ class CategoryColormapData(CustomBaseModel):
     name: Annotated[StrictStr, Field(title="Name")]
 
 
-class Color2Item(RootModel[StrictInt]):
-    root: StrictInt
-
-
-class Color2(RootModel[list[Color2Item]]):
-    root: Annotated[list[Color2Item], Field(max_length=3, min_length=3)]
-
-
 class ContinuousColormapData(CustomBaseModel):
     attribute_controls: Annotated[list[StrictFloat], Field(min_length=2, title="Attribute Controls")]
-    colors: Annotated[list[Color2], Field(max_length=1024, min_length=2, title="Colors")]
+    colors: Annotated[
+        list[Annotated[list[StrictInt], Field(max_length=3, min_length=3)]],
+        Field(max_length=1024, min_length=2, title="Colors"),
+    ]
     """
     An ordered list of RGB colors, containing between 2 and 1024 colors. Each color is represented by three integer values (for Red, Green, and Blue) ranging from 0 to 255.
     """
@@ -112,20 +94,15 @@ class ContinuousColormapData(CustomBaseModel):
     name: Annotated[StrictStr, Field(title="Name")]
 
 
-class Color3Item(RootModel[StrictInt]):
-    root: StrictInt
-
-
-class Color3(RootModel[list[Color3Item]]):
-    root: Annotated[list[Color3Item], Field(max_length=3, min_length=3)]
-
-
 class ContinuousColormapResponse(CustomBaseModel):
     attribute_controls: Annotated[list[StrictFloat], Field(min_length=1, title="Attribute controls")]
     """
     List of ordered attribute values for gradient curve
     """
-    colors: Annotated[list[Color3], Field(max_length=1024, min_length=2, title="Colors")]
+    colors: Annotated[
+        list[Annotated[list[StrictInt], Field(max_length=3, min_length=3)]],
+        Field(max_length=1024, min_length=2, title="Colors"),
+    ]
     """
     An ordered list of RGB colors, containing between 2 and 1024 colors. Each color is represented by three integer values (for Red, Green, and Blue) ranging from 0 to 255.
     """
@@ -143,16 +120,11 @@ class ContinuousColormapResponse(CustomBaseModel):
     self_link: Annotated[AnyUrl, Field(title="Self link")]
 
 
-class Color4Item(RootModel[StrictInt]):
-    root: StrictInt
-
-
-class Color4(RootModel[list[Color4Item]]):
-    root: Annotated[list[Color4Item], Field(max_length=3, min_length=3)]
-
-
 class DiscreteColormapData(CustomBaseModel):
-    colors: Annotated[list[Color4], Field(max_length=1024, min_length=1, title="Colors")]
+    colors: Annotated[
+        list[Annotated[list[StrictInt], Field(max_length=3, min_length=3)]],
+        Field(max_length=1024, min_length=1, title="Colors"),
+    ]
     """
     An ordered list of RGB colors, containing between 1 and 1024 colors. Each color is represented by three integer values (for Red, Green, and Blue) ranging from 0 to 255.
     """
@@ -162,16 +134,11 @@ class DiscreteColormapData(CustomBaseModel):
     name: Annotated[StrictStr, Field(title="Name")]
 
 
-class Color5Item(RootModel[StrictInt]):
-    root: StrictInt
-
-
-class Color5(RootModel[list[Color5Item]]):
-    root: Annotated[list[Color5Item], Field(max_length=3, min_length=3)]
-
-
 class DiscreteColormapResponse(CustomBaseModel):
-    colors: Annotated[list[Color5], Field(max_length=1024, min_length=1, title="Colors")]
+    colors: Annotated[
+        list[Annotated[list[StrictInt], Field(max_length=3, min_length=3)]],
+        Field(max_length=1024, min_length=1, title="Colors"),
+    ]
     """
     An ordered list of RGB colors, containing between 1 and 1024 colors. Each color is represented by three integer values (for Red, Green, and Blue) ranging from 0 to 255.
     """
@@ -202,7 +169,10 @@ class WorkspaceMetadataResponse(CustomBaseModel):
 
 
 class CategoryColormapResponse(CustomBaseModel):
-    colors: Annotated[list[Color1], Field(max_length=16384, min_length=1, title="Colors")]
+    colors: Annotated[
+        list[Annotated[list[StrictInt], Field(max_length=3, min_length=3)]],
+        Field(max_length=16384, min_length=1, title="Colors"),
+    ]
     """
     An ordered list of RGB colors, containing between 1 and 16384 colors. Each color is represented by three integer values (for Red, Green, and Blue) ranging from 0 to 255.
     """
@@ -225,10 +195,9 @@ class ColormapData(RootModel[ContinuousColormapData | DiscreteColormapData | Cat
 
 
 class ColormapResponseList(CustomBaseModel):
-    colormaps: Annotated[
-        list[CategoryColormapResponse | DiscreteColormapResponse | ContinuousColormapResponse],
-        Field(title="Colormaps"),
-    ]
+    colormaps: list[CategoryColormapResponse | DiscreteColormapResponse | ContinuousColormapResponse] = Field(
+        ..., title="Colormaps"
+    )
 
 
 class ResponseGetColormapByID(

@@ -19,12 +19,11 @@ from data import load_test_data
 from evo.common import IFeedback, RequestMethod
 from evo.common.io.exceptions import DataExistsError
 from evo.common.test_tools import TestWithConnector, TestWithStorage
-from evo.common.utils import NoFeedback, PartialFeedback, get_package_details
+from evo.common.utils import NoFeedback, PartialFeedback, get_header_metadata
 from evo.objects.utils import KnownTableFormat, ObjectDataClient
 from helpers import NoImport, UnloadModule, get_sample_table_and_bytes
 
-package_details = get_package_details("evo-objects")
-header_metadata = {package_details["name"]: package_details["version"]}
+header_metadata = get_header_metadata("evo-objects")
 
 
 class TestObjectDataClient(TestWithConnector, TestWithStorage):

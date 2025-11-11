@@ -22,7 +22,6 @@ from uuid import UUID
 from pydantic import (
     AnyUrl,
     Field,
-    RootModel,
     StrictBool,
     StrictFloat,
     StrictInt,
@@ -739,14 +738,6 @@ class UserInfo(CustomBaseModel):
     """
     The full name of the user. Can be null if an error occurred while retrieving this information.
     """
-
-
-class AllInputOptionsInput(RootModel[InputOptionsParquet | InputOptionsCSV | InputOptionsDatamine]):
-    root: InputOptionsParquet | InputOptionsCSV | InputOptionsDatamine
-
-
-class AllInputOptionsOutput(RootModel[InputOptionsParquet | InputOptionsCSV | InputOptionsDatamine]):
-    root: InputOptionsParquet | InputOptionsCSV | InputOptionsDatamine
 
 
 class BBox(CustomBaseModel):
@@ -2250,7 +2241,7 @@ class UpdateDataLiteInput(CustomBaseModel):
 
     """
     input_options: Annotated[
-        AllInputOptionsInput | None,
+        InputOptionsParquet | InputOptionsCSV | InputOptionsDatamine | None,
         Field(discriminator="file_format", title="Input Options"),
     ] = None
     lineage: LineageV100Input | None = None
@@ -2290,7 +2281,7 @@ class UpdateDataLiteOutput(CustomBaseModel):
 
     """
     input_options: Annotated[
-        AllInputOptionsOutput | None,
+        InputOptionsParquet | InputOptionsCSV | InputOptionsDatamine | None,
         Field(discriminator="file_format", title="Input Options"),
     ] = None
     lineage: LineageV100Output | None = None
