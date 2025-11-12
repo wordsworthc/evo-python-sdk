@@ -987,7 +987,7 @@ test = [
 
 [[package]]
 name = "evo-objects"
-version = "0.3.1"
+version = "0.3.2"
 source = { editable = "packages/evo-objects" }
 dependencies = [
     { name = "evo-sdk-common", extra = ["jmespath"] },
@@ -1126,7 +1126,7 @@ test = [
 
 [[package]]
 name = "evo-sdk-common"
-version = "0.5.7"
+version = "0.5.8"
 source = { editable = "packages/evo-sdk-common" }
 dependencies = [
     { name = "pure-interface" },
