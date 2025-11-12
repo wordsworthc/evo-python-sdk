@@ -4,6 +4,8 @@
 ### What's changed
 #### evo-sdk
 * Add DownloadedObject.update method to conveniently update an existing geoscience object by @BenLewis-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/134
+* Add methods on DownloadedObject to download category data and attributes by @BenLewis-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/124
+* Add MultiDownloadRequestHandler to test_tools, to be able to mock multiple downloads at the same time by @BenLewis-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/124
 
 **Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk@v0.1.12...evo-sdk@v0.1.13
 
@@ -11,8 +13,16 @@
 ### What's changed
 #### evo-objects
 * Add DownloadedObject.update method to conveniently update an existing geoscience object by @BenLewis-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/134
+* Add methods on DownloadedObject to download category data and attributes by @BenLewis-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/124
 
 **Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-objects@v0.3.1...evo-objects@v0.3.2
+
+## evo-sdk-common@v0.5.8
+### What's changed
+#### evo-sdk-common
+* Add MultiDownloadRequestHandler to test_tools, to be able to mock multiple downloads at the same time by @BenLewis-Seequent in https://github.com/SeequentEvo/evo-python-sdk/pull/124
+
+**Full changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-sdk-common@v0.5.7...evo-sdk-common@v0.5.8
 
 ## evo-sdk@v0.1.12
 ### What's changed
