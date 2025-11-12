@@ -590,14 +590,6 @@ class Size3D(CustomBaseModel):
     nz: Annotated[StrictInt, Field(title="Nz")]
 
 
-class ModelType(Enum):
-    """
-    Type of sub-blocking
-    """
-
-    flexible = "flexible"
-
-
 class SizeOptionsFlexible(CustomBaseModel):
     model_type: Annotated[Literal["flexible"], Field(title="Model Type")]
     """
@@ -615,14 +607,6 @@ class SizeOptionsFlexible(CustomBaseModel):
     """
     Parent block size.
     """
-
-
-class ModelType1(Enum):
-    """
-    Type of sub-blocking
-    """
-
-    fully_sub_blocked = "fully-sub-blocked"
 
 
 class SizeOptionsFullySubBlocked(CustomBaseModel):
@@ -644,14 +628,6 @@ class SizeOptionsFullySubBlocked(CustomBaseModel):
     """
 
 
-class ModelType2(Enum):
-    """
-    Type of sub-blocking
-    """
-
-    variable_octree = "variable-octree"
-
-
 class SizeOptionsOctree(CustomBaseModel):
     model_type: Annotated[Literal["variable-octree"], Field(title="Model Type")]
     """
@@ -669,14 +645,6 @@ class SizeOptionsOctree(CustomBaseModel):
     """
     Parent block size.
     """
-
-
-class ModelType3(Enum):
-    """
-    Type of sub-blocking
-    """
-
-    regular = "regular"
 
 
 class SizeOptionsRegular(CustomBaseModel):
