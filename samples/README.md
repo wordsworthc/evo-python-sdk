@@ -190,11 +190,15 @@ Learn about Evo auth and the Evo Discovery service:
 ### 🧊 Block models
 **📁 [blockmodels](blockmodels/)**
 
-Comprehensive block model workflows organized by operation:
-- **Create**: Regular and variable octree block models
-- **Download**: Entire models or specific bounding box regions
-- **Manage**: List, delete, and restore block models
-- **Update**: Add, delete, rename, and update columns
+Block model workflow examples using both SDK and direct API approaches:
+- `sdk-examples.ipynb` - High-level Block Model SDK examples (recommended)
+- `api-examples.ipynb` - Direct API calls for advanced use cases
+
+These notebooks demonstrate:
+- Creating regular block models
+- Adding and updating columns
+- Querying data with bounding boxes
+- Working with PyArrow tables and pandas DataFrames
 
 ### 🗂️ File operations
 **📁 [files](files/)**
@@ -222,6 +226,7 @@ Publish and download various geoscience data types:
 Administrative operations:
 - Manage Evo workspaces
 - Handle user roles and permissions
+- Bonus: Move geoscience objects from one workspace to another
 
 ### ✨ Extras
 **📁 [common-tasks](common-tasks/)**
