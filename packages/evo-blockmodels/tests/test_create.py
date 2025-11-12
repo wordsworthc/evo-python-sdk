@@ -24,7 +24,7 @@ from evo.blockmodels.exceptions import CacheNotConfiguredException, JobFailedExc
 from evo.common import ServiceUser
 from evo.common.data import HTTPHeaderDict, RequestMethod
 from evo.common.test_tools import BASE_URL, MockResponse, TestWithConnector, TestWithStorage
-from evo.common.utils import get_package_details
+from evo.common.utils import get_header_metadata
 from utils import JobPollingRequestHandler
 
 BM_UUID = uuid.uuid4()
@@ -42,8 +42,7 @@ GRID_DEFINITION = RegularGridDefinition(
     model_origin=[0, 0, 0], rotations=[(RotationAxis.x, 20)], n_blocks=[10, 10, 10], block_size=[1, 1, 1]
 )
 
-package_details = get_package_details("evo-blockmodels")
-header_metadata = {package_details["name"]: package_details["version"]}
+header_metadata = get_header_metadata("evo-blockmodels")
 
 
 def _mock_create_result(environment) -> models.BlockModelAndJobURL:

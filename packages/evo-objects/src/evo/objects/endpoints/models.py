@@ -21,7 +21,6 @@ from uuid import UUID
 
 from pydantic import (
     Field,
-    RootModel,
     StrictBool,
     StrictFloat,
     StrictInt,
@@ -29,23 +28,6 @@ from pydantic import (
 )
 
 from .._model_config import CustomBaseModel
-
-
-class CoordinateItem(RootModel[list[StrictFloat]]):
-    root: Annotated[list[StrictFloat], Field(max_length=2, min_length=2, title="GeoJSON Point")]
-    """
-    A WGS84 coordinate pair [longitude, latitude]. The longitude must come before the latitude, in order to be considered a valid GeoJSON Point
-    """
-
-
-class Coordinate(RootModel[list[CoordinateItem]]):
-    root: Annotated[
-        list[CoordinateItem],
-        Field(max_length=5, min_length=5, title="GeoJSON LinearRing"),
-    ]
-    """
-    A list of GeoJSON points defining a closed linear ring. In order for the ring to be closed, the last point must be the same as the first point. Only a rectangle is supported, so the ring must be defined by 5 points.
-    """
 
 
 class DataDownloadUrl(CustomBaseModel):
@@ -178,7 +160,12 @@ class BoundingBox(CustomBaseModel):
     """
 
     coordinates: Annotated[
-        list[Coordinate],
+        list[
+            Annotated[
+                list[Annotated[list[StrictFloat], Field(max_length=2, min_length=2, title="GeoJSON Point")]],
+                Field(max_length=5, min_length=5, title="GeoJSON LinearRing"),
+            ]
+        ],
         Field(max_length=1, min_length=1, title="GeoJSON Polygon Coordinates"),
     ]
     """

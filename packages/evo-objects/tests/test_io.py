@@ -15,7 +15,7 @@ from uuid import UUID
 
 from data import load_test_data
 from evo.common.test_tools import TestWithConnector, TestWithDownloadHandler, TestWithUploadHandler
-from evo.common.utils import get_package_details
+from evo.common.utils import get_header_metadata
 from evo.objects import ObjectDataDownload, ObjectDataUpload, ObjectMetadata
 
 # The test data for these tests does need to be real parquet data, we just need enough content to test
@@ -28,8 +28,7 @@ DATA_NAME = "0000000000000000000000000000000000000000000000000000000000000001"
 INITIAL_URL = "https://unit.test/initial/url"
 
 
-package_details = get_package_details("evo-objects")
-header_metadata = {package_details["name"]: package_details["version"]}
+header_metadata = get_header_metadata("evo-objects")
 
 
 class TestObjectDataDownload(TestWithConnector, TestWithDownloadHandler):

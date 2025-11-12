@@ -29,7 +29,7 @@ API version: 0.0.2
 
 from evo.common.connector import APIConnector
 from evo.common.data import EmptyResponse, RequestMethod
-from evo.common.utils import get_package_details
+from evo.common.utils import get_header_metadata
 
 from ..models import *  # noqa: F403
 
@@ -99,12 +99,9 @@ class TasksApi:
         # Prepare the header parameters.
         _header_params = {
             "Content-Type": "application/json",
-        }
+        } | get_header_metadata(__name__)
         if additional_headers is not None:
             _header_params.update(additional_headers)
-        package_details = get_package_details(__name__)
-        if "name" in package_details and "version" in package_details:
-            _header_params[package_details["name"]] = package_details["version"]
 
         # Define the collection formats.
         _collection_formats = {}

@@ -19,7 +19,7 @@ from evo.common import RequestMethod
 from evo.common.exceptions import UnknownResponseError
 from evo.common.test_tools import ORG as TEST_ORG
 from evo.common.test_tools import MockResponse, TestWithConnector
-from evo.common.utils import get_package_details
+from evo.common.utils import get_header_metadata
 from parameterized import parameterized
 from pydantic import BaseModel
 
@@ -32,8 +32,7 @@ TEST_TASK = "job-client"
 TEST_JOB_ID = UUID(int=1234)
 
 
-package_details = get_package_details("evo-compute")
-header_metadata = {package_details["name"]: package_details["version"]}
+header_metadata = get_header_metadata("evo-compute")
 
 
 class PydanticResult(BaseModel):
