@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import asyncio
 import uuid
-from typing import List
 from uuid import UUID
 
 from evo import logging
@@ -167,7 +166,7 @@ class BlockModelAPIClient(BaseAPIClient):
 
             case _:
                 # Fall back to an informative error for unknown types
-                raise NotImplementedError(f"Size options type '{type(model.size_options).__name__}' is not supported")
+                raise NotImplementedError(f"Size options type '{type(model.size_options).__name__!r}' is not supported")
 
         return BlockModel(
             environment=self._environment,
@@ -267,11 +266,11 @@ class BlockModelAPIClient(BaseAPIClient):
         job_status = await self._poll_job_url(bm_id, job_id)
         return extract_payload(job_id, job_status, models.Version)
 
-    async def list_block_models(self) -> List[BlockModel]:
+    async def list_block_models(self) -> list[BlockModel]:
         """List block models in the current workspace.
 
-        Returns a list of `BlockModel` dataclasses for the workspace referenced by the client's
-        `Environment`. Limited to the first page of results.
+        Returns a list of `BlockModel`s for the workspace referenced by the client's
+        `Environment`. Limited to the first 100 results.
         """
         response = await self._metadata_api.list_block_models(
             workspace_id=str(self._environment.workspace_id),
@@ -280,7 +279,7 @@ class BlockModelAPIClient(BaseAPIClient):
 
         return [self._bm_from_model(m) for m in response.results]
 
-    async def list_all_block_models(self, page_limit: int = 100) -> List[BlockModel]:
+    async def list_all_block_models(self, page_limit: int | None = 100) -> list[BlockModel]:
         """Return all block models for the current workspace, following paginated responses.
 
         This method will page through the `list_block_models` endpoint using `offset` and `limit`
@@ -297,7 +296,7 @@ class BlockModelAPIClient(BaseAPIClient):
         page_limit = min(page_limit, 100)
 
         offset = 0
-        all_models: List[BlockModel] = []
+        all_models: list[BlockModel] = []
 
         while True:
             page = await self._metadata_api.list_block_models(

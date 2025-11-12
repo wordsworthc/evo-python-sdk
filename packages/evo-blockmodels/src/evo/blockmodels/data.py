@@ -67,19 +67,18 @@ class RegularGridDefinition(BaseGridDefinition):
 
 
 @dataclass(frozen=True, kw_only=True)
-class FullySubBlockedGridDefinition(BaseGridDefinition):
-    """A fully sub-blocked grid definition.
+class SubBlockedGridDefinition(BaseGridDefinition):
+    """A sub-blocked grid definition.
 
-    This represents a grid where each parent block is subdivided into a fixed number of regular
-    sub-blocks along each axis.
+    This represents a grid where each parent block is subdivided into a number of sub-blocks along each axis.
     """
 
     n_parent_blocks: list[int]
-    """Number of parent blocks along each axis."""
+    """Number of parent blocks along each axis. This must have 3 elements - `nx, ny, nz`."""
     n_subblocks_per_parent: list[int]
-    """Number of sub-blocks per parent block along each axis."""
+    """Number of sub-blocks per parent block along each axis. This must have 3 elements - `nx, ny, nz`."""
     parent_block_size: list[float]
-    """Size of the parent block along each axis."""
+    """Size of the parent block along each axis. This must have 3 elements - `x, y, z`."""
 
     def __post_init__(self):
         super().__post_init__()
@@ -92,7 +91,16 @@ class FullySubBlockedGridDefinition(BaseGridDefinition):
 
 
 @dataclass(frozen=True, kw_only=True)
-class FlexibleGridDefinition(FullySubBlockedGridDefinition):
+class FullySubBlockedGridDefinition(SubBlockedGridDefinition):
+    """A fully sub-blocked grid definition.
+
+    This represents a grid where each parent block is subdivided into a fixed number of regular
+    sub-blocks along each axis.
+    """
+
+
+@dataclass(frozen=True, kw_only=True)
+class FlexibleGridDefinition(SubBlockedGridDefinition):
     """A flexible sub-blocking grid definition.
 
     Semantically similar to FullySubBlocked but used when the subdivision can vary per parent at runtime.
@@ -101,7 +109,7 @@ class FlexibleGridDefinition(FullySubBlockedGridDefinition):
 
 
 @dataclass(frozen=True, kw_only=True)
-class OctreeGridDefinition(FullySubBlockedGridDefinition):
+class OctreeGridDefinition(SubBlockedGridDefinition):
     """An octree-style (variable-octree) grid definition.
 
     Represented here by parent block counts and subdivision counts per parent along each axis.
