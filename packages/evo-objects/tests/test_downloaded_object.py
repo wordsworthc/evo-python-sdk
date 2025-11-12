@@ -56,8 +56,6 @@ _TABLE_INFO_VARIANTS: list[tuple[str, TableInfo | str]] = [
     ("with JMESPath reference", "locations.coordinates"),
 ]
 
-header_metadata = get_header_metadata("evo-objects")
-
 
 class TestDownloadedObject(TestWithConnector, TestWithStorage):
     def setUp(self) -> None:
@@ -74,6 +72,7 @@ class TestDownloadedObject(TestWithConnector, TestWithStorage):
             connector=self.connector,
             cache=self.cache,
         )
+        self.setup_universal_headers(get_header_metadata(DownloadedObject.__module__))
 
     def tearDown(self) -> None:
         # Clear cache between tests to avoid cached files interfering with subsequent tests.
@@ -137,7 +136,7 @@ class TestDownloadedObject(TestWithConnector, TestWithStorage):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=expected_request_path,
-            headers={"Accept": "application/json", "Accept-Encoding": "gzip"} | header_metadata,
+            headers={"Accept": "application/json", "Accept-Encoding": "gzip"},
         )
         # Check metadata.
         actual_metadata = actual_object.metadata

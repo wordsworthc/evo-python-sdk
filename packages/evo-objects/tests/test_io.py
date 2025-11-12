@@ -15,7 +15,6 @@ from uuid import UUID
 
 from data import load_test_data
 from evo.common.test_tools import TestWithConnector, TestWithDownloadHandler, TestWithUploadHandler
-from evo.common.utils import get_header_metadata
 from evo.objects import ObjectDataDownload, ObjectDataUpload, ObjectMetadata
 
 # The test data for these tests does need to be real parquet data, we just need enough content to test
@@ -26,9 +25,6 @@ OBJECT_ID = UUID(int=5)
 VERSION_ID = "123456"
 DATA_NAME = "0000000000000000000000000000000000000000000000000000000000000001"
 INITIAL_URL = "https://unit.test/initial/url"
-
-
-header_metadata = get_header_metadata("evo-objects")
 
 
 class TestObjectDataDownload(TestWithConnector, TestWithDownloadHandler):
@@ -77,7 +73,7 @@ class TestObjectDataDownload(TestWithConnector, TestWithDownloadHandler):
         with self.transport.set_http_response(
             status_code=200,
             content=json.dumps(get_object_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             second = await self.download.get_download_url()
         self.assertEqual(get_object_response["links"]["data"][1]["download_url"], second)
@@ -130,7 +126,7 @@ class TestObjectDataUpload(TestWithConnector, TestWithUploadHandler):
         with self.transport.set_http_response(
             status_code=200,
             content=json.dumps(put_data_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             second = await self.upload.get_upload_url()
         self.assertEqual(put_data_response[0]["upload_url"], second)

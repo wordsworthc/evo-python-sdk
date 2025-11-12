@@ -29,14 +29,13 @@ from evo.common.exceptions import NotFoundException
 from evo.common.test_tools import BASE_URL, ORG, WORKSPACE_ID, TestWithConnector, utc_datetime
 from evo.common.utils import get_header_metadata
 
-header_metadata = get_header_metadata("evo-colormaps")
-
 
 class TestColormapApiClient(TestWithConnector):
     def setUp(self) -> None:
         TestWithConnector.setUp(self)
         self.environment = Environment(hub_url=BASE_URL, org_id=ORG.id, workspace_id=WORKSPACE_ID)
         self.colormap_api_client = ColormapAPIClient(connector=self.connector, environment=self.environment)
+        self.setup_universal_headers(get_header_metadata(ColormapAPIClient.__module__))
 
     @property
     def base_path(self) -> str:
@@ -72,7 +71,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=201,
             content=json.dumps(post_colormap_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             colormap_metadata = await self.colormap_api_client.create_colormap(colormap=colormap, name=colormap_name)
 
@@ -81,7 +80,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/colormaps",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={
                 "attribute_controls": colormap.attribute_controls,
                 "colors": colormap.colors,
@@ -113,7 +112,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=201,
             content=json.dumps(post_colormap_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             colormap_metadata = await self.colormap_api_client.create_colormap(colormap=colormap, name=colormap_name)
 
@@ -122,7 +121,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/colormaps",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={
                 "colors": colormap.colors,
                 "dtype": "discrete",
@@ -153,7 +152,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=201,
             content=json.dumps(post_colormap_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             colormap_metadata = await self.colormap_api_client.create_colormap(colormap=colormap, name=colormap_name)
 
@@ -162,7 +161,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/colormaps",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={
                 "colors": colormap.colors,
                 "dtype": "category",
@@ -193,7 +192,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=201,
             content=json.dumps(post_colormap_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             colormap_metadata = await self.colormap_api_client.create_colormap(colormap=colormap, name=colormap_name)
 
@@ -202,7 +201,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/colormaps",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={
                 "attribute_controls": colormap.attribute_controls,
                 "colors": colormap.colors,
@@ -221,7 +220,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=200,
             content=json.dumps(get_colormap_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             colormap_metadata = await self.colormap_api_client.get_colormap_by_id(colormap_id)
         self.assertIsInstance(colormap_metadata, ColormapMetadata)
@@ -229,7 +228,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/colormaps/{colormap_id}",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
 
     async def test_get_colormap_by_id_continuous(self) -> None:
@@ -348,7 +347,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=200,
             content=json.dumps(get_colormap_collection_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             colormap_metadata = await self.colormap_api_client.get_colormap_collection()
 
@@ -357,7 +356,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/colormaps",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
 
     async def test_create_association(self) -> None:
@@ -385,7 +384,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=200,
             content=json.dumps(colormap_association_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             association = await self.colormap_api_client.create_association(object_id, association)
 
@@ -394,7 +393,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/{object_id}/associations",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={"attribute_id": str(attribute_id), "colormap_id": str(colormap_id)},
         )
 
@@ -429,7 +428,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=200,
             content=json.dumps(colormap_association_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             associations = await self.colormap_api_client.create_batch_associations(object_id, associations)
 
@@ -438,7 +437,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/{object_id}/associations/batch",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={
                 "associations": [
                     {"attribute_id": attribute_id, "colormap_id": str(colormap_id)}
@@ -474,7 +473,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=200,
             content=json.dumps(colormap_association_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             associations = await self.colormap_api_client.create_batch_associations(object_id, associations)
 
@@ -483,7 +482,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_any_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/{object_id}/associations/batch",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={
                 "associations": [
                     {"attribute_id": f"attribute_id_{i}", "colormap_id": str(UUID(int=i))} for i in range(128)
@@ -493,7 +492,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_any_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/{object_id}/associations/batch",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={
                 "associations": [
                     {"attribute_id": f"attribute_id_{i}", "colormap_id": str(UUID(int=i))} for i in range(128, 256)
@@ -503,7 +502,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_any_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/{object_id}/associations/batch",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={
                 "associations": [
                     {"attribute_id": f"attribute_id_{i}", "colormap_id": str(UUID(int=i))} for i in range(256, 384)
@@ -513,7 +512,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_any_request_made(
             method=RequestMethod.POST,
             path=f"{self.base_path}/objects/{object_id}/associations/batch",
-            headers={"Content-Type": "application/json", "Accept": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
             body={
                 "associations": [
                     {"attribute_id": f"attribute_id_{i}", "colormap_id": str(UUID(int=i))} for i in range(384, 500)
@@ -551,7 +550,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=200,
             content=json.dumps(colormap_association_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             association = await self.colormap_api_client.get_association(object_id, association_id)
 
@@ -560,7 +559,7 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/{object_id}/associations/{association_id}",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
 
     async def test_get_association_collection(self) -> None:
@@ -590,7 +589,7 @@ class TestColormapApiClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=200,
             content=json.dumps(colormap_association_response),
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             associations = await self.colormap_api_client.get_association_collection(object_id)
 
@@ -599,5 +598,5 @@ class TestColormapApiClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{self.base_path}/objects/{object_id}/associations",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )

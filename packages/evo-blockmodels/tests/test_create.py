@@ -42,8 +42,6 @@ GRID_DEFINITION = RegularGridDefinition(
     model_origin=[0, 0, 0], rotations=[(RotationAxis.x, 20)], n_blocks=[10, 10, 10], block_size=[1, 1, 1]
 )
 
-header_metadata = get_header_metadata("evo-blockmodels")
-
 
 def _mock_create_result(environment) -> models.BlockModelAndJobURL:
     return models.BlockModelAndJobURL(
@@ -151,6 +149,7 @@ class TestCreateBlockModel(TestWithConnector, TestWithStorage):
         TestWithStorage.setUp(self)
         self.bms_client = BlockModelAPIClient(connector=self.connector, environment=self.environment, cache=self.cache)
         self.bms_client_without_cache = BlockModelAPIClient(connector=self.connector, environment=self.environment)
+        self.setup_universal_headers(get_header_metadata(BlockModelAPIClient.__module__))
 
     @property
     def base_path(self) -> str:
@@ -270,7 +269,7 @@ class TestCreateBlockModel(TestWithConnector, TestWithStorage):
                 ),
                 update_type=models.UpdateType.replace,
             )
-            self.transport.assert_any_request_made(
+            self.assert_any_request_made(
                 method=RequestMethod.PATCH,
                 path=f"{self.base_path}/block-models/{BM_UUID}/blocks",
                 body=expected_update_body.model_dump(mode="json", exclude_unset=True),
@@ -278,8 +277,7 @@ class TestCreateBlockModel(TestWithConnector, TestWithStorage):
                     "Authorization": "Bearer <not-a-real-token>",
                     "Content-Type": "application/json",
                     "Accept": "application/json",
-                }
-                | header_metadata,
+                },
             )
         self.assertEqual(bm.id, BM_UUID)
 

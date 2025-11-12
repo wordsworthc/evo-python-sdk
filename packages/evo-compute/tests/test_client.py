@@ -32,9 +32,6 @@ TEST_TASK = "job-client"
 TEST_JOB_ID = UUID(int=1234)
 
 
-header_metadata = get_header_metadata("evo-compute")
-
-
 class PydanticResult(BaseModel):
     foo: str
     baz: int
@@ -56,6 +53,7 @@ class TestJobClient(TestWithConnector):
             task=TEST_TASK,
             job_id=TEST_JOB_ID,
         )
+        self.setup_universal_headers(get_header_metadata(JobClient.__module__))
 
     @property
     def task_path(self) -> str:
@@ -100,7 +98,7 @@ class TestJobClient(TestWithConnector):
 
     async def test_submit(self) -> None:
         """Test that a job can be submitted."""
-        with self.transport.set_http_response(status_code=303, headers={"Location": self.job_url} | header_metadata):
+        with self.transport.set_http_response(status_code=303, headers={"Location": self.job_url}):
             job = await JobClient.submit(
                 connector=self.connector,
                 org_id=TEST_ORG.id,
@@ -111,7 +109,7 @@ class TestJobClient(TestWithConnector):
         self.assert_request_made(
             RequestMethod.POST,
             self.task_path,
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
             body={"parameters": {"foo": "bar"}},
         )
         self.assert_jobs_equal(self.job, job)
@@ -132,14 +130,14 @@ class TestJobClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=http_status,
             content=response_json,
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             yield expected_status
 
             self.assert_request_made(
                 RequestMethod.GET,
                 self.task_path + f"/{self.job.id}/status",
-                headers={"Accept": "application/json"} | header_metadata,
+                headers={"Accept": "application/json"},
             )
 
     @parameterized.expand(
@@ -166,13 +164,13 @@ class TestJobClient(TestWithConnector):
         with self.transport.set_http_response(
             status_code=http_status,
             content=response_json,
-            headers={"Content-Type": "application/json"} | header_metadata,
+            headers={"Content-Type": "application/json"},
         ):
             yield response_data.get("results")
             self.assert_request_made(
                 RequestMethod.GET,
                 self.task_path + f"/{self.job.id}",
-                headers={"Accept": "application/json"} | header_metadata,
+                headers={"Accept": "application/json"},
             )
 
     @parameterized.expand(
@@ -236,7 +234,7 @@ class TestJobClient(TestWithConnector):
         """Test that a job can be cancelled."""
         with self.transport.set_http_response(status_code=204):
             await self.job.cancel()
-        self.assert_request_made(RequestMethod.DELETE, self.task_path + f"/{self.job.id}", headers=header_metadata)
+        self.assert_request_made(RequestMethod.DELETE, self.task_path + f"/{self.job.id}")
 
     @contextmanager
     def set_job_states(self, *data_files: str) -> Iterator[dict | None]:
@@ -244,7 +242,7 @@ class TestJobClient(TestWithConnector):
         all_responses = [
             MockResponse(
                 status_code=202,
-                headers={"Content-Type": "application/json"} | header_metadata,
+                headers={"Content-Type": "application/json"},
                 content=json.dumps(load_test_data(data_file)),
             )
             for data_file in data_files
@@ -253,7 +251,7 @@ class TestJobClient(TestWithConnector):
         all_responses.append(
             MockResponse(
                 status_code=200,
-                headers={"Content-Type": "application/json"} | header_metadata,
+                headers={"Content-Type": "application/json"},
                 content=json.dumps(final_response),
             )
         )
@@ -276,12 +274,12 @@ class TestJobClient(TestWithConnector):
         self.assert_any_request_made(
             RequestMethod.GET,
             self.task_path + f"/{self.job.id}/status",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assert_any_request_made(
             RequestMethod.GET,
             self.task_path + f"/{self.job.id}",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
 
         self.assertEqual(expected_results, results)
@@ -299,12 +297,12 @@ class TestJobClient(TestWithConnector):
         self.assert_any_request_made(
             RequestMethod.GET,
             self.task_path + f"/{self.job.id}/status",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assert_any_request_made(
             RequestMethod.GET,
             self.task_path + f"/{self.job.id}",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
 
     async def test_wait_for_result_cancelled(self) -> None:
@@ -321,10 +319,10 @@ class TestJobClient(TestWithConnector):
         self.assert_any_request_made(
             RequestMethod.GET,
             self.task_path + f"/{self.job.id}/status",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assert_any_request_made(
             RequestMethod.GET,
             self.task_path + f"/{self.job.id}",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
