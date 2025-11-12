@@ -20,7 +20,7 @@ class TestBMSizeOptionsConversion(TestWithConnector, TestWithStorage):
         self.environment = Environment(hub_url=BASE_URL, org_id=ORG.id, workspace_id=WORKSPACE_ID)
         self.client = BlockModelAPIClient(connector=self.connector, environment=self.environment)
 
-    def _common_base(self, name: str, size_options: object) -> api_models.BlockModel:
+    def _create_bm(self, name: str, size_options: object) -> api_models.BlockModel:
         now = datetime.utcnow()
         return api_models.BlockModel(
             bbox=api_models.BBoxXYZ(
@@ -53,7 +53,7 @@ class TestBMSizeOptionsConversion(TestWithConnector, TestWithStorage):
             n_blocks=api_models.Size3D(nx=4, ny=5, nz=6),
             block_size=api_models.BlockSize(x=1.0, y=2.0, z=3.0),
         )
-        endpoint_bm = self._common_base("regular", size_options)
+        endpoint_bm = self._create_bm("regular", size_options)
 
         bm = self.client._bm_from_model(endpoint_bm)
         assert isinstance(bm.grid_definition, RegularGridDefinition)
@@ -67,7 +67,7 @@ class TestBMSizeOptionsConversion(TestWithConnector, TestWithStorage):
             n_subblocks_per_parent=api_models.RegularSubblocks(nx=2, ny=2, nz=2),
             parent_block_size=api_models.BlockSize(x=4.0, y=4.0, z=4.0),
         )
-        endpoint_bm = self._common_base("full", size_options)
+        endpoint_bm = self._create_bm("full", size_options)
 
         bm = self.client._bm_from_model(endpoint_bm)
         assert isinstance(bm.grid_definition, FullySubBlockedGridDefinition)
@@ -82,7 +82,7 @@ class TestBMSizeOptionsConversion(TestWithConnector, TestWithStorage):
             n_subblocks_per_parent=api_models.RegularSubblocks(nx=3, ny=3, nz=3),
             parent_block_size=api_models.BlockSize(x=3.0, y=3.0, z=3.0),
         )
-        endpoint_bm = self._common_base("flex", size_options)
+        endpoint_bm = self._create_bm("flex", size_options)
 
         bm = self.client._bm_from_model(endpoint_bm)
         assert isinstance(bm.grid_definition, FlexibleGridDefinition)
@@ -97,7 +97,7 @@ class TestBMSizeOptionsConversion(TestWithConnector, TestWithStorage):
             n_subblocks_per_parent=api_models.OctreeSubblocks(nx=2, ny=2, nz=2),
             parent_block_size=api_models.BlockSize(x=2.0, y=2.0, z=2.0),
         )
-        endpoint_bm = self._common_base("oct", size_options)
+        endpoint_bm = self._create_bm("oct", size_options)
 
         bm = self.client._bm_from_model(endpoint_bm)
         assert isinstance(bm.grid_definition, OctreeGridDefinition)

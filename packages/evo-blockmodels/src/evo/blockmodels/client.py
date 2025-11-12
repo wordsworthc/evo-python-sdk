@@ -271,11 +271,7 @@ class BlockModelAPIClient(BaseAPIClient):
         """List block models in the current workspace.
 
         Returns a list of `BlockModel` dataclasses for the workspace referenced by the client's
-        `Environment`.
-
-        The underlying operations API may return either a list or an object containing a list of
-        models (e.g. `block_models` or `items`). This method normalises the response and converts
-        each returned model into the local `BlockModel` type using `_bm_from_model`.
+        `Environment`. Limited to the first page of results.
         """
         response = await self._metadata_api.list_block_models(
             workspace_id=str(self._environment.workspace_id),

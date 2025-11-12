@@ -52,9 +52,6 @@ class TestListBlockModels(TestWithConnector, TestWithStorage):
         }
 
     async def test_list_block_models_converts_endpoint_models_to_dataclass(self) -> None:
-        """A realistic test: construct an endpoint `BlockModel` and ensure the client converts it to the
-        local `BlockModel` dataclass via `_bm_from_model` when `list_block_models` is used.
-        """
         # Prepare a fake endpoint BlockModel
         endpoint_bm = self.make_bm("Test BM")
 
