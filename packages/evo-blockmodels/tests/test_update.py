@@ -34,8 +34,6 @@ DATE = datetime(2021, 1, 1)
 MODEL_USER = models.UserInfo(email="test@test.com", name="Test User", id=uuid.uuid4())
 USER = ServiceUser.from_model(MODEL_USER)
 
-header_metadata = get_header_metadata("evo-blockmodels")
-
 
 def _mock_version(
     version_id: int, version_uuid: uuid.UUID, goose_version_id: str, bbox=None, columns: Iterable[models.Column] = ()
@@ -123,6 +121,7 @@ class TestUpdateBlockModel(TestWithConnector, TestWithStorage):
         TestWithStorage.setUp(self)
         self.bms_client = BlockModelAPIClient(connector=self.connector, environment=self.environment, cache=self.cache)
         self.bms_client_without_cache = BlockModelAPIClient(connector=self.connector, environment=self.environment)
+        self.setup_universal_headers(get_header_metadata(BlockModelAPIClient.__module__))
 
     @property
     def base_path(self) -> str:
@@ -170,7 +169,7 @@ class TestUpdateBlockModel(TestWithConnector, TestWithStorage):
                 ),
                 update_type=models.UpdateType.replace,
             )
-            self.transport.assert_any_request_made(
+            self.assert_any_request_made(
                 method=RequestMethod.PATCH,
                 path=f"{self.base_path}/block-models/{BM_UUID}/blocks",
                 body=expected_update_body.model_dump(mode="json", exclude_unset=True),
@@ -178,8 +177,7 @@ class TestUpdateBlockModel(TestWithConnector, TestWithStorage):
                     "Authorization": "Bearer <not-a-real-token>",
                     "Content-Type": "application/json",
                     "Accept": "application/json",
-                }
-                | header_metadata,
+                },
             )
         self.assertEqual(version.bm_uuid, BM_UUID)
         self.assertEqual(version.version_id, 2)
@@ -266,7 +264,7 @@ class TestUpdateBlockModel(TestWithConnector, TestWithStorage):
                 ),
                 update_type=models.UpdateType.replace,
             )
-            self.transport.assert_any_request_made(
+            self.assert_any_request_made(
                 method=RequestMethod.PATCH,
                 path=f"{self.base_path}/block-models/{BM_UUID}/blocks",
                 body=expected_update_body.model_dump(mode="json", exclude_unset=True),
@@ -274,8 +272,7 @@ class TestUpdateBlockModel(TestWithConnector, TestWithStorage):
                     "Authorization": "Bearer <not-a-real-token>",
                     "Content-Type": "application/json",
                     "Accept": "application/json",
-                }
-                | header_metadata,
+                },
             )
         self.assertEqual(version.bm_uuid, BM_UUID)
         self.assertEqual(version.version_id, 2)

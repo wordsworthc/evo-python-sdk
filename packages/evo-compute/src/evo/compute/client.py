@@ -204,10 +204,22 @@ class JobClient(Generic[T_Result]):
                 task=self._task,
                 job_id=self._job_id,
             )
+
+        if response.error:
+            error = JobError(
+                status=response.error.status,
+                reason=None,
+                content=response.error.model_dump(by_alias=True, exclude_unset=True, exclude_defaults=True),
+                headers=None,
+            )
+        else:
+            error = None
+
         return JobProgress(
             status=JobStatusEnum(response.status.value),
             progress=response.progress,
             message=response.message,
+            error=error,
         )
 
     async def _get_results(self) -> T_Result | JobError:

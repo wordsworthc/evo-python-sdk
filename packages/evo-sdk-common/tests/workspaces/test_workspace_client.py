@@ -37,9 +37,6 @@ BASE_PATH = f"/workspace/orgs/{ORG_UUID}"
 TEST_USER = ServiceUser(id=USER_ID, name="Test User", email="test.user@unit.test")
 
 
-header_metadata = get_header_metadata("evo-sdk-common")
-
-
 def _test_workspace(ws_id: UUID, name: str) -> Workspace:
     """Factory method to create test workspace objects."""
     return Workspace(
@@ -76,6 +73,7 @@ class TestWorkspaceClient(TestWithConnector):
     def setUp(self) -> None:
         super().setUp()
         self.workspace_client = WorkspaceAPIClient(connector=self.connector, org_id=ORG_UUID)
+        self.setup_universal_headers(get_header_metadata(WorkspaceAPIClient.__module__))
 
     async def test_get_service_health(self) -> None:
         with mock.patch("evo.workspaces.client.get_service_health") as mock_get_service_health:
@@ -93,7 +91,7 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces?offset=0",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assertEqual([], workspaces.items())
 
@@ -103,16 +101,14 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces?limit=20&offset=10",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assertEqual([], workspaces.items())
 
     async def test_delete_workspace_call(self):
         with self.transport.set_http_response(204):
             response = await self.workspace_client.delete_workspace(workspace_id=TEST_WORKSPACE_A.id)
-        self.assert_request_made(
-            method=RequestMethod.DELETE, path=f"{BASE_PATH}/workspaces/{TEST_WORKSPACE_A.id}", headers=header_metadata
-        )
+        self.assert_request_made(method=RequestMethod.DELETE, path=f"{BASE_PATH}/workspaces/{TEST_WORKSPACE_A.id}")
         self.assertIsNone(response, "Delete workspace response should be None")
 
     async def test_create_workspace(self):
@@ -127,8 +123,7 @@ class TestWorkspaceClient(TestWithConnector):
             headers={
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-            }
-            | header_metadata,
+            },
             body={
                 "bounding_box": None,
                 "default_coordinate_system": "",
@@ -151,8 +146,7 @@ class TestWorkspaceClient(TestWithConnector):
             headers={
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-            }
-            | header_metadata,
+            },
             body={
                 "name": "Test Workspace",
             },
@@ -180,8 +174,7 @@ class TestWorkspaceClient(TestWithConnector):
             headers={
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-            }
-            | header_metadata,
+            },
             body={
                 "user_id": str(USER_ID),
                 "role": "owner",
@@ -203,7 +196,7 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces/{TEST_WORKSPACE_A.id}/current-user-role",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assertEqual(response, UserRole(user_id=USER_ID, role=WorkspaceRole.owner))
 
@@ -229,7 +222,7 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces/{TEST_WORKSPACE_A.id}/users",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assertEqual(
             response,
@@ -245,7 +238,7 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces?limit=2&offset=0",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assertEqual(1, self.transport.request.call_count, "One requests should be made.")
         self.assertEqual([TEST_WORKSPACE_A, TEST_WORKSPACE_B], workspaces.items())
@@ -265,12 +258,12 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces?limit=2&offset=0",
-            headers=TestHTTPHeaderDict({"Accept": "application/json"} | header_metadata),
+            headers=TestHTTPHeaderDict({"Accept": "application/json"}),
         )
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces?limit=2&offset=2",
-            headers=TestHTTPHeaderDict({"Accept": "application/json"} | header_metadata),
+            headers=TestHTTPHeaderDict({"Accept": "application/json"}),
         )
         self.assertEqual(expected_workspaces, actual_workspaces)
 
@@ -296,12 +289,12 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces?limit=2&offset=0",
-            headers=TestHTTPHeaderDict({"Accept": "application/json"} | header_metadata),
+            headers=TestHTTPHeaderDict({"Accept": "application/json"}),
         )
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces?limit=2&offset=2",
-            headers=TestHTTPHeaderDict({"Accept": "application/json"} | header_metadata),
+            headers=TestHTTPHeaderDict({"Accept": "application/json"}),
         )
         self.assertEqual(expected_workspaces, actual_workspaces)
 
@@ -311,7 +304,7 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces/summary",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assertEqual([], workspaces.items())
 
@@ -340,7 +333,7 @@ class TestWorkspaceClient(TestWithConnector):
                 f"limit=20&offset=10&order_by=asc%3Aname&filter%5Bcreated_by%5D=00000000-0000-0000-0000-000000000002&"
                 f"created_at=2020-01-01+00%3A00%3A00%2B00%3A00&updated_at=2020-01-01+00%3A00%3A00%2B00%3A00&"
                 f"name=Test+Workspace+A&deleted=False&filter%5Buser_id%5D=00000000-0000-0000-0000-000000000002",
-                headers={"Accept": "application/json"} | header_metadata,
+                headers={"Accept": "application/json"},
             )
             self.assertEqual([], workspaces.items())
 
@@ -351,7 +344,7 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces/summary",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assertEqual(1, self.transport.request.call_count, "One requests should be made.")
         self.assertEqual([TEST_BASIC_WORKSPACE_A, TEST_BASIC_WORKSPACE_B, TEST_BASIC_WORKSPACE_C], workspaces.items())
@@ -368,12 +361,12 @@ class TestWorkspaceClient(TestWithConnector):
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces/summary?limit=2&offset=0",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assert_any_request_made(
             method=RequestMethod.GET,
             path=f"{BASE_PATH}/workspaces/summary?limit=2&offset=2",
-            headers={"Accept": "application/json"} | header_metadata,
+            headers={"Accept": "application/json"},
         )
         self.assertEqual(2, self.transport.request.call_count, "Two requests should be made.")
         self.assertEqual([TEST_BASIC_WORKSPACE_A, TEST_BASIC_WORKSPACE_B], workspaces_page_1.items())

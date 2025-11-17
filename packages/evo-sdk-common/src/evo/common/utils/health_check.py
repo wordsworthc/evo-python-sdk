@@ -35,11 +35,11 @@ async def _check_service_health(
     """
     query_params = {}
     if full is True:
-        query_params["full"] = True
+        query_params["full"] = "true"
     if check_type in {HealthCheckType.FULL, HealthCheckType.STRICT}:
-        query_params["check_dependencies"] = True
+        query_params["check_dependencies"] = "true"
     if check_type is HealthCheckType.STRICT:
-        query_params["strict"] = True
+        query_params["strict"] = "true"
 
     return await connector.call_api(
         RequestMethod.GET,
