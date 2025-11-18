@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from evo.blockmodels import BlockModelAPIClient
@@ -32,12 +32,12 @@ class TestListBlockModels(TestWithConnector, TestWithStorage):
             "block_rotation": [{"angle": 0, "axis": "x"}],
             "bm_uuid": str(uuid4()),
             "coordinate_reference_system": "string",
-            "created_at": str(datetime.utcnow()),
+            "created_at": str(datetime.now(timezone.utc)),
             "created_by": {"email": "c@example.com", "id": str(uuid4()), "name": "creator"},
             "description": "string",
             "fill_subblocks": False,
             "geoscience_object_id": str(uuid4()),
-            "last_updated_at": str(datetime.utcnow()),
+            "last_updated_at": str(datetime.now(timezone.utc)),
             "last_updated_by": {"email": "u@example.com", "id": str(uuid4()), "name": "updater"},
             "model_origin": {"x": 0, "y": 0, "z": 0},
             "name": name,
