@@ -421,3 +421,89 @@ class TestUpdateBlockModel(TestWithConnector, TestWithStorage):
         )
         self.assertEqual(version.bm_uuid, BM_UUID)
         self.assertEqual(version.version_id, 2)
+
+    async def test_rename_block_model_columns(self) -> None:
+        self.transport.set_request_handler(
+            UpdateRequestHandler(
+                update_result=UPDATE_RESULT,
+                job_response=JobResponse(
+                    job_status=JobStatus.COMPLETE,
+                    payload=UPDATED_VERSION,
+                ),
+            )
+        )
+        version = await self.bms_client_without_cache.rename_block_model_columns(
+            BM_UUID,
+            column_renames={"col1": "col1_renamed", "col2": "col2_renamed"},
+        )
+
+        # Verify the returned version object
+        self.assertEqual(version.bm_uuid, BM_UUID)
+        self.assertEqual(version.version_uuid, UPDATED_VERSION.version_uuid)
+
+    async def test_rename_block_model_columns_with_comment(self) -> None:
+        self.transport.set_request_handler(
+            UpdateRequestHandler(
+                update_result=UPDATE_RESULT,
+                job_response=JobResponse(
+                    job_status=JobStatus.COMPLETE,
+                    payload=UPDATED_VERSION,
+                ),
+            )
+        )
+        version = await self.bms_client_without_cache.rename_block_model_columns(
+            BM_UUID,
+            column_renames={"col1": "col1_renamed", "col2": "col2_renamed"},
+            comment="Renamed columns for clarity",
+        )
+
+        # Assert that the correct rename request with comment was made
+        expected_update_body = models.UpdateDataLiteInput(
+            columns=models.UpdateColumnsLiteInput(
+                new=[],
+                update=[],
+                delete=[],
+                rename=[
+                    models.RenameLite(title="col1", new_title="col1_renamed"),
+                    models.RenameLite(title="col2", new_title="col2_renamed"),
+                ],
+            ),
+            comment="Renamed columns for clarity",
+        )
+        self.assert_any_request_made(
+            method=RequestMethod.PATCH,
+            path=f"{self.base_path}/block-models/{BM_UUID}/blocks",
+            body=expected_update_body.model_dump(mode="json", exclude_unset=True),
+            headers={
+                "Authorization": "Bearer <not-a-real-token>",
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        self.assertEqual(version.bm_uuid, BM_UUID)
+        self.assertEqual(version.version_id, 2)
+        self.assertEqual(version.version_uuid, UPDATED_VERSION.version_uuid)
+        self.assertEqual(version.parent_version_id, 1)
+        self.assertEqual(version.base_version_id, 1)
+        self.assertEqual(version.geoscience_version_id, "3")
+
+    async def test_rename_block_model_columns_job_failed(self) -> None:
+        self.transport.set_request_handler(
+            UpdateRequestHandler(
+                update_result=UPDATE_RESULT,
+                job_response=JobResponse(
+                    job_status=JobStatus.FAILED,
+                    payload=models.JobErrorPayload(
+                        detail="Rename Job failed",
+                        status=500,
+                        title="Rename Job failed",
+                        type="https://seequent.com/error-codes/block-model-service/job/internal-error",
+                    ),
+                ),
+            )
+        )
+        with self.assertRaises(JobFailedException):
+            await self.bms_client_without_cache.rename_block_model_columns(
+                BM_UUID,
+                column_renames={"col1": "col1_renamed"},
+            )
