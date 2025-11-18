@@ -485,6 +485,58 @@ class BlockModelAPIClient(BaseAPIClient):
         version = await self._upload_data(bm_id, update_response.job_uuid, str(update_response.upload_url), data)
         return _version_from_model(version)
 
+    async def update_column_metadata(
+        self,
+        bm_id: UUID,
+        column_updates: dict[str, str | None],
+        comment: str | None = None,
+    ) -> Version:
+        """Update metadata (e.g., units) for existing block model columns.
+
+        This method updates column properties without requiring data upload or cache configuration.
+
+        :param bm_id: The ID of the block model to update.
+        :param column_updates: A dictionary mapping column titles to their new unit IDs.
+                               Set the unit ID to None to remove the unit.
+                               Example: {"Cu": "%[mass]", "Au": None}
+        :param comment: An optional comment describing the metadata changes. This is max 250 characters.
+        :return: The new version of the block model with updated metadata.
+        """
+        update_metadata_list = [
+            models.UpdateMetadataLite(title=col_title, values=models.UpdateMetadataValues(unit_id=unit_id))
+            for col_title, unit_id in column_updates.items()
+        ]
+
+        columns = models.UpdateColumnsLiteInput(
+            new=[],
+            update=[],
+            delete=[],
+            rename=[],
+            update_metadata=update_metadata_list,
+        )
+
+        update_response = await self._column_operations_api.update_block_model_from_latest_version(
+            org_id=str(self._environment.org_id),
+            workspace_id=str(self._environment.workspace_id),
+            bm_id=str(bm_id),
+            update_data_lite_input=models.UpdateDataLiteInput(
+                columns=columns,
+                comment=comment,
+            ),
+        )
+
+        job_id = _job_id_from_url(update_response.job_url)
+        # Notify the service that the upload is complete (as no data needed)
+        await self._column_operations_api.notify_upload_complete(
+            org_id=str(self._environment.org_id),
+            workspace_id=str(self._environment.workspace_id),
+            bm_id=str(bm_id),
+            job_id=str(job_id),
+        )
+        job_status = await self._poll_job_url(bm_id, job_id)
+        version = extract_payload(job_id, job_status, models.Version)
+        return _version_from_model(version)
+
     async def query_block_model_as_table(
         self,
         bm_id: UUID,
