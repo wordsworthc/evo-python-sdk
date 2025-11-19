@@ -266,6 +266,33 @@ class BlockModelAPIClient(BaseAPIClient):
         job_status = await self._poll_job_url(bm_id, job_id)
         return extract_payload(job_id, job_status, models.Version)
 
+    async def _update_model_no_data(
+        self, bm_id: UUID, columns: models.UpdateColumnsLiteInput, comment: str | None = None
+    ) -> Version:
+        """Helper to apply an UpdateColumnsLiteInput and return the resulting Version.
+        This is for column operations where new data is not required.
+        """
+        update_response = await self._column_operations_api.update_block_model_from_latest_version(
+            org_id=str(self._environment.org_id),
+            workspace_id=str(self._environment.workspace_id),
+            bm_id=str(bm_id),
+            update_data_lite_input=models.UpdateDataLiteInput(
+                columns=columns,
+                comment=comment,
+            ),
+        )
+
+        job_id = _job_id_from_url(update_response.job_url)
+        await self._column_operations_api.notify_upload_complete(
+            org_id=str(self._environment.org_id),
+            workspace_id=str(self._environment.workspace_id),
+            bm_id=str(bm_id),
+            job_id=str(job_id),
+        )
+        job_status = await self._poll_job_url(bm_id, job_id)
+        version = extract_payload(job_id, job_status, models.Version)
+        return _version_from_model(version)
+
     async def list_block_models(self) -> list[BlockModel]:
         """List block models in the current workspace.
 
@@ -515,27 +542,7 @@ class BlockModelAPIClient(BaseAPIClient):
             update_metadata=update_metadata_list,
         )
 
-        update_response = await self._column_operations_api.update_block_model_from_latest_version(
-            org_id=str(self._environment.org_id),
-            workspace_id=str(self._environment.workspace_id),
-            bm_id=str(bm_id),
-            update_data_lite_input=models.UpdateDataLiteInput(
-                columns=columns,
-                comment=comment,
-            ),
-        )
-
-        job_id = _job_id_from_url(update_response.job_url)
-        # Notify the service that the upload is complete (as no data needed)
-        await self._column_operations_api.notify_upload_complete(
-            org_id=str(self._environment.org_id),
-            workspace_id=str(self._environment.workspace_id),
-            bm_id=str(bm_id),
-            job_id=str(job_id),
-        )
-        job_status = await self._poll_job_url(bm_id, job_id)
-        version = extract_payload(job_id, job_status, models.Version)
-        return _version_from_model(version)
+        return await self._update_model_no_data(bm_id, columns, comment=comment)
 
     async def rename_block_model_columns(
         self,
@@ -564,27 +571,31 @@ class BlockModelAPIClient(BaseAPIClient):
             rename=rename_list,
         )
 
-        update_response = await self._column_operations_api.update_block_model_from_latest_version(
-            org_id=str(self._environment.org_id),
-            workspace_id=str(self._environment.workspace_id),
-            bm_id=str(bm_id),
-            update_data_lite_input=models.UpdateDataLiteInput(
-                columns=columns,
-                comment=comment,
-            ),
+        return await self._update_model_no_data(bm_id, columns, comment=comment)
+
+    async def delete_block_model_columns(
+        self,
+        bm_id: UUID,
+        column_titles: list[str],
+        comment: str | None = None,
+    ) -> Version:
+        """Delete existing columns from a block model.
+
+        This method deletes columns without requiring data upload or cache configuration.
+
+        :param bm_id: The ID of the block model to update.
+        :param column_titles: The titles of the columns to delete.
+        :param comment: An optional comment describing the rename operation. This is max 250 characters.
+        :return: The new version of the block model with renamed columns.
+        """
+        columns = models.UpdateColumnsLiteInput(
+            new=[],
+            update=[],
+            delete=column_titles,
+            rename=[],
         )
 
-        job_id = _job_id_from_url(update_response.job_url)
-        # Notify the service that the upload is complete (as no data needed)
-        await self._column_operations_api.notify_upload_complete(
-            org_id=str(self._environment.org_id),
-            workspace_id=str(self._environment.workspace_id),
-            bm_id=str(bm_id),
-            job_id=str(job_id),
-        )
-        job_status = await self._poll_job_url(bm_id, job_id)
-        version = extract_payload(job_id, job_status, models.Version)
-        return _version_from_model(version)
+        return await self._update_model_no_data(bm_id, columns, comment=comment)
 
     async def query_block_model_as_table(
         self,
