@@ -199,8 +199,6 @@ class TestListBlockModels(TestWithConnector, TestWithStorage):
         self.assertEqual([v.version_id for v in result], [3, 2, 1])
 
     async def test_list_all_versions_empty_returns_empty(self) -> None:
-        import json
-
         bm_id = uuid.uuid4()
         with self.transport.set_http_response(
             200,
