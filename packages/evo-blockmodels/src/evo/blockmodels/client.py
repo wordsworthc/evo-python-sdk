@@ -537,6 +537,55 @@ class BlockModelAPIClient(BaseAPIClient):
         version = extract_payload(job_id, job_status, models.Version)
         return _version_from_model(version)
 
+    async def rename_block_model_columns(
+        self,
+        bm_id: UUID,
+        column_renames: dict[str, str],
+        comment: str | None = None,
+    ) -> Version:
+        """Rename existing block model columns.
+
+        This method renames columns without requiring data upload or cache configuration.
+
+        :param bm_id: The ID of the block model to update.
+        :param column_renames: A dictionary mapping current column titles to their new titles.
+                               Example: {"Cu": "Copper", "Au": "Gold"}
+        :param comment: An optional comment describing the rename operation. This is max 250 characters.
+        :return: The new version of the block model with renamed columns.
+        """
+        rename_list = [
+            models.RenameLite(title=old_title, new_title=new_title) for old_title, new_title in column_renames.items()
+        ]
+
+        columns = models.UpdateColumnsLiteInput(
+            new=[],
+            update=[],
+            delete=[],
+            rename=rename_list,
+        )
+
+        update_response = await self._column_operations_api.update_block_model_from_latest_version(
+            org_id=str(self._environment.org_id),
+            workspace_id=str(self._environment.workspace_id),
+            bm_id=str(bm_id),
+            update_data_lite_input=models.UpdateDataLiteInput(
+                columns=columns,
+                comment=comment,
+            ),
+        )
+
+        job_id = _job_id_from_url(update_response.job_url)
+        # Notify the service that the upload is complete (as no data needed)
+        await self._column_operations_api.notify_upload_complete(
+            org_id=str(self._environment.org_id),
+            workspace_id=str(self._environment.workspace_id),
+            bm_id=str(bm_id),
+            job_id=str(job_id),
+        )
+        job_status = await self._poll_job_url(bm_id, job_id)
+        version = extract_payload(job_id, job_status, models.Version)
+        return _version_from_model(version)
+
     async def query_block_model_as_table(
         self,
         bm_id: UUID,
