@@ -321,6 +321,71 @@ class BlockModelAPIClient(BaseAPIClient):
 
         return all_models
 
+    async def list_versions(self, bm_id: UUID) -> list[Version]:
+        """List versions of a block model.
+
+        Returns a list of `Version`s for the block model referenced by `bm_id`,
+        limited to the first 100 results (or the service maximum).
+
+        Versions are ordered from newest to oldest.
+
+        :param bm_id: The ID of the block model.
+        :return: A list of `Version` dataclasses for the block model, ordered newest to oldest.
+        """
+        response = await self._versions_api.list_block_model_versions(
+            workspace_id=str(self._environment.workspace_id),
+            org_id=str(self._environment.org_id),
+            bm_id=str(bm_id),
+        )
+
+        return [_version_from_model(v) for v in response.results]
+
+    async def list_all_versions(self, bm_id: UUID, page_limit: int | None = 100) -> list[Version]:
+        """Return all versions of a block model, following paginated responses.
+
+        This method will page through the `list_block_model_versions` endpoint using `offset` and `limit`
+        until all entries are retrieved. The `page_limit` is clamped to the service maximum (100).
+
+        Versions are ordered from newest to oldest.
+
+        :param bm_id: The ID of the block model.
+        :param page_limit: Maximum items to request per page (1..100). Defaults to 100.
+        :return: A list of `Version` dataclasses for the block model, ordered newest to oldest.
+        """
+        if page_limit is None:
+            page_limit = 100
+        if page_limit <= 0:
+            raise ValueError("page_limit must be > 0")
+        # Service enforces maximum limit of 100
+        page_limit = min(page_limit, 100)
+
+        offset = 0
+        all_versions: list[Version] = []
+
+        while True:
+            page = await self._versions_api.list_block_model_versions(
+                workspace_id=str(self._environment.workspace_id),
+                org_id=str(self._environment.org_id),
+                bm_id=str(bm_id),
+                offset=offset,
+                limit=page_limit,
+            )
+
+            # Convert and append
+            for v in page.results:
+                all_versions.append(_version_from_model(v))
+
+            # Determine stopping condition
+            if page.count == 0:
+                break
+            if page.total is not None:
+                if offset + page.count >= page.total:
+                    break
+            # Advance offset
+            offset += page.count
+
+        return all_versions
+
     async def create_block_model(
         self,
         name: str,
