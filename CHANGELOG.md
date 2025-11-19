@@ -10,7 +10,6 @@ New methods on the Blockmodel SDK 🎉
 * Add a method for deleting columns by @rachelcarpenterseequent in https://github.com/SeequentEvo/evo-python-sdk/pull/152
 * Add methods for listing blockmodel versions. by @rachelcarpenterseequent in https://github.com/SeequentEvo/evo-python-sdk/pull/153
 
-
 **Full Changelog**: https://github.com/SeequentEvo/evo-python-sdk/compare/evo-blockmodels@v0.0.3...evo-blockmodels@v0.1.0
 
 ## evo-sdk@v0.1.14
