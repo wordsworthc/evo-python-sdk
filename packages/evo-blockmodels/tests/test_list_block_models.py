@@ -132,7 +132,7 @@ class TestListBlockModels(TestWithConnector, TestWithStorage):
             ),
             headers={"Content-Type": "application/json"},
         ):
-            result = await self.bms_client.list_versions(bm_id)
+            result = await self.client.list_versions(bm_id)
         self.assertEqual(len(result), 2)
         self.assertIsInstance(result[0], Version)
         self.assertIsInstance(result[1], Version)
@@ -146,7 +146,7 @@ class TestListBlockModels(TestWithConnector, TestWithStorage):
             json.dumps({"count": 0, "limit": 100, "offset": 0, "results": [], "total": 0, "referenced_units": []}),
             headers={"Content-Type": "application/json"},
         ):
-            result = await self.bms_client.list_versions(bm_id)
+            result = await self.client.list_versions(bm_id)
         self.assertEqual(result, [])
 
     async def test_list_all_versions_returns_all_versions(self) -> None:
@@ -164,7 +164,7 @@ class TestListBlockModels(TestWithConnector, TestWithStorage):
         ]
         self.transport.request.side_effect = responses
 
-        result = await self.bms_client.list_all_versions(bm_id, page_limit=2)
+        result = await self.client.list_all_versions(bm_id, page_limit=2)
         self.assertEqual(len(result), 2)
         self.assertIsInstance(result[0], Version)
         self.assertIsInstance(result[1], Version)
@@ -194,7 +194,7 @@ class TestListBlockModels(TestWithConnector, TestWithStorage):
         ]
         self.transport.request.side_effect = responses
 
-        result = await self.bms_client.list_all_versions(bm_id, page_limit=2)
+        result = await self.client.list_all_versions(bm_id, page_limit=2)
         self.assertEqual(len(result), 3)
         self.assertEqual([v.version_id for v in result], [3, 2, 1])
 
@@ -207,5 +207,5 @@ class TestListBlockModels(TestWithConnector, TestWithStorage):
             json.dumps({"count": 0, "limit": 100, "offset": 0, "results": [], "total": 0, "referenced_units": []}),
             headers={"Content-Type": "application/json"},
         ):
-            result = await self.bms_client.list_all_versions(bm_id)
+            result = await self.client.list_all_versions(bm_id)
         self.assertEqual(result, [])
